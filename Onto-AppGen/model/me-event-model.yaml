@@ -1,0 +1,59 @@
+domain: 本体工作台 V3 应用生成机制
+events:
+  - eventId: Schema.Generated
+    eventName: App Schema 已生成
+    ordering: AT_LEAST_ONCE
+    payload:
+      - name
+      - version
+      - pages
+    producerBehaviorRef: Schema_Generate
+    subscriberBehaviorRefs:
+      - Schema_Validate
+    version: '1.0'
+  - eventId: Schema.Validated
+    eventName: App Schema 校验通过
+    ordering: EXACTLY_ONCE
+    payload:
+      - name
+      - issues
+    producerBehaviorRef: Schema_Validate
+    subscriberBehaviorRefs:
+      - App_Generate
+    version: '1.0'
+  - eventId: Schema.Rejected
+    eventName: App Schema 校验失败已打回
+    ordering: EXACTLY_ONCE
+    payload:
+      - issues
+    producerBehaviorRef: Schema_Reject
+    subscriberBehaviorRefs: []
+    version: '1.0'
+  - eventId: API.Generated
+    eventName: API 已生成
+    ordering: AT_LEAST_ONCE
+    payload:
+      - entity
+      - behavior
+    producerBehaviorRef: API_GenerateCRUD
+    subscriberBehaviorRefs: []
+    version: '1.0'
+  - eventId: App.Generated
+    eventName: 应用已生成
+    ordering: EXACTLY_ONCE
+    payload:
+      - appDir
+    producerBehaviorRef: App_Generate
+    subscriberBehaviorRefs:
+      - App_Run
+    version: '1.0'
+  - eventId: App.Started
+    eventName: 应用已启动
+    ordering: AT_LEAST_ONCE
+    payload:
+      - url
+    producerBehaviorRef: App_Run
+    subscriberBehaviorRefs: []
+    version: '1.0'
+model_type: EVENT
+version: '1.1'

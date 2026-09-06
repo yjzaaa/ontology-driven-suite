@@ -1,0 +1,188 @@
+aggregates:
+  - aggregateConstraints:
+      - enforcedAt: PERSIST
+        expression: pages.count() > 0
+        name: 应用至少一个页面
+      - enforcedAt: PERSIST
+        expression: unique(pages.id)
+        name: 页面 id 唯一
+    id: AGG-APP-SCHEMA
+    internalEntities:
+      - alias: Page
+        attributes:
+          - name: id
+            label: 页面 id
+            required: true
+            type: String
+          - name: title
+            label: 页面标题
+            required: true
+            type: String
+          - name: icon
+            label: 图标
+            type: String
+        name: 页面
+    name: App Schema 聚合
+    rootEntity:
+      alias: AppSchema
+      attributes:
+        - name: name
+          label: 应用名
+          required: true
+          type: String
+        - name: version
+          label: 版本
+          required: true
+          type: String
+        - name: sourceProject
+          label: 来源项目
+          required: true
+          type: String
+        - name: pages
+          label: 页面列表
+          required: true
+          type: ValueObject
+      lifecycle:
+        - 草稿
+        - 已校验
+        - 已生成
+      name: App Schema 主单据
+  - aggregateConstraints: []
+    id: AGG-BLOCK
+    internalEntities:
+      - alias: Field
+        attributes:
+          - name: name
+            label: 字段名
+            required: true
+            type: String
+          - name: label
+            label: 标签
+            required: true
+            type: String
+          - name: control
+            label: 控件类型
+            required: true
+            type: Enum
+            enumValues:
+              - select
+              - input
+              - textarea
+              - date
+              - datetime
+              - radio
+              - number
+          - name: required
+            label: 必填
+            type: Boolean
+          - name: refTable
+            label: 引用表
+            type: Reference
+            refEntity: Entity
+          - name: refValue
+            label: 下拉值列
+            type: String
+          - name: refLabel
+            label: 下拉显示列
+            type: String
+        name: 表单字段
+      - alias: Column
+        attributes:
+          - name: name
+            label: 列名
+            required: true
+            type: String
+          - name: label
+            label: 列标题
+            required: true
+            type: String
+          - name: render
+            label: 渲染方式
+            type: Enum
+            enumValues:
+              - text
+              - tag
+          - name: tagMap
+            label: 标签颜色映射
+            type: ValueObject
+        name: 列表列
+      - alias: Action
+        attributes:
+          - name: label
+            label: 按钮名
+            required: true
+            type: String
+          - name: behavior
+            label: 绑定行为
+            type: Reference
+            refEntity: Behavior
+          - name: confirm
+            label: 确认文案
+            type: String
+          - name: visibleWhen
+            label: 显隐条件
+            type: ValueObject
+        name: 行内操作
+    name: Block 聚合
+    rootEntity:
+      alias: Block
+      attributes:
+        - name: type
+          label: Block 类型
+          required: true
+          type: Enum
+          enumValues:
+            - form
+            - table
+            - stat
+            - detail
+        - name: title
+          label: 标题
+          required: true
+          type: String
+        - name: entity
+          label: 数据表
+          required: true
+          type: Reference
+          refEntity: Entity
+        - name: behavior
+          label: 绑定行为
+          type: Reference
+          refEntity: Behavior
+      lifecycle: []
+      name: 页面组成单元
+associations:
+  - source: AppSchema
+    sourceRole: 包含页面
+    target: Page
+    type: composition
+  - source: Page
+    sourceRole: 包含 Block
+    target: Block
+    type: composition
+  - source: Block
+    sourceRole: 引用实体
+    target: Entity
+    type: association
+  - source: Block
+    sourceRole: 绑定行为
+    target: Behavior
+    type: association
+  - source: Action
+    sourceRole: 触发行为
+    target: Behavior
+    type: association
+masterEntities:
+  - alias: Entity
+    attributes:
+      - entityName
+      - entityType
+    name: 本体实体（M1 引用）
+  - alias: Behavior
+    attributes:
+      - behaviorId
+      - behaviorType
+    name: 本体行为（M2 引用）
+model_type: AGGREGATE_OBJECT
+version: '1.1'
+domain: 本体工作台 V3 应用生成机制

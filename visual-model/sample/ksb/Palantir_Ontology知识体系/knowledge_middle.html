@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Palantir Ontology 中间层知识矩阵</title>
+<style>
+body{font-family:Arial,"Microsoft YaHei",sans-serif;background:#f7f8fa;margin:0;padding:20px;color:#1a1a2e}
+h2{text-align:center;margin:8px 0 10px}
+.desc{max-width:1180px;margin:0 auto 14px;color:#4b5563;line-height:1.7}
+.ctrl{display:flex;justify-content:center;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+select{padding:5px 8px}
+table{border-collapse:collapse;margin:0 auto;background:#fff;box-shadow:0 2px 8px #0001}
+th,td{border:1px solid #d7dbe8;padding:10px 12px;vertical-align:top;min-width:190px;max-width:330px}
+th{background:#3f51b5;color:#fff;position:sticky;top:0;z-index:1}
+.row-h{background:#5c6bc0;color:#fff;font-weight:bold;min-width:120px}
+.cell{font-size:13px;line-height:1.52}
+.d0{background:#fff}.d1{background:#f6f8ff}.d2{background:#eef2ff}.d3{background:#e3e9ff}
+.level-beginner{background:#dff6e5}.level-intermediate{background:#fff1b8}.level-advanced{background:#f2c94c}
+.level-block{border-radius:7px;margin:6px 0;padding:8px 9px;border:1px solid #00000014}
+.group{margin:0 0 5px;font-weight:700;color:#1f2a3d}
+.kb{background:#fff;border:1px solid #dfe4f1;border-radius:7px;margin:6px 0;padding:8px 9px;box-shadow:0 1px 2px #0000000c}
+.kb-title{font-weight:700;color:#1a237e;margin-bottom:4px}
+.kb-meta{display:grid;gap:3px;color:#263238}
+.kb-meta b{color:#42526e}
+.tag{display:inline-block;font-size:11px;border-radius:999px;padding:1px 7px;margin-left:4px;background:#eef2ff;color:#3949ab;border:1px solid #d7defc}
+.legend{text-align:center;margin-top:14px;color:#555;font-size:13px}
+.legend span{display:inline-block;width:14px;height:14px;margin:0 4px;vertical-align:middle;border:1px solid #00000018}
+.note{max-width:1180px;margin:14px auto 0;background:#fff;border:1px solid #e0e6f2;border-radius:8px;padding:12px 14px;color:#4b5563;line-height:1.7;font-size:13px}
+</style>
+</head>
+<body>
+<h2>中间层 · Palantir Ontology 动态多维知识矩阵</h2>
+<div class="desc">
+  维度含义：系统层级定位知识所在架构层；任务类型定位实际工作；难度层级提示学习顺序。每个知识块细化为“学习焦点、典型产出、前导知识”，用于把矩阵从概念索引升级为可执行学习清单。
+</div>
+<div class="ctrl">
+  <label>行维度：<select id="rowDim" onchange="syncDims()"></select></label>
+  <label>列维度：<select id="colDim" onchange="syncDims()"></select></label>
+  <label id="filterBox">筛选：<select id="filterVal" onchange="render()"></select></label>
+</div>
+<table id="mt"></table>
+<div class="legend">
+  难度层级：<span class="level-beginner"></span>入门 <span class="level-intermediate"></span>进阶 <span class="level-advanced"></span>高级 ｜
+  知识密度：<span class="d1"></span>低 <span class="d2"></span>中 <span class="d3"></span>高 ｜ “—”表示该交叉点不是主学习重点
+</div>
+<div class="note">
+  矩阵读法：先按“系统层级 × 任务类型”查看每层要完成的建模、集成、操作、治理、开发和应用工作；再切换“难度层级”作为行或列，检查入门、进阶、高级知识块是否形成递进链。
+</div>
+<script>
+const dims = {
+  layer:['思想层','语义层','数据层','动作层','治理层','AI层','产品层'],
+  task:['建模','集成','操作','治理','开发','应用'],
+  difficulty:['入门','进阶','高级']
+};
+const dimLabel = {layer:'系统层级', task:'任务类型', difficulty:'难度层级'};
+const entries = [
+  {title:'Operational Ontology 定位', layer:'思想层', task:'建模', difficulty:'入门', focus:'理解 Ontology 是组织运行语义层，而不是数据库表或 BI 指标层。', output:'能画出“源系统 → Ontology → 应用/AI/动作”的三段式架构。', prereq:'数据平台与业务流程基础'},
+  {title:'现实对象优先原则', layer:'思想层', task:'建模', difficulty:'入门', focus:'从现实中的订单、资产、人员、地点、事件出发，而不是从已有表结构出发。', output:'一份核心业务对象候选清单。', prereq:'业务域访谈'},
+  {title:'Ontology vs Data Model', layer:'思想层', task:'建模', difficulty:'进阶', focus:'区分对象语义、数据存储、指标口径和应用视图各自职责。', output:'数据模型、语义模型、应用模型的边界说明。', prereq:'Operational Ontology 定位'},
+  {title:'价值闭环设计', layer:'思想层', task:'应用', difficulty:'高级', focus:'把发现、分析、决策、执行、审计、反馈组织成闭环。', output:'一个业务价值 loop：触发条件、对象、动作、反馈指标。', prereq:'现实对象优先原则'},
+
+  {title:'Object Type 切分', layer:'语义层', task:'建模', difficulty:'入门', focus:'确定对象类型的粒度，避免把流程、报表或宽表误建成对象。', output:'Object type 清单与每类对象的一句话定义。', prereq:'现实对象优先原则'},
+  {title:'Property 设计', layer:'语义层', task:'建模', difficulty:'入门', focus:'区分标识属性、状态属性、描述属性、派生属性和敏感属性。', output:'每个 Object type 的属性字典。', prereq:'Object Type 切分'},
+  {title:'Primary Key 与对象稳定性', layer:'语义层', task:'建模', difficulty:'进阶', focus:'选择能稳定识别现实实体的主键，处理跨系统 ID 冲突。', output:'主键策略与 ID 映射规则。', prereq:'Property 设计'},
+  {title:'Link Type 设计', layer:'语义层', task:'建模', difficulty:'入门', focus:'表达对象间业务关系，明确方向、基数、可解释名称。', output:'Link type 清单：A 如何关联 B、关系含义、基数。', prereq:'Object Type 切分'},
+  {title:'关系基数与导航路径', layer:'语义层', task:'建模', difficulty:'进阶', focus:'处理一对一、一对多、多对多关系，以及用户在对象间如何跳转。', output:'对象关系图与主要导航路径。', prereq:'Link Type 设计'},
+  {title:'Object Set 查询语义', layer:'语义层', task:'开发', difficulty:'进阶', focus:'把筛选条件、关系跳转、排序聚合组织成可复用对象集合。', output:'常用 Object set 查询模板。', prereq:'Object Type + Link Type'},
+  {title:'对象显示与业务语言', layer:'语义层', task:'应用', difficulty:'入门', focus:'定义对象标题、摘要字段、默认视图和业务用户可理解的命名。', output:'对象卡片展示规范。', prereq:'Property 设计'},
+  {title:'Property 口径治理', layer:'语义层', task:'治理', difficulty:'进阶', focus:'管理属性来源、含义、单位、更新时间和使用约束。', output:'属性口径表与敏感字段标记。', prereq:'Property 设计'},
+
+  {title:'源系统盘点', layer:'数据层', task:'集成', difficulty:'入门', focus:'识别 ERP、MES、CRM、数据湖等源系统提供哪些事实。', output:'源系统-对象覆盖矩阵。', prereq:'Object Type 清单'},
+  {title:'Dataset Mapping', layer:'数据层', task:'集成', difficulty:'入门', focus:'把数据集字段映射到 Object type 的属性、主键和链接。', output:'字段到对象属性的映射表。', prereq:'Property 设计'},
+  {title:'Pipeline 到对象同步', layer:'数据层', task:'集成', difficulty:'进阶', focus:'将清洗、转换、增量刷新流程对齐到对象状态更新。', output:'对象同步 pipeline 与刷新策略。', prereq:'Dataset Mapping'},
+  {title:'Entity Resolution', layer:'数据层', task:'集成', difficulty:'进阶', focus:'合并同一现实实体在多个系统中的不同记录。', output:'实体匹配规则、置信度和人工复核机制。', prereq:'Primary Key 与对象稳定性'},
+  {title:'Master Data Alignment', layer:'数据层', task:'治理', difficulty:'进阶', focus:'统一供应商、客户、设备、地点等关键实体口径。', output:'主数据对齐方案与冲突处理规则。', prereq:'Entity Resolution'},
+  {title:'Data Quality Rule', layer:'数据层', task:'治理', difficulty:'进阶', focus:'约束对象属性完整性、合法性、范围和跨字段一致性。', output:'质量规则、失败处理和告警策略。', prereq:'Dataset Mapping'},
+  {title:'Data Lineage', layer:'数据层', task:'治理', difficulty:'进阶', focus:'追踪对象属性从源数据到应用和动作的加工链路。', output:'属性血缘图与影响分析说明。', prereq:'Pipeline 到对象同步'},
+  {title:'数据可观测性', layer:'数据层', task:'操作', difficulty:'高级', focus:'监控同步延迟、失败批次、质量波动和对象缺失。', output:'数据健康看板与处理 runbook。', prereq:'Data Quality Rule'},
+
+  {title:'Action Type 基础', layer:'动作层', task:'操作', difficulty:'入门', focus:'把创建、更新、删除、关联变更等业务动作显式建模。', output:'对象可执行动作清单。', prereq:'Object Type + Property'},
+  {title:'Action Form 设计', layer:'动作层', task:'应用', difficulty:'入门', focus:'把动作参数变成业务用户可填写、可校验的表单。', output:'动作表单字段、默认值、帮助文本。', prereq:'Action Type 基础'},
+  {title:'Validation Rule', layer:'动作层', task:'治理', difficulty:'进阶', focus:'在动作执行前校验参数、对象状态和业务约束。', output:'动作前置校验规则。', prereq:'Action Type 基础'},
+  {title:'Writeback 与事务边界', layer:'动作层', task:'操作', difficulty:'进阶', focus:'设计动作结果写回 Ontology 或外部系统的事务范围。', output:'写回目标、失败处理、回滚策略。', prereq:'Action Type + 源系统映射'},
+  {title:'Workflow State', layer:'动作层', task:'操作', difficulty:'高级', focus:'把对象生命周期建成状态机，规定状态迁移和允许动作。', output:'状态图、迁移条件、异常分支。', prereq:'Validation Rule'},
+  {title:'Function 基础', layer:'动作层', task:'开发', difficulty:'进阶', focus:'用函数封装对象读取、计算、聚合、校验和业务规则。', output:'可复用函数清单与输入输出契约。', prereq:'Object Set 查询语义'},
+  {title:'Aggregation 与指标计算', layer:'动作层', task:'开发', difficulty:'进阶', focus:'在 Object set 上计算风险分、库存缺口、产能负载等指标。', output:'聚合函数与指标定义。', prereq:'Function 基础'},
+  {title:'Human-in-the-loop', layer:'动作层', task:'治理', difficulty:'高级', focus:'把人工审批、复核、责任确认嵌入动作闭环。', output:'人工审核节点与责任矩阵。', prereq:'Workflow State'},
+
+  {title:'Object Permission', layer:'治理层', task:'治理', difficulty:'入门', focus:'控制用户对对象类型和对象实例的可见性与可操作性。', output:'对象权限矩阵。', prereq:'Object Type 切分'},
+  {title:'Property Permission', layer:'治理层', task:'治理', difficulty:'进阶', focus:'对敏感属性做字段级可见性、编辑权和脱敏控制。', output:'敏感属性授权策略。', prereq:'Property 口径治理'},
+  {title:'Dynamic Policy', layer:'治理层', task:'治理', difficulty:'高级', focus:'根据用户角色、组织关系、对象状态和场景动态授权。', output:'动态授权规则与测试用例。', prereq:'Object Permission'},
+  {title:'Audit Log', layer:'治理层', task:'操作', difficulty:'进阶', focus:'记录用户、系统、AI 对对象和动作的访问、修改、调用行为。', output:'审计字段、查询视图、异常追踪流程。', prereq:'Action Type 基础'},
+  {title:'Lineage Governance', layer:'治理层', task:'治理', difficulty:'进阶', focus:'把数据血缘、动作记录、函数调用和 AI 输出串成可解释链。', output:'端到端 lineage 视图。', prereq:'Data Lineage + Audit Log'},
+  {title:'Ontology Versioning', layer:'治理层', task:'建模', difficulty:'高级', focus:'管理对象、属性、链接、动作语义变更对应用和 AI 的影响。', output:'版本变更记录与兼容性检查清单。', prereq:'Ontology Manager'},
+  {title:'Simulation Sandbox', layer:'治理层', task:'开发', difficulty:'高级', focus:'在不污染生产对象的环境中测试动作、函数和 AI 计划。', output:'模拟环境、测试对象集、回归用例。', prereq:'Action Type + Function'},
+  {title:'AIP Evals', layer:'治理层', task:'治理', difficulty:'高级', focus:'评估 AIP 对象查询、工具调用、动作建议的稳定性和安全性。', output:'评估集、评分标准、失败样例库。', prereq:'Simulation Sandbox'},
+
+  {title:'Ontology Grounding', layer:'AI层', task:'开发', difficulty:'入门', focus:'把 LLM 上下文锚定到可授权对象、关系、属性和动作。', output:'模型可访问对象范围与上下文构造规则。', prereq:'Object Set + Object Permission'},
+  {title:'Prompt Template', layer:'AI层', task:'开发', difficulty:'入门', focus:'将业务目标、对象上下文、输出格式和约束稳定注入模型。', output:'Prompt 模板与变量说明。', prereq:'Ontology Grounding'},
+  {title:'LLM Tool 定义', layer:'AI层', task:'开发', difficulty:'进阶', focus:'把 Function、Action 或查询能力暴露为模型可调用工具。', output:'工具名称、参数 schema、返回结构、失败策略。', prereq:'Function + Action Type'},
+  {title:'Tool Authorization', layer:'AI层', task:'治理', difficulty:'进阶', focus:'约束模型何时、对哪些对象、以什么权限调用工具。', output:'工具授权策略与拒绝样例。', prereq:'Dynamic Policy'},
+  {title:'AIP Logic Blocks', layer:'AI层', task:'开发', difficulty:'进阶', focus:'组合提示、函数、对象查询、工具调用和条件分支。', output:'AIP Logic 流程图。', prereq:'LLM Tool 定义'},
+  {title:'Agent Plan', layer:'AI层', task:'应用', difficulty:'高级', focus:'让 Agent 将目标拆成查询、分析、动作建议和反馈步骤。', output:'任务计划模板与执行轨迹。', prereq:'AIP Logic Blocks'},
+  {title:'AI Action Review', layer:'AI层', task:'治理', difficulty:'高级', focus:'对 AI 生成的动作建议做人工确认、审计和回滚准备。', output:'AI 动作审批流与风险分级。', prereq:'Agent Plan + Human-in-the-loop'},
+  {title:'AIP Analyst 使用模式', layer:'AI层', task:'应用', difficulty:'进阶', focus:'围绕对象集合进行搜索、过滤、解释、可视化和假设分析。', output:'分析问题库与对象查询示例。', prereq:'Ontology Grounding'},
+
+  {title:'Workshop 页面建模', layer:'产品层', task:'应用', difficulty:'入门', focus:'围绕对象和动作构建业务用户可操作的应用界面。', output:'页面结构、对象视图、动作入口。', prereq:'Object View + Action Form'},
+  {title:'Object View 设计', layer:'产品层', task:'应用', difficulty:'入门', focus:'展示对象属性、关系、历史、附件和可执行动作。', output:'对象详情页信息架构。', prereq:'Object Type + Link Type'},
+  {title:'Dashboard 与运营视图', layer:'产品层', task:'应用', difficulty:'进阶', focus:'基于 Object set 和聚合函数展示运营态势。', output:'运营看板指标、筛选器、下钻路径。', prereq:'Aggregation 与指标计算'},
+  {title:'OSDK 应用开发', layer:'产品层', task:'开发', difficulty:'进阶', focus:'用类型化 SDK 在外部代码中访问对象、链接和动作。', output:'OSDK 调用样例与应用架构。', prereq:'Object Set + Action Type'},
+  {title:'TypeScript/Python/Java SDK 选择', layer:'产品层', task:'开发', difficulty:'进阶', focus:'根据前端、分析自动化、企业后端选择合适 SDK。', output:'技术选型表与调用边界。', prereq:'OSDK 应用开发'},
+  {title:'Application Permission', layer:'产品层', task:'治理', difficulty:'进阶', focus:'定义应用层用户、对象、动作和页面能力边界。', output:'应用权限矩阵。', prereq:'Object Permission'},
+  {title:'AIP 应用工作台', layer:'产品层', task:'应用', difficulty:'高级', focus:'把对象视图、Agent、工具调用和人工审批整合为工作台。', output:'AI 工作台蓝图。', prereq:'Agent Plan + Workshop 页面建模'},
+  {title:'行业本体蓝图', layer:'产品层', task:'建模', difficulty:'高级', focus:'抽象供应链、制造、风控等行业通用对象、关系和动作。', output:'行业对象-关系-动作蓝图。', prereq:'价值闭环设计'},
+  {title:'落地路线与扩展模式', layer:'产品层', task:'操作', difficulty:'高级', focus:'从试点对象、核心动作、AI 辅助到规模化治理逐步扩展。', output:'试点到规模化 roadmap。', prereq:'行业本体蓝图'}
+];
+const keys = Object.keys(dims);
+const rowSel = document.getElementById('rowDim');
+const colSel = document.getElementById('colDim');
+const filterSel = document.getElementById('filterVal');
+function fillSelect(sel, selected){
+  sel.innerHTML = keys.map(k=>`<option value="${k}" ${k===selected?'selected':''}>${dimLabel[k]}</option>`).join('');
+}
+function otherDim(){ return keys.find(k=>k!==rowSel.value && k!==colSel.value); }
+function syncDims(){
+  if(rowSel.value===colSel.value) colSel.value = keys.find(k=>k!==rowSel.value) || rowSel.value;
+  const f = otherDim();
+  document.getElementById('filterBox').style.display = f ? 'inline-block' : 'none';
+  filterSel.innerHTML = f ? '<option value="__all__">全部</option>' + dims[f].map(v=>`<option value="${v}">${v}</option>`).join('') : '';
+  render();
+}
+function cls(n){ return n===0?'d0':(n<=1?'d1':(n<=3?'d2':'d3')); }
+function levelCls(v){ return v==='入门'?'level-beginner':(v==='进阶'?'level-intermediate':(v==='高级'?'level-advanced':'')); }
+function isDifficultyDim(dim){ return dim==='difficulty'; }
+function itemsFor(rDim,rVal,cDim,cVal,fDim,fVal){
+  return entries.filter(e=>e[rDim]===rVal && e[cDim]===cVal && (!fDim || fVal==='__all__' || e[fDim]===fVal));
+}
+function itemHtml(x){
+  return `<div class="kb">
+    <div class="kb-title">${x.title}<span class="tag">${x.difficulty}</span></div>
+    <div class="kb-meta">
+      <div><b>焦点：</b>${x.focus}</div>
+      <div><b>产出：</b>${x.output}</div>
+      <div><b>前导：</b>${x.prereq}</div>
+    </div>
+  </div>`;
+}
+function render(){
+  const rDim=rowSel.value, cDim=colSel.value, fDim=otherDim(), fVal=filterSel.value || '__all__';
+  const rows=dims[rDim], cols=dims[cDim];
+  let html = `<tr><th>${dimLabel[rDim]} \\ ${dimLabel[cDim]}</th>` + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
+  for(const r of rows){
+    html += `<tr><td class="row-h">${r}</td>`;
+    for(const c of cols){
+      const items = itemsFor(rDim,r,cDim,c,fDim,fVal);
+      const cnt = items.length;
+      let body = '—';
+      let cellLevelClass = isDifficultyDim(rDim) ? levelCls(r) : (isDifficultyDim(cDim) ? levelCls(c) : '');
+      if(items.length && fDim && fVal==='__all__'){
+        body = dims[fDim].map(v=>{
+          const group = items.filter(x=>x[fDim]===v);
+          const blockClass = isDifficultyDim(fDim) ? ` level-block ${levelCls(v)}` : '';
+          return group.length ? `<div class="${blockClass.trim()}"><div class="group">${v}</div>` + group.map(itemHtml).join('') + '</div>' : '';
+        }).filter(Boolean).join('');
+      }else if(items.length){
+        body = items.map(itemHtml).join('');
+        if(fDim && isDifficultyDim(fDim) && fVal!=='__all__') cellLevelClass = levelCls(fVal);
+      }
+      html += `<td class="cell ${cellLevelClass || cls(cnt)}">${body}</td>`;
+    }
+    html += '</tr>';
+  }
+  document.getElementById('mt').innerHTML = html;
+}
+fillSelect(rowSel,'layer');
+fillSelect(colSel,'task');
+syncDims();
+</script>
+</body>
+</html>

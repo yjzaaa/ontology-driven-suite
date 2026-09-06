@@ -1,0 +1,5082 @@
+{
+  "nodes": [
+    {
+      "id": "B01-S01-K01-A01",
+      "name": "演绎法·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K01",
+      "l4Id": "B01-S01-K01-A01",
+      "category": 0,
+      "parentL3": "演绎法",
+      "value": "演绎法的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B01-S01-K01-A02",
+      "name": "演绎法·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K01",
+      "l4Id": "B01-S01-K01-A02",
+      "category": 0,
+      "parentL3": "演绎法",
+      "value": "演绎法的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S01-K01-A03",
+      "name": "演绎法·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K01",
+      "l4Id": "B01-S01-K01-A03",
+      "category": 0,
+      "parentL3": "演绎法",
+      "value": "演绎法的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S01-K02-A01",
+      "name": "归纳法·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K02",
+      "l4Id": "B01-S01-K02-A01",
+      "category": 0,
+      "parentL3": "归纳法",
+      "value": "归纳法的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.775,
+      "degreeScore": 0.75,
+      "symbolSize": 49
+    },
+    {
+      "id": "B01-S01-K02-A02",
+      "name": "归纳法·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K02",
+      "l4Id": "B01-S01-K02-A02",
+      "category": 0,
+      "parentL3": "归纳法",
+      "value": "归纳法的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S01-K02-A03",
+      "name": "归纳法·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K02",
+      "l4Id": "B01-S01-K02-A03",
+      "category": 0,
+      "parentL3": "归纳法",
+      "value": "归纳法的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S01-K03-A01",
+      "name": "论证分析·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K03",
+      "l4Id": "B01-S01-K03-A01",
+      "category": 0,
+      "parentL3": "论证分析",
+      "value": "论证分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S01-K03-A02",
+      "name": "论证分析·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S01",
+      "l3Id": "B01-S01-K03",
+      "l4Id": "B01-S01-K03-A02",
+      "category": 0,
+      "parentL3": "论证分析",
+      "value": "论证分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S02-K01-A01",
+      "name": "抽象·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K01",
+      "l4Id": "B01-S02-K01-A01",
+      "category": 0,
+      "parentL3": "抽象",
+      "value": "抽象的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.86,
+      "degreeScore": 1.0,
+      "symbolSize": 56
+    },
+    {
+      "id": "B01-S02-K01-A02",
+      "name": "抽象·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K01",
+      "l4Id": "B01-S02-K01-A02",
+      "category": 0,
+      "parentL3": "抽象",
+      "value": "抽象的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S02-K01-A03",
+      "name": "抽象·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K01",
+      "l4Id": "B01-S02-K01-A03",
+      "category": 0,
+      "parentL3": "抽象",
+      "value": "抽象的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S02-K02-A01",
+      "name": "概念提取·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K02",
+      "l4Id": "B01-S02-K02-A01",
+      "category": 0,
+      "parentL3": "概念提取",
+      "value": "概念提取的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B01-S02-K02-A02",
+      "name": "概念提取·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K02",
+      "l4Id": "B01-S02-K02-A02",
+      "category": 0,
+      "parentL3": "概念提取",
+      "value": "概念提取的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S02-K02-A03",
+      "name": "概念提取·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K02",
+      "l4Id": "B01-S02-K02-A03",
+      "category": 0,
+      "parentL3": "概念提取",
+      "value": "概念提取的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S02-K03-A01",
+      "name": "模型构建·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K03",
+      "l4Id": "B01-S02-K03-A01",
+      "category": 0,
+      "parentL3": "模型构建",
+      "value": "模型构建的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S02-K03-A02",
+      "name": "模型构建·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S02",
+      "l3Id": "B01-S02-K03",
+      "l4Id": "B01-S02-K03-A02",
+      "category": 0,
+      "parentL3": "模型构建",
+      "value": "模型构建的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S03-K01-A01",
+      "name": "分解·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K01",
+      "l4Id": "B01-S03-K01-A01",
+      "category": 0,
+      "parentL3": "分解",
+      "value": "分解的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B01-S03-K01-A02",
+      "name": "分解·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K01",
+      "l4Id": "B01-S03-K01-A02",
+      "category": 0,
+      "parentL3": "分解",
+      "value": "分解的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S03-K01-A03",
+      "name": "分解·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K01",
+      "l4Id": "B01-S03-K01-A03",
+      "category": 0,
+      "parentL3": "分解",
+      "value": "分解的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S03-K02-A01",
+      "name": "结构化表达·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K02",
+      "l4Id": "B01-S03-K02-A01",
+      "category": 0,
+      "parentL3": "结构化表达",
+      "value": "结构化表达的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S03-K02-A02",
+      "name": "结构化表达·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K02",
+      "l4Id": "B01-S03-K02-A02",
+      "category": 0,
+      "parentL3": "结构化表达",
+      "value": "结构化表达的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S03-K02-A03",
+      "name": "结构化表达·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K02",
+      "l4Id": "B01-S03-K02-A03",
+      "category": 0,
+      "parentL3": "结构化表达",
+      "value": "结构化表达的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S03-K03-A01",
+      "name": "MECE原则·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K03",
+      "l4Id": "B01-S03-K03-A01",
+      "category": 0,
+      "parentL3": "MECE原则",
+      "value": "MECE原则的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.775,
+      "degreeScore": 0.75,
+      "symbolSize": 49
+    },
+    {
+      "id": "B01-S03-K03-A02",
+      "name": "MECE原则·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S03",
+      "l3Id": "B01-S03-K03",
+      "l4Id": "B01-S03-K03-A02",
+      "category": 0,
+      "parentL3": "MECE原则",
+      "value": "MECE原则的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S04-K01-A01",
+      "name": "系统思维·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S04",
+      "l3Id": "B01-S04-K01",
+      "l4Id": "B01-S04-K01-A01",
+      "category": 0,
+      "parentL3": "系统思维",
+      "value": "系统思维的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.818,
+      "degreeScore": 0.875,
+      "symbolSize": 52
+    },
+    {
+      "id": "B01-S04-K01-A02",
+      "name": "系统思维·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S04",
+      "l3Id": "B01-S04-K01",
+      "l4Id": "B01-S04-K01-A02",
+      "category": 0,
+      "parentL3": "系统思维",
+      "value": "系统思维的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S04-K01-A03",
+      "name": "系统思维·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S04",
+      "l3Id": "B01-S04-K01",
+      "l4Id": "B01-S04-K01-A03",
+      "category": 0,
+      "parentL3": "系统思维",
+      "value": "系统思维的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S04-K02-A01",
+      "name": "全局思考·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S04",
+      "l3Id": "B01-S04-K02",
+      "l4Id": "B01-S04-K02-A01",
+      "category": 0,
+      "parentL3": "全局思考",
+      "value": "全局思考的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B01-S04-K02-A02",
+      "name": "全局思考·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S04",
+      "l3Id": "B01-S04-K02",
+      "l4Id": "B01-S04-K02-A02",
+      "category": 0,
+      "parentL3": "全局思考",
+      "value": "全局思考的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S05-K01-A01",
+      "name": "决策·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S05",
+      "l3Id": "B01-S05-K01",
+      "l4Id": "B01-S05-K01-A01",
+      "category": 0,
+      "parentL3": "决策",
+      "value": "决策的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B01-S05-K01-A02",
+      "name": "决策·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S05",
+      "l3Id": "B01-S05-K01",
+      "l4Id": "B01-S05-K01-A02",
+      "category": 0,
+      "parentL3": "决策",
+      "value": "决策的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S05-K01-A03",
+      "name": "决策·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S05",
+      "l3Id": "B01-S05-K01",
+      "l4Id": "B01-S05-K01-A03",
+      "category": 0,
+      "parentL3": "决策",
+      "value": "决策的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S05-K02-A01",
+      "name": "风险分析·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S05",
+      "l3Id": "B01-S05-K02",
+      "l4Id": "B01-S05-K02-A01",
+      "category": 0,
+      "parentL3": "风险分析",
+      "value": "风险分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B01-S05-K02-A02",
+      "name": "风险分析·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S05",
+      "l3Id": "B01-S05-K02",
+      "l4Id": "B01-S05-K02-A02",
+      "category": 0,
+      "parentL3": "风险分析",
+      "value": "风险分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S05-K02-A03",
+      "name": "风险分析·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S05",
+      "l3Id": "B01-S05-K02",
+      "l4Id": "B01-S05-K02-A03",
+      "category": 0,
+      "parentL3": "风险分析",
+      "value": "风险分析的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S06-K01-A01",
+      "name": "批判式思维·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S06",
+      "l3Id": "B01-S06-K01",
+      "l4Id": "B01-S06-K01-A01",
+      "category": 0,
+      "parentL3": "批判式思维",
+      "value": "批判式思维的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B01-S06-K01-A02",
+      "name": "批判式思维·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S06",
+      "l3Id": "B01-S06-K01",
+      "l4Id": "B01-S06-K01-A02",
+      "category": 0,
+      "parentL3": "批判式思维",
+      "value": "批判式思维的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B01-S06-K01-A03",
+      "name": "批判式思维·典型工具与案例",
+      "l1Id": "B01",
+      "l2Id": "B01-S06",
+      "l3Id": "B01-S06-K01",
+      "l4Id": "B01-S06-K01-A03",
+      "category": 0,
+      "parentL3": "批判式思维",
+      "value": "批判式思维的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B01-S06-K02-A01",
+      "name": "辩证思维·核心定义与本质",
+      "l1Id": "B01",
+      "l2Id": "B01-S06",
+      "l3Id": "B01-S06-K02",
+      "l4Id": "B01-S06-K02-A01",
+      "category": 0,
+      "parentL3": "辩证思维",
+      "value": "辩证思维的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B01-S06-K02-A02",
+      "name": "辩证思维·操作步骤与流程",
+      "l1Id": "B01",
+      "l2Id": "B01-S06",
+      "l3Id": "B01-S06-K02",
+      "l4Id": "B01-S06-K02-A02",
+      "category": 0,
+      "parentL3": "辩证思维",
+      "value": "辩证思维的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.562,
+      "degreeScore": 0.125,
+      "symbolSize": 31
+    },
+    {
+      "id": "B02-S01-K01-A01",
+      "name": "认知·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S01",
+      "l3Id": "B02-S01-K01",
+      "l4Id": "B02-S01-K01-A01",
+      "category": 1,
+      "parentL3": "认知",
+      "value": "认知的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B02-S01-K01-A02",
+      "name": "认知·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S01",
+      "l3Id": "B02-S01-K01",
+      "l4Id": "B02-S01-K01-A02",
+      "category": 1,
+      "parentL3": "认知",
+      "value": "认知的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S01-K01-A03",
+      "name": "认知·典型工具与案例",
+      "l1Id": "B02",
+      "l2Id": "B02-S01",
+      "l3Id": "B02-S01-K01",
+      "l4Id": "B02-S01-K01-A03",
+      "category": 1,
+      "parentL3": "认知",
+      "value": "认知的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B02-S01-K02-A01",
+      "name": "认知偏见·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S01",
+      "l3Id": "B02-S01-K02",
+      "l4Id": "B02-S01-K02-A01",
+      "category": 1,
+      "parentL3": "认知偏见",
+      "value": "认知偏见的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S01-K02-A02",
+      "name": "认知偏见·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S01",
+      "l3Id": "B02-S01-K02",
+      "l4Id": "B02-S01-K02-A02",
+      "category": 1,
+      "parentL3": "认知偏见",
+      "value": "认知偏见的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S02-K01-A01",
+      "name": "元认知·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S02",
+      "l3Id": "B02-S02-K01",
+      "l4Id": "B02-S02-K01-A01",
+      "category": 1,
+      "parentL3": "元认知",
+      "value": "元认知的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.818,
+      "degreeScore": 0.875,
+      "symbolSize": 52
+    },
+    {
+      "id": "B02-S02-K01-A02",
+      "name": "元认知·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S02",
+      "l3Id": "B02-S02-K01",
+      "l4Id": "B02-S02-K01-A02",
+      "category": 1,
+      "parentL3": "元认知",
+      "value": "元认知的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S02-K01-A03",
+      "name": "元认知·典型工具与案例",
+      "l1Id": "B02",
+      "l2Id": "B02-S02",
+      "l3Id": "B02-S02-K01",
+      "l4Id": "B02-S02-K01-A03",
+      "category": 1,
+      "parentL3": "元认知",
+      "value": "元认知的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B02-S02-K02-A01",
+      "name": "反思力·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S02",
+      "l3Id": "B02-S02-K02",
+      "l4Id": "B02-S02-K02-A01",
+      "category": 1,
+      "parentL3": "反思力",
+      "value": "反思力的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B02-S02-K02-A02",
+      "name": "反思力·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S02",
+      "l3Id": "B02-S02-K02",
+      "l4Id": "B02-S02-K02-A02",
+      "category": 1,
+      "parentL3": "反思力",
+      "value": "反思力的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S03-K01-A01",
+      "name": "知识·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K01",
+      "l4Id": "B02-S03-K01-A01",
+      "category": 1,
+      "parentL3": "知识",
+      "value": "知识的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B02-S03-K01-A02",
+      "name": "知识·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K01",
+      "l4Id": "B02-S03-K01-A02",
+      "category": 1,
+      "parentL3": "知识",
+      "value": "知识的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S03-K01-A03",
+      "name": "知识·典型工具与案例",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K01",
+      "l4Id": "B02-S03-K01-A03",
+      "category": 1,
+      "parentL3": "知识",
+      "value": "知识的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B02-S03-K02-A01",
+      "name": "显性知识·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K02",
+      "l4Id": "B02-S03-K02-A01",
+      "category": 1,
+      "parentL3": "显性知识",
+      "value": "显性知识的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B02-S03-K02-A02",
+      "name": "显性知识·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K02",
+      "l4Id": "B02-S03-K02-A02",
+      "category": 1,
+      "parentL3": "显性知识",
+      "value": "显性知识的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S03-K03-A01",
+      "name": "隐性知识·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K03",
+      "l4Id": "B02-S03-K03-A01",
+      "category": 1,
+      "parentL3": "隐性知识",
+      "value": "隐性知识的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B02-S03-K03-A02",
+      "name": "隐性知识·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S03",
+      "l3Id": "B02-S03-K03",
+      "l4Id": "B02-S03-K03-A02",
+      "category": 1,
+      "parentL3": "隐性知识",
+      "value": "隐性知识的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S04-K01-A01",
+      "name": "第一性原理·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S04",
+      "l3Id": "B02-S04-K01",
+      "l4Id": "B02-S04-K01-A01",
+      "category": 1,
+      "parentL3": "第一性原理",
+      "value": "第一性原理的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.818,
+      "degreeScore": 0.875,
+      "symbolSize": 52
+    },
+    {
+      "id": "B02-S04-K01-A02",
+      "name": "第一性原理·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S04",
+      "l3Id": "B02-S04-K01",
+      "l4Id": "B02-S04-K01-A02",
+      "category": 1,
+      "parentL3": "第一性原理",
+      "value": "第一性原理的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S04-K01-A03",
+      "name": "第一性原理·典型工具与案例",
+      "l1Id": "B02",
+      "l2Id": "B02-S04",
+      "l3Id": "B02-S04-K01",
+      "l4Id": "B02-S04-K01-A03",
+      "category": 1,
+      "parentL3": "第一性原理",
+      "value": "第一性原理的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B02-S04-K02-A01",
+      "name": "底层逻辑·核心定义与本质",
+      "l1Id": "B02",
+      "l2Id": "B02-S04",
+      "l3Id": "B02-S04-K02",
+      "l4Id": "B02-S04-K02-A01",
+      "category": 1,
+      "parentL3": "底层逻辑",
+      "value": "底层逻辑的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B02-S04-K02-A02",
+      "name": "底层逻辑·操作步骤与流程",
+      "l1Id": "B02",
+      "l2Id": "B02-S04",
+      "l3Id": "B02-S04-K02",
+      "l4Id": "B02-S04-K02-A02",
+      "category": 1,
+      "parentL3": "底层逻辑",
+      "value": "底层逻辑的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.562,
+      "degreeScore": 0.125,
+      "symbolSize": 31
+    },
+    {
+      "id": "B03-S01-K01-A01",
+      "name": "问题定义·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S01",
+      "l3Id": "B03-S01-K01",
+      "l4Id": "B03-S01-K01-A01",
+      "category": 2,
+      "parentL3": "问题定义",
+      "value": "问题定义的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.8,
+      "degreeScore": 1.0,
+      "symbolSize": 54
+    },
+    {
+      "id": "B03-S01-K01-A02",
+      "name": "问题定义·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S01",
+      "l3Id": "B03-S01-K01",
+      "l4Id": "B03-S01-K01-A02",
+      "category": 2,
+      "parentL3": "问题定义",
+      "value": "问题定义的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S01-K01-A03",
+      "name": "问题定义·典型工具与案例",
+      "l1Id": "B03",
+      "l2Id": "B03-S01",
+      "l3Id": "B03-S01-K01",
+      "l4Id": "B03-S01-K01-A03",
+      "category": 2,
+      "parentL3": "问题定义",
+      "value": "问题定义的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B03-S01-K02-A01",
+      "name": "破题·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S01",
+      "l3Id": "B03-S01-K02",
+      "l4Id": "B03-S01-K02-A01",
+      "category": 2,
+      "parentL3": "破题",
+      "value": "破题的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B03-S01-K02-A02",
+      "name": "破题·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S01",
+      "l3Id": "B03-S01-K02",
+      "l4Id": "B03-S01-K02-A02",
+      "category": 2,
+      "parentL3": "破题",
+      "value": "破题的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S02-K01-A01",
+      "name": "要素分析·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S02",
+      "l3Id": "B03-S02-K01",
+      "l4Id": "B03-S02-K01-A01",
+      "category": 2,
+      "parentL3": "要素分析",
+      "value": "要素分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S02-K01-A02",
+      "name": "要素分析·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S02",
+      "l3Id": "B03-S02-K01",
+      "l4Id": "B03-S02-K01-A02",
+      "category": 2,
+      "parentL3": "要素分析",
+      "value": "要素分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S02-K02-A01",
+      "name": "结构分析·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S02",
+      "l3Id": "B03-S02-K02",
+      "l4Id": "B03-S02-K02-A01",
+      "category": 2,
+      "parentL3": "结构分析",
+      "value": "结构分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S02-K02-A02",
+      "name": "结构分析·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S02",
+      "l3Id": "B03-S02-K02",
+      "l4Id": "B03-S02-K02-A02",
+      "category": 2,
+      "parentL3": "结构分析",
+      "value": "结构分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S03-K01-A01",
+      "name": "流程分析·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K01",
+      "l4Id": "B03-S03-K01-A01",
+      "category": 2,
+      "parentL3": "流程分析",
+      "value": "流程分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.758,
+      "degreeScore": 0.875,
+      "symbolSize": 51
+    },
+    {
+      "id": "B03-S03-K01-A02",
+      "name": "流程分析·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K01",
+      "l4Id": "B03-S03-K01-A02",
+      "category": 2,
+      "parentL3": "流程分析",
+      "value": "流程分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S03-K01-A03",
+      "name": "流程分析·典型工具与案例",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K01",
+      "l4Id": "B03-S03-K01-A03",
+      "category": 2,
+      "parentL3": "流程分析",
+      "value": "流程分析的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B03-S03-K02-A01",
+      "name": "动态分析·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K02",
+      "l4Id": "B03-S03-K02-A01",
+      "category": 2,
+      "parentL3": "动态分析",
+      "value": "动态分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B03-S03-K02-A02",
+      "name": "动态分析·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K02",
+      "l4Id": "B03-S03-K02-A02",
+      "category": 2,
+      "parentL3": "动态分析",
+      "value": "动态分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S03-K03-A01",
+      "name": "状态识别·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K03",
+      "l4Id": "B03-S03-K03-A01",
+      "category": 2,
+      "parentL3": "状态识别",
+      "value": "状态识别的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S03-K03-A02",
+      "name": "状态识别·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S03",
+      "l3Id": "B03-S03-K03",
+      "l4Id": "B03-S03-K03-A02",
+      "category": 2,
+      "parentL3": "状态识别",
+      "value": "状态识别的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S04-K01-A01",
+      "name": "知识索引·核心定义与本质",
+      "l1Id": "B03",
+      "l2Id": "B03-S04",
+      "l3Id": "B03-S04-K01",
+      "l4Id": "B03-S04-K01-A01",
+      "category": 2,
+      "parentL3": "知识索引",
+      "value": "知识索引的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B03-S04-K01-A02",
+      "name": "知识索引·操作步骤与流程",
+      "l1Id": "B03",
+      "l2Id": "B03-S04",
+      "l3Id": "B03-S04-K01",
+      "l4Id": "B03-S04-K01-A02",
+      "category": 2,
+      "parentL3": "知识索引",
+      "value": "知识索引的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B04-S01-K01-A01",
+      "name": "深度思考·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S01",
+      "l3Id": "B04-S01-K01",
+      "l4Id": "B04-S01-K01-A01",
+      "category": 3,
+      "parentL3": "深度思考",
+      "value": "深度思考的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.818,
+      "degreeScore": 0.875,
+      "symbolSize": 52
+    },
+    {
+      "id": "B04-S01-K01-A02",
+      "name": "深度思考·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S01",
+      "l3Id": "B04-S01-K01",
+      "l4Id": "B04-S01-K01-A02",
+      "category": 3,
+      "parentL3": "深度思考",
+      "value": "深度思考的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S01-K01-A03",
+      "name": "深度思考·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S01",
+      "l3Id": "B04-S01-K01",
+      "l4Id": "B04-S01-K01-A03",
+      "category": 3,
+      "parentL3": "深度思考",
+      "value": "深度思考的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S01-K02-A01",
+      "name": "系统思考·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S01",
+      "l3Id": "B04-S01-K02",
+      "l4Id": "B04-S01-K02-A01",
+      "category": 3,
+      "parentL3": "系统思考",
+      "value": "系统思考的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.86,
+      "degreeScore": 1.0,
+      "symbolSize": 56
+    },
+    {
+      "id": "B04-S01-K02-A02",
+      "name": "系统思考·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S01",
+      "l3Id": "B04-S01-K02",
+      "l4Id": "B04-S01-K02-A02",
+      "category": 3,
+      "parentL3": "系统思考",
+      "value": "系统思考的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S02-K01-A01",
+      "name": "结构化思维·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K01",
+      "l4Id": "B04-S02-K01-A01",
+      "category": 3,
+      "parentL3": "结构化思维",
+      "value": "结构化思维的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.818,
+      "degreeScore": 0.875,
+      "symbolSize": 52
+    },
+    {
+      "id": "B04-S02-K01-A02",
+      "name": "结构化思维·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K01",
+      "l4Id": "B04-S02-K01-A02",
+      "category": 3,
+      "parentL3": "结构化思维",
+      "value": "结构化思维的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S02-K01-A03",
+      "name": "结构化思维·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K01",
+      "l4Id": "B04-S02-K01-A03",
+      "category": 3,
+      "parentL3": "结构化思维",
+      "value": "结构化思维的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S02-K02-A01",
+      "name": "问题解决·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K02",
+      "l4Id": "B04-S02-K02-A01",
+      "category": 3,
+      "parentL3": "问题解决",
+      "value": "问题解决的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B04-S02-K02-A02",
+      "name": "问题解决·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K02",
+      "l4Id": "B04-S02-K02-A02",
+      "category": 3,
+      "parentL3": "问题解决",
+      "value": "问题解决的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S02-K02-A03",
+      "name": "问题解决·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K02",
+      "l4Id": "B04-S02-K02-A03",
+      "category": 3,
+      "parentL3": "问题解决",
+      "value": "问题解决的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S02-K03-A01",
+      "name": "目标分解·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K03",
+      "l4Id": "B04-S02-K03-A01",
+      "category": 3,
+      "parentL3": "目标分解",
+      "value": "目标分解的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.775,
+      "degreeScore": 0.75,
+      "symbolSize": 49
+    },
+    {
+      "id": "B04-S02-K03-A02",
+      "name": "目标分解·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S02",
+      "l3Id": "B04-S02-K03",
+      "l4Id": "B04-S02-K03-A02",
+      "category": 3,
+      "parentL3": "目标分解",
+      "value": "目标分解的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S03-K01-A01",
+      "name": "知识体系构建·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S03",
+      "l3Id": "B04-S03-K01",
+      "l4Id": "B04-S03-K01-A01",
+      "category": 3,
+      "parentL3": "知识体系构建",
+      "value": "知识体系构建的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B04-S03-K01-A02",
+      "name": "知识体系构建·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S03",
+      "l3Id": "B04-S03-K01",
+      "l4Id": "B04-S03-K01-A02",
+      "category": 3,
+      "parentL3": "知识体系构建",
+      "value": "知识体系构建的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S03-K01-A03",
+      "name": "知识体系构建·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S03",
+      "l3Id": "B04-S03-K01",
+      "l4Id": "B04-S03-K01-A03",
+      "category": 3,
+      "parentL3": "知识体系构建",
+      "value": "知识体系构建的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S03-K02-A01",
+      "name": "个人知识管理·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S03",
+      "l3Id": "B04-S03-K02",
+      "l4Id": "B04-S03-K02-A01",
+      "category": 3,
+      "parentL3": "个人知识管理",
+      "value": "个人知识管理的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B04-S03-K02-A02",
+      "name": "个人知识管理·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S03",
+      "l3Id": "B04-S03-K02",
+      "l4Id": "B04-S03-K02-A02",
+      "category": 3,
+      "parentL3": "个人知识管理",
+      "value": "个人知识管理的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S03-K02-A03",
+      "name": "个人知识管理·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S03",
+      "l3Id": "B04-S03-K02",
+      "l4Id": "B04-S03-K02-A03",
+      "category": 3,
+      "parentL3": "个人知识管理",
+      "value": "个人知识管理的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S04-K01-A01",
+      "name": "学习实践复盘·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S04",
+      "l3Id": "B04-S04-K01",
+      "l4Id": "B04-S04-K01-A01",
+      "category": 3,
+      "parentL3": "学习实践复盘",
+      "value": "学习实践复盘的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S04-K01-A02",
+      "name": "学习实践复盘·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S04",
+      "l3Id": "B04-S04-K01",
+      "l4Id": "B04-S04-K01-A02",
+      "category": 3,
+      "parentL3": "学习实践复盘",
+      "value": "学习实践复盘的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S04-K02-A01",
+      "name": "方法论·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S04",
+      "l3Id": "B04-S04-K02",
+      "l4Id": "B04-S04-K02-A01",
+      "category": 3,
+      "parentL3": "方法论",
+      "value": "方法论的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B04-S04-K02-A02",
+      "name": "方法论·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S04",
+      "l3Id": "B04-S04-K02",
+      "l4Id": "B04-S04-K02-A02",
+      "category": 3,
+      "parentL3": "方法论",
+      "value": "方法论的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S04-K02-A03",
+      "name": "方法论·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S04",
+      "l3Id": "B04-S04-K02",
+      "l4Id": "B04-S04-K02-A03",
+      "category": 3,
+      "parentL3": "方法论",
+      "value": "方法论的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B04-S05-K01-A01",
+      "name": "认知升级·核心定义与本质",
+      "l1Id": "B04",
+      "l2Id": "B04-S05",
+      "l3Id": "B04-S05-K01",
+      "l4Id": "B04-S05-K01-A01",
+      "category": 3,
+      "parentL3": "认知升级",
+      "value": "认知升级的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B04-S05-K01-A02",
+      "name": "认知升级·操作步骤与流程",
+      "l1Id": "B04",
+      "l2Id": "B04-S05",
+      "l3Id": "B04-S05-K01",
+      "l4Id": "B04-S05-K01-A02",
+      "category": 3,
+      "parentL3": "认知升级",
+      "value": "认知升级的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B04-S05-K01-A03",
+      "name": "认知升级·典型工具与案例",
+      "l1Id": "B04",
+      "l2Id": "B04-S05",
+      "l3Id": "B04-S05-K01",
+      "l4Id": "B04-S05-K01-A03",
+      "category": 3,
+      "parentL3": "认知升级",
+      "value": "认知升级的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B05-S01-K01-A01",
+      "name": "如何进行问题定义·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S01",
+      "l3Id": "B05-S01-K01",
+      "l4Id": "B05-S01-K01-A01",
+      "category": 4,
+      "parentL3": "如何进行问题定义",
+      "value": "如何进行问题定义的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S01-K01-A02",
+      "name": "如何进行问题定义·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S01",
+      "l3Id": "B05-S01-K01",
+      "l4Id": "B05-S01-K01-A02",
+      "category": 4,
+      "parentL3": "如何进行问题定义",
+      "value": "如何进行问题定义的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S01-K01-A03",
+      "name": "如何进行问题定义·典型工具与案例",
+      "l1Id": "B05",
+      "l2Id": "B05-S01",
+      "l3Id": "B05-S01-K01",
+      "l4Id": "B05-S01-K01-A03",
+      "category": 4,
+      "parentL3": "如何进行问题定义",
+      "value": "如何进行问题定义的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S01-K02-A01",
+      "name": "如何进行破题·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S01",
+      "l3Id": "B05-S01-K02",
+      "l4Id": "B05-S01-K02-A01",
+      "category": 4,
+      "parentL3": "如何进行破题",
+      "value": "如何进行破题的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S01-K02-A02",
+      "name": "如何进行破题·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S01",
+      "l3Id": "B05-S01-K02",
+      "l4Id": "B05-S01-K02-A02",
+      "category": 4,
+      "parentL3": "如何进行破题",
+      "value": "如何进行破题的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S02-K01-A01",
+      "name": "如何进行问题分析·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S02",
+      "l3Id": "B05-S02-K01",
+      "l4Id": "B05-S02-K01-A01",
+      "category": 4,
+      "parentL3": "如何进行问题分析",
+      "value": "如何进行问题分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B05-S02-K01-A02",
+      "name": "如何进行问题分析·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S02",
+      "l3Id": "B05-S02-K01",
+      "l4Id": "B05-S02-K01-A02",
+      "category": 4,
+      "parentL3": "如何进行问题分析",
+      "value": "如何进行问题分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S02-K01-A03",
+      "name": "如何进行问题分析·典型工具与案例",
+      "l1Id": "B05",
+      "l2Id": "B05-S02",
+      "l3Id": "B05-S02-K01",
+      "l4Id": "B05-S02-K01-A03",
+      "category": 4,
+      "parentL3": "如何进行问题分析",
+      "value": "如何进行问题分析的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S02-K02-A01",
+      "name": "如何进行系统思考·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S02",
+      "l3Id": "B05-S02-K02",
+      "l4Id": "B05-S02-K02-A01",
+      "category": 4,
+      "parentL3": "如何进行系统思考",
+      "value": "如何进行系统思考的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S02-K02-A02",
+      "name": "如何进行系统思考·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S02",
+      "l3Id": "B05-S02-K02",
+      "l4Id": "B05-S02-K02-A02",
+      "category": 4,
+      "parentL3": "如何进行系统思考",
+      "value": "如何进行系统思考的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S03-K01-A01",
+      "name": "如何进行决策分析·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S03",
+      "l3Id": "B05-S03-K01",
+      "l4Id": "B05-S03-K01-A01",
+      "category": 4,
+      "parentL3": "如何进行决策分析",
+      "value": "如何进行决策分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B05-S03-K01-A02",
+      "name": "如何进行决策分析·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S03",
+      "l3Id": "B05-S03-K01",
+      "l4Id": "B05-S03-K01-A02",
+      "category": 4,
+      "parentL3": "如何进行决策分析",
+      "value": "如何进行决策分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S03-K01-A03",
+      "name": "如何进行决策分析·典型工具与案例",
+      "l1Id": "B05",
+      "l2Id": "B05-S03",
+      "l3Id": "B05-S03-K01",
+      "l4Id": "B05-S03-K01-A03",
+      "category": 4,
+      "parentL3": "如何进行决策分析",
+      "value": "如何进行决策分析的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S03-K02-A01",
+      "name": "如何进行风险分析·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S03",
+      "l3Id": "B05-S03-K02",
+      "l4Id": "B05-S03-K02-A01",
+      "category": 4,
+      "parentL3": "如何进行风险分析",
+      "value": "如何进行风险分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S03-K02-A02",
+      "name": "如何进行风险分析·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S03",
+      "l3Id": "B05-S03-K02",
+      "l4Id": "B05-S03-K02-A02",
+      "category": 4,
+      "parentL3": "如何进行风险分析",
+      "value": "如何进行风险分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S04-K01-A01",
+      "name": "如何进行复盘总结·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S04",
+      "l3Id": "B05-S04-K01",
+      "l4Id": "B05-S04-K01-A01",
+      "category": 4,
+      "parentL3": "如何进行复盘总结",
+      "value": "如何进行复盘总结的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B05-S04-K01-A02",
+      "name": "如何进行复盘总结·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S04",
+      "l3Id": "B05-S04-K01",
+      "l4Id": "B05-S04-K01-A02",
+      "category": 4,
+      "parentL3": "如何进行复盘总结",
+      "value": "如何进行复盘总结的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S04-K02-A01",
+      "name": "如何进行知识萃取·核心定义与本质",
+      "l1Id": "B05",
+      "l2Id": "B05-S04",
+      "l3Id": "B05-S04-K02",
+      "l4Id": "B05-S04-K02-A01",
+      "category": 4,
+      "parentL3": "如何进行知识萃取",
+      "value": "如何进行知识萃取的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B05-S04-K02-A02",
+      "name": "如何进行知识萃取·操作步骤与流程",
+      "l1Id": "B05",
+      "l2Id": "B05-S04",
+      "l3Id": "B05-S04-K02",
+      "l4Id": "B05-S04-K02-A02",
+      "category": 4,
+      "parentL3": "如何进行知识萃取",
+      "value": "如何进行知识萃取的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B06-S01-K01-A01",
+      "name": "如何提高学习效率·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S01",
+      "l3Id": "B06-S01-K01",
+      "l4Id": "B06-S01-K01-A01",
+      "category": 5,
+      "parentL3": "如何提高学习效率",
+      "value": "如何提高学习效率的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B06-S01-K01-A02",
+      "name": "如何提高学习效率·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S01",
+      "l3Id": "B06-S01-K01",
+      "l4Id": "B06-S01-K01-A02",
+      "category": 5,
+      "parentL3": "如何提高学习效率",
+      "value": "如何提高学习效率的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S01-K02-A01",
+      "name": "如何快速切入新领域·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S01",
+      "l3Id": "B06-S01-K02",
+      "l4Id": "B06-S01-K02-A01",
+      "category": 5,
+      "parentL3": "如何快速切入新领域",
+      "value": "如何快速切入新领域的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S01-K02-A02",
+      "name": "如何快速切入新领域·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S01",
+      "l3Id": "B06-S01-K02",
+      "l4Id": "B06-S01-K02-A02",
+      "category": 5,
+      "parentL3": "如何快速切入新领域",
+      "value": "如何快速切入新领域的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S02-K01-A01",
+      "name": "如何提升思考力·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K01",
+      "l4Id": "B06-S02-K01-A01",
+      "category": 5,
+      "parentL3": "如何提升思考力",
+      "value": "如何提升思考力的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.715,
+      "degreeScore": 0.75,
+      "symbolSize": 47
+    },
+    {
+      "id": "B06-S02-K01-A02",
+      "name": "如何提升思考力·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K01",
+      "l4Id": "B06-S02-K01-A02",
+      "category": 5,
+      "parentL3": "如何提升思考力",
+      "value": "如何提升思考力的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S02-K01-A03",
+      "name": "如何提升思考力·典型工具与案例",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K01",
+      "l4Id": "B06-S02-K01-A03",
+      "category": 5,
+      "parentL3": "如何提升思考力",
+      "value": "如何提升思考力的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B06-S02-K02-A01",
+      "name": "如何提升认知能力·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K02",
+      "l4Id": "B06-S02-K02-A01",
+      "category": 5,
+      "parentL3": "如何提升认知能力",
+      "value": "如何提升认知能力的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B06-S02-K02-A02",
+      "name": "如何提升认知能力·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K02",
+      "l4Id": "B06-S02-K02-A02",
+      "category": 5,
+      "parentL3": "如何提升认知能力",
+      "value": "如何提升认知能力的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S02-K03-A01",
+      "name": "如何进行深度思考·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K03",
+      "l4Id": "B06-S02-K03-A01",
+      "category": 5,
+      "parentL3": "如何进行深度思考",
+      "value": "如何进行深度思考的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B06-S02-K03-A02",
+      "name": "如何进行深度思考·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S02",
+      "l3Id": "B06-S02-K03",
+      "l4Id": "B06-S02-K03-A02",
+      "category": 5,
+      "parentL3": "如何进行深度思考",
+      "value": "如何进行深度思考的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S03-K01-A01",
+      "name": "如何跳出思维盒子实现认知升级·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S03",
+      "l3Id": "B06-S03-K01",
+      "l4Id": "B06-S03-K01-A01",
+      "category": 5,
+      "parentL3": "如何跳出思维盒子实现认知升级",
+      "value": "如何跳出思维盒子实现认知升级的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B06-S03-K01-A02",
+      "name": "如何跳出思维盒子实现认知升级·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S03",
+      "l3Id": "B06-S03-K01",
+      "l4Id": "B06-S03-K01-A02",
+      "category": 5,
+      "parentL3": "如何跳出思维盒子实现认知升级",
+      "value": "如何跳出思维盒子实现认知升级的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S03-K01-A03",
+      "name": "如何跳出思维盒子实现认知升级·典型工具与案例",
+      "l1Id": "B06",
+      "l2Id": "B06-S03",
+      "l3Id": "B06-S03-K01",
+      "l4Id": "B06-S03-K01-A03",
+      "category": 5,
+      "parentL3": "如何跳出思维盒子实现认知升级",
+      "value": "如何跳出思维盒子实现认知升级的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B06-S03-K02-A01",
+      "name": "如何摆脱二元对立思维·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S03",
+      "l3Id": "B06-S03-K02",
+      "l4Id": "B06-S03-K02-A01",
+      "category": 5,
+      "parentL3": "如何摆脱二元对立思维",
+      "value": "如何摆脱二元对立思维的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S03-K02-A02",
+      "name": "如何摆脱二元对立思维·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S03",
+      "l3Id": "B06-S03-K02",
+      "l4Id": "B06-S03-K02-A02",
+      "category": 5,
+      "parentL3": "如何摆脱二元对立思维",
+      "value": "如何摆脱二元对立思维的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S04-K01-A01",
+      "name": "如何实现个人成长底层逻辑·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S04",
+      "l3Id": "B06-S04-K01",
+      "l4Id": "B06-S04-K01-A01",
+      "category": 5,
+      "parentL3": "如何实现个人成长底层逻辑",
+      "value": "如何实现个人成长底层逻辑的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S04-K01-A02",
+      "name": "如何实现个人成长底层逻辑·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S04",
+      "l3Id": "B06-S04-K01",
+      "l4Id": "B06-S04-K01-A02",
+      "category": 5,
+      "parentL3": "如何实现个人成长底层逻辑",
+      "value": "如何实现个人成长底层逻辑的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S04-K02-A01",
+      "name": "如何突显人的价值·核心定义与本质",
+      "l1Id": "B06",
+      "l2Id": "B06-S04",
+      "l3Id": "B06-S04-K02",
+      "l4Id": "B06-S04-K02-A01",
+      "category": 5,
+      "parentL3": "如何突显人的价值",
+      "value": "如何突显人的价值的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B06-S04-K02-A02",
+      "name": "如何突显人的价值·操作步骤与流程",
+      "l1Id": "B06",
+      "l2Id": "B06-S04",
+      "l3Id": "B06-S04-K02",
+      "l4Id": "B06-S04-K02-A02",
+      "category": 5,
+      "parentL3": "如何突显人的价值",
+      "value": "如何突显人的价值的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B07-S01-K01-A01",
+      "name": "如何做好个人知识管理·核心定义与本质",
+      "l1Id": "B07",
+      "l2Id": "B07-S01",
+      "l3Id": "B07-S01-K01",
+      "l4Id": "B07-S01-K01-A01",
+      "category": 6,
+      "parentL3": "如何做好个人知识管理",
+      "value": "如何做好个人知识管理的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B07-S01-K01-A02",
+      "name": "如何做好个人知识管理·操作步骤与流程",
+      "l1Id": "B07",
+      "l2Id": "B07-S01",
+      "l3Id": "B07-S01-K01",
+      "l4Id": "B07-S01-K01-A02",
+      "category": 6,
+      "parentL3": "如何做好个人知识管理",
+      "value": "如何做好个人知识管理的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B07-S01-K01-A03",
+      "name": "如何做好个人知识管理·典型工具与案例",
+      "l1Id": "B07",
+      "l2Id": "B07-S01",
+      "l3Id": "B07-S01-K01",
+      "l4Id": "B07-S01-K01-A03",
+      "category": 6,
+      "parentL3": "如何做好个人知识管理",
+      "value": "如何做好个人知识管理的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B07-S01-K02-A01",
+      "name": "如何构建第二大脑·核心定义与本质",
+      "l1Id": "B07",
+      "l2Id": "B07-S01",
+      "l3Id": "B07-S01-K02",
+      "l4Id": "B07-S01-K02-A01",
+      "category": 6,
+      "parentL3": "如何构建第二大脑",
+      "value": "如何构建第二大脑的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B07-S01-K02-A02",
+      "name": "如何构建第二大脑·操作步骤与流程",
+      "l1Id": "B07",
+      "l2Id": "B07-S01",
+      "l3Id": "B07-S01-K02",
+      "l4Id": "B07-S01-K02-A02",
+      "category": 6,
+      "parentL3": "如何构建第二大脑",
+      "value": "如何构建第二大脑的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B07-S02-K01-A01",
+      "name": "如何构建知识体系·核心定义与本质",
+      "l1Id": "B07",
+      "l2Id": "B07-S02",
+      "l3Id": "B07-S02-K01",
+      "l4Id": "B07-S02-K01-A01",
+      "category": 6,
+      "parentL3": "如何构建知识体系",
+      "value": "如何构建知识体系的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B07-S02-K01-A02",
+      "name": "如何构建知识体系·操作步骤与流程",
+      "l1Id": "B07",
+      "l2Id": "B07-S02",
+      "l3Id": "B07-S02-K01",
+      "l4Id": "B07-S02-K01-A02",
+      "category": 6,
+      "parentL3": "如何构建知识体系",
+      "value": "如何构建知识体系的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B07-S03-K01-A01",
+      "name": "如何基于知识库进行文章写作·核心定义与本质",
+      "l1Id": "B07",
+      "l2Id": "B07-S03",
+      "l3Id": "B07-S03-K01",
+      "l4Id": "B07-S03-K01-A01",
+      "category": 6,
+      "parentL3": "如何基于知识库进行文章写作",
+      "value": "如何基于知识库进行文章写作的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B07-S03-K01-A02",
+      "name": "如何基于知识库进行文章写作·操作步骤与流程",
+      "l1Id": "B07",
+      "l2Id": "B07-S03",
+      "l3Id": "B07-S03-K01",
+      "l4Id": "B07-S03-K01-A02",
+      "category": 6,
+      "parentL3": "如何基于知识库进行文章写作",
+      "value": "如何基于知识库进行文章写作的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B08-S01-K01-A01",
+      "name": "思维钻石模型·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K01",
+      "l4Id": "B08-S01-K01-A01",
+      "category": 7,
+      "parentL3": "思维钻石模型",
+      "value": "思维钻石模型的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B08-S01-K01-A02",
+      "name": "思维钻石模型·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K01",
+      "l4Id": "B08-S01-K01-A02",
+      "category": 7,
+      "parentL3": "思维钻石模型",
+      "value": "思维钻石模型的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S01-K01-A03",
+      "name": "思维钻石模型·典型工具与案例",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K01",
+      "l4Id": "B08-S01-K01-A03",
+      "category": 7,
+      "parentL3": "思维钻石模型",
+      "value": "思维钻石模型的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B08-S01-K02-A01",
+      "name": "思维元模型·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K02",
+      "l4Id": "B08-S01-K02-A01",
+      "category": 7,
+      "parentL3": "思维元模型",
+      "value": "思维元模型的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B08-S01-K02-A02",
+      "name": "思维元模型·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K02",
+      "l4Id": "B08-S01-K02-A02",
+      "category": 7,
+      "parentL3": "思维元模型",
+      "value": "思维元模型的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S01-K03-A01",
+      "name": "深度思考模型·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K03",
+      "l4Id": "B08-S01-K03-A01",
+      "category": 7,
+      "parentL3": "深度思考模型",
+      "value": "深度思考模型的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S01-K03-A02",
+      "name": "深度思考模型·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S01",
+      "l3Id": "B08-S01-K03",
+      "l4Id": "B08-S01-K03-A02",
+      "category": 7,
+      "parentL3": "深度思考模型",
+      "value": "深度思考模型的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S02-K01-A01",
+      "name": "知识树·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K01",
+      "l4Id": "B08-S02-K01-A01",
+      "category": 7,
+      "parentL3": "知识树",
+      "value": "知识树的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.733,
+      "degreeScore": 0.625,
+      "symbolSize": 45
+    },
+    {
+      "id": "B08-S02-K01-A02",
+      "name": "知识树·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K01",
+      "l4Id": "B08-S02-K01-A02",
+      "category": 7,
+      "parentL3": "知识树",
+      "value": "知识树的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S02-K01-A03",
+      "name": "知识树·典型工具与案例",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K01",
+      "l4Id": "B08-S02-K01-A03",
+      "category": 7,
+      "parentL3": "知识树",
+      "value": "知识树的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B08-S02-K02-A01",
+      "name": "知识图谱构建·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K02",
+      "l4Id": "B08-S02-K02-A01",
+      "category": 7,
+      "parentL3": "知识图谱构建",
+      "value": "知识图谱构建的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S02-K02-A02",
+      "name": "知识图谱构建·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K02",
+      "l4Id": "B08-S02-K02-A02",
+      "category": 7,
+      "parentL3": "知识图谱构建",
+      "value": "知识图谱构建的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S02-K03-A01",
+      "name": "知识地图·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K03",
+      "l4Id": "B08-S02-K03-A01",
+      "category": 7,
+      "parentL3": "知识地图",
+      "value": "知识地图的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.69,
+      "degreeScore": 0.5,
+      "symbolSize": 41
+    },
+    {
+      "id": "B08-S02-K03-A02",
+      "name": "知识地图·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S02",
+      "l3Id": "B08-S02-K03",
+      "l4Id": "B08-S02-K03-A02",
+      "category": 7,
+      "parentL3": "知识地图",
+      "value": "知识地图的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S03-K01-A01",
+      "name": "系统动力学建模·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S03",
+      "l3Id": "B08-S03-K01",
+      "l4Id": "B08-S03-K01-A01",
+      "category": 7,
+      "parentL3": "系统动力学建模",
+      "value": "系统动力学建模的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S03-K01-A02",
+      "name": "系统动力学建模·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S03",
+      "l3Id": "B08-S03-K01",
+      "l4Id": "B08-S03-K01-A02",
+      "category": 7,
+      "parentL3": "系统动力学建模",
+      "value": "系统动力学建模的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S03-K02-A01",
+      "name": "科学方法论·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S03",
+      "l3Id": "B08-S03-K02",
+      "l4Id": "B08-S03-K02-A01",
+      "category": 7,
+      "parentL3": "科学方法论",
+      "value": "科学方法论的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B08-S03-K02-A02",
+      "name": "科学方法论·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S03",
+      "l3Id": "B08-S03-K02",
+      "l4Id": "B08-S03-K02-A02",
+      "category": 7,
+      "parentL3": "科学方法论",
+      "value": "科学方法论的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.605,
+      "degreeScore": 0.25,
+      "symbolSize": 34
+    },
+    {
+      "id": "B08-S03-K03-A01",
+      "name": "SBR模型·核心定义与本质",
+      "l1Id": "B08",
+      "l2Id": "B08-S03",
+      "l3Id": "B08-S03-K03",
+      "l4Id": "B08-S03-K03-A01",
+      "category": 7,
+      "parentL3": "SBR模型",
+      "value": "SBR模型的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.647,
+      "degreeScore": 0.375,
+      "symbolSize": 38
+    },
+    {
+      "id": "B08-S03-K03-A02",
+      "name": "SBR模型·操作步骤与流程",
+      "l1Id": "B08",
+      "l2Id": "B08-S03",
+      "l3Id": "B08-S03-K03",
+      "l4Id": "B08-S03-K03-A02",
+      "category": 7,
+      "parentL3": "SBR模型",
+      "value": "SBR模型的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.562,
+      "degreeScore": 0.125,
+      "symbolSize": 31
+    },
+    {
+      "id": "B09-S01-K01-A01",
+      "name": "OKR·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K01",
+      "l4Id": "B09-S01-K01-A01",
+      "category": 8,
+      "parentL3": "OKR",
+      "value": "OKR的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B09-S01-K01-A02",
+      "name": "OKR·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K01",
+      "l4Id": "B09-S01-K01-A02",
+      "category": 8,
+      "parentL3": "OKR",
+      "value": "OKR的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S01-K02-A01",
+      "name": "麦肯锡七步法·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K02",
+      "l4Id": "B09-S01-K02-A01",
+      "category": 8,
+      "parentL3": "麦肯锡七步法",
+      "value": "麦肯锡七步法的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B09-S01-K02-A02",
+      "name": "麦肯锡七步法·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K02",
+      "l4Id": "B09-S01-K02-A02",
+      "category": 8,
+      "parentL3": "麦肯锡七步法",
+      "value": "麦肯锡七步法的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S01-K02-A03",
+      "name": "麦肯锡七步法·典型工具与案例",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K02",
+      "l4Id": "B09-S01-K02-A03",
+      "category": 8,
+      "parentL3": "麦肯锡七步法",
+      "value": "麦肯锡七步法的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B09-S01-K03-A01",
+      "name": "PDCA循环·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K03",
+      "l4Id": "B09-S01-K03-A01",
+      "category": 8,
+      "parentL3": "PDCA循环",
+      "value": "PDCA循环的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B09-S01-K03-A02",
+      "name": "PDCA循环·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S01",
+      "l3Id": "B09-S01-K03",
+      "l4Id": "B09-S01-K03-A02",
+      "category": 8,
+      "parentL3": "PDCA循环",
+      "value": "PDCA循环的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S02-K01-A01",
+      "name": "价值链分析·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S02",
+      "l3Id": "B09-S02-K01",
+      "l4Id": "B09-S02-K01-A01",
+      "category": 8,
+      "parentL3": "价值链分析",
+      "value": "价值链分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S02-K01-A02",
+      "name": "价值链分析·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S02",
+      "l3Id": "B09-S02-K01",
+      "l4Id": "B09-S02-K01-A02",
+      "category": 8,
+      "parentL3": "价值链分析",
+      "value": "价值链分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S02-K02-A01",
+      "name": "领域建模四步法·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S02",
+      "l3Id": "B09-S02-K02",
+      "l4Id": "B09-S02-K02-A01",
+      "category": 8,
+      "parentL3": "领域建模四步法",
+      "value": "领域建模四步法的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S02-K02-A02",
+      "name": "领域建模四步法·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S02",
+      "l3Id": "B09-S02-K02",
+      "l4Id": "B09-S02-K02-A02",
+      "category": 8,
+      "parentL3": "领域建模四步法",
+      "value": "领域建模四步法的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S03-K01-A01",
+      "name": "检查单·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S03",
+      "l3Id": "B09-S03-K01",
+      "l4Id": "B09-S03-K01-A01",
+      "category": 8,
+      "parentL3": "检查单",
+      "value": "检查单的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B09-S03-K01-A02",
+      "name": "检查单·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S03",
+      "l3Id": "B09-S03-K01",
+      "l4Id": "B09-S03-K01-A02",
+      "category": 8,
+      "parentL3": "检查单",
+      "value": "检查单的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S03-K02-A01",
+      "name": "鱼骨图·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S03",
+      "l3Id": "B09-S03-K02",
+      "l4Id": "B09-S03-K02-A01",
+      "category": 8,
+      "parentL3": "鱼骨图",
+      "value": "鱼骨图的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B09-S03-K02-A02",
+      "name": "鱼骨图·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S03",
+      "l3Id": "B09-S03-K02",
+      "l4Id": "B09-S03-K02-A02",
+      "category": 8,
+      "parentL3": "鱼骨图",
+      "value": "鱼骨图的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S03-K03-A01",
+      "name": "CRUD矩阵分析·核心定义与本质",
+      "l1Id": "B09",
+      "l2Id": "B09-S03",
+      "l3Id": "B09-S03-K03",
+      "l4Id": "B09-S03-K03-A01",
+      "category": 8,
+      "parentL3": "CRUD矩阵分析",
+      "value": "CRUD矩阵分析的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B09-S03-K03-A02",
+      "name": "CRUD矩阵分析·操作步骤与流程",
+      "l1Id": "B09",
+      "l2Id": "B09-S03",
+      "l3Id": "B09-S03-K03",
+      "l4Id": "B09-S03-K03-A02",
+      "category": 8,
+      "parentL3": "CRUD矩阵分析",
+      "value": "CRUD矩阵分析的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B10-S01-K01-A01",
+      "name": "Obsidian·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K01",
+      "l4Id": "B10-S01-K01-A01",
+      "category": 9,
+      "parentL3": "Obsidian",
+      "value": "Obsidian的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.673,
+      "degreeScore": 0.625,
+      "symbolSize": 43
+    },
+    {
+      "id": "B10-S01-K01-A02",
+      "name": "Obsidian·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K01",
+      "l4Id": "B10-S01-K01-A02",
+      "category": 9,
+      "parentL3": "Obsidian",
+      "value": "Obsidian的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S01-K01-A03",
+      "name": "Obsidian·典型工具与案例",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K01",
+      "l4Id": "B10-S01-K01-A03",
+      "category": 9,
+      "parentL3": "Obsidian",
+      "value": "Obsidian的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B10-S01-K02-A01",
+      "name": "Logseq·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K02",
+      "l4Id": "B10-S01-K02-A01",
+      "category": 9,
+      "parentL3": "Logseq",
+      "value": "Logseq的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B10-S01-K02-A02",
+      "name": "Logseq·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K02",
+      "l4Id": "B10-S01-K02-A02",
+      "category": 9,
+      "parentL3": "Logseq",
+      "value": "Logseq的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S01-K03-A01",
+      "name": "第二大脑·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K03",
+      "l4Id": "B10-S01-K03-A01",
+      "category": 9,
+      "parentL3": "第二大脑",
+      "value": "第二大脑的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.673,
+      "degreeScore": 0.625,
+      "symbolSize": 43
+    },
+    {
+      "id": "B10-S01-K03-A02",
+      "name": "第二大脑·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S01",
+      "l3Id": "B10-S01-K03",
+      "l4Id": "B10-S01-K03-A02",
+      "category": 9,
+      "parentL3": "第二大脑",
+      "value": "第二大脑的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S02-K01-A01",
+      "name": "AI知识库·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S02",
+      "l3Id": "B10-S02-K01",
+      "l4Id": "B10-S02-K01-A01",
+      "category": 9,
+      "parentL3": "AI知识库",
+      "value": "AI知识库的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B10-S02-K01-A02",
+      "name": "AI知识库·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S02",
+      "l3Id": "B10-S02-K01",
+      "l4Id": "B10-S02-K01-A02",
+      "category": 9,
+      "parentL3": "AI知识库",
+      "value": "AI知识库的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S02-K02-A01",
+      "name": "Cursor辅助写作·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S02",
+      "l3Id": "B10-S02-K02",
+      "l4Id": "B10-S02-K02-A01",
+      "category": 9,
+      "parentL3": "Cursor辅助写作",
+      "value": "Cursor辅助写作的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S02-K02-A02",
+      "name": "Cursor辅助写作·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S02",
+      "l3Id": "B10-S02-K02",
+      "l4Id": "B10-S02-K02-A02",
+      "category": 9,
+      "parentL3": "Cursor辅助写作",
+      "value": "Cursor辅助写作的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S02-K03-A01",
+      "name": "DeepSeek·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S02",
+      "l3Id": "B10-S02-K03",
+      "l4Id": "B10-S02-K03-A01",
+      "category": 9,
+      "parentL3": "DeepSeek",
+      "value": "DeepSeek的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B10-S02-K03-A02",
+      "name": "DeepSeek·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S02",
+      "l3Id": "B10-S02-K03",
+      "l4Id": "B10-S02-K03-A02",
+      "category": 9,
+      "parentL3": "DeepSeek",
+      "value": "DeepSeek的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S03-K01-A01",
+      "name": "低代码平台·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S03",
+      "l3Id": "B10-S03-K01",
+      "l4Id": "B10-S03-K01-A01",
+      "category": 9,
+      "parentL3": "低代码平台",
+      "value": "低代码平台的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S03-K01-A02",
+      "name": "低代码平台·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S03",
+      "l3Id": "B10-S03-K01",
+      "l4Id": "B10-S03-K01-A02",
+      "category": 9,
+      "parentL3": "低代码平台",
+      "value": "低代码平台的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B10-S03-K02-A01",
+      "name": "思维导图工具·核心定义与本质",
+      "l1Id": "B10",
+      "l2Id": "B10-S03",
+      "l3Id": "B10-S03-K02",
+      "l4Id": "B10-S03-K02-A01",
+      "category": 9,
+      "parentL3": "思维导图工具",
+      "value": "思维导图工具的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B10-S03-K02-A02",
+      "name": "思维导图工具·操作步骤与流程",
+      "l1Id": "B10",
+      "l2Id": "B10-S03",
+      "l3Id": "B10-S03-K02",
+      "l4Id": "B10-S03-K02-A02",
+      "category": 9,
+      "parentL3": "思维导图工具",
+      "value": "思维导图工具的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    },
+    {
+      "id": "B11-S01-K01-A01",
+      "name": "费曼学习法·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K01",
+      "l4Id": "B11-S01-K01-A01",
+      "category": 10,
+      "parentL3": "费曼学习法",
+      "value": "费曼学习法的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S01-K01-A02",
+      "name": "费曼学习法·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K01",
+      "l4Id": "B11-S01-K01-A02",
+      "category": 10,
+      "parentL3": "费曼学习法",
+      "value": "费曼学习法的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S01-K01-A03",
+      "name": "费曼学习法·典型工具与案例",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K01",
+      "l4Id": "B11-S01-K01-A03",
+      "category": 10,
+      "parentL3": "费曼学习法",
+      "value": "费曼学习法的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B11-S01-K02-A01",
+      "name": "Anki·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K02",
+      "l4Id": "B11-S01-K02-A01",
+      "category": 10,
+      "parentL3": "Anki",
+      "value": "Anki的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S01-K02-A02",
+      "name": "Anki·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K02",
+      "l4Id": "B11-S01-K02-A02",
+      "category": 10,
+      "parentL3": "Anki",
+      "value": "Anki的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S01-K03-A01",
+      "name": "番茄工作法·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K03",
+      "l4Id": "B11-S01-K03-A01",
+      "category": 10,
+      "parentL3": "番茄工作法",
+      "value": "番茄工作法的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S01-K03-A02",
+      "name": "番茄工作法·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S01",
+      "l3Id": "B11-S01-K03",
+      "l4Id": "B11-S01-K03-A02",
+      "category": 10,
+      "parentL3": "番茄工作法",
+      "value": "番茄工作法的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S02-K01-A01",
+      "name": "学习系统构建·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S02",
+      "l3Id": "B11-S02-K01",
+      "l4Id": "B11-S02-K01-A01",
+      "category": 10,
+      "parentL3": "学习系统构建",
+      "value": "学习系统构建的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B11-S02-K01-A02",
+      "name": "学习系统构建·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S02",
+      "l3Id": "B11-S02-K01",
+      "l4Id": "B11-S02-K01-A02",
+      "category": 10,
+      "parentL3": "学习系统构建",
+      "value": "学习系统构建的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S02-K01-A03",
+      "name": "学习系统构建·典型工具与案例",
+      "l1Id": "B11",
+      "l2Id": "B11-S02",
+      "l3Id": "B11-S02-K01",
+      "l4Id": "B11-S02-K01-A03",
+      "category": 10,
+      "parentL3": "学习系统构建",
+      "value": "学习系统构建的「典型工具与案例」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.588,
+      "degreeScore": 0.375,
+      "symbolSize": 36
+    },
+    {
+      "id": "B11-S02-K02-A01",
+      "name": "学习路线·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S02",
+      "l3Id": "B11-S02-K02",
+      "l4Id": "B11-S02-K02-A01",
+      "category": 10,
+      "parentL3": "学习路线",
+      "value": "学习路线的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.63,
+      "degreeScore": 0.5,
+      "symbolSize": 40
+    },
+    {
+      "id": "B11-S02-K02-A02",
+      "name": "学习路线·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S02",
+      "l3Id": "B11-S02-K02",
+      "l4Id": "B11-S02-K02-A02",
+      "category": 10,
+      "parentL3": "学习路线",
+      "value": "学习路线的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S03-K01-A01",
+      "name": "黑格尔小逻辑·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S03",
+      "l3Id": "B11-S03-K01",
+      "l4Id": "B11-S03-K01-A01",
+      "category": 10,
+      "parentL3": "黑格尔小逻辑",
+      "value": "黑格尔小逻辑的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.673,
+      "degreeScore": 0.625,
+      "symbolSize": 43
+    },
+    {
+      "id": "B11-S03-K01-A02",
+      "name": "黑格尔小逻辑·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S03",
+      "l3Id": "B11-S03-K01",
+      "l4Id": "B11-S03-K01-A02",
+      "category": 10,
+      "parentL3": "黑格尔小逻辑",
+      "value": "黑格尔小逻辑的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.545,
+      "degreeScore": 0.25,
+      "symbolSize": 32
+    },
+    {
+      "id": "B11-S03-K02-A01",
+      "name": "对立统一·核心定义与本质",
+      "l1Id": "B11",
+      "l2Id": "B11-S03",
+      "l3Id": "B11-S03-K02",
+      "l4Id": "B11-S03-K02-A01",
+      "category": 10,
+      "parentL3": "对立统一",
+      "value": "对立统一的「核心定义与本质」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.715,
+      "degreeScore": 0.75,
+      "symbolSize": 47
+    },
+    {
+      "id": "B11-S03-K02-A02",
+      "name": "对立统一·操作步骤与流程",
+      "l1Id": "B11",
+      "l2Id": "B11-S03",
+      "l3Id": "B11-S03-K02",
+      "l4Id": "B11-S03-K02-A02",
+      "category": 10,
+      "parentL3": "对立统一",
+      "value": "对立统一的「操作步骤与流程」，是 wiki1 个人思维知识体系中可独立讲解或操作的原子知识点。",
+      "importance": 0.503,
+      "degreeScore": 0.125,
+      "symbolSize": 29
+    }
+  ],
+  "edges": [
+    {
+      "source": "B01-S01-K01-A01",
+      "target": "B01-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S01-K01-A02",
+      "target": "B01-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S01-K01-A01",
+      "target": "B01-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S01-K02-A01",
+      "target": "B01-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S01-K02-A02",
+      "target": "B01-S01-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S01-K02-A01",
+      "target": "B01-S01-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S01-K03-A01",
+      "target": "B01-S01-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S02-K01-A01",
+      "target": "B01-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S02-K01-A02",
+      "target": "B01-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S02-K01-A01",
+      "target": "B01-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S02-K02-A01",
+      "target": "B01-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S02-K02-A02",
+      "target": "B01-S02-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S02-K02-A01",
+      "target": "B01-S02-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S02-K03-A01",
+      "target": "B01-S02-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S03-K01-A01",
+      "target": "B01-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S03-K01-A02",
+      "target": "B01-S03-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S03-K01-A01",
+      "target": "B01-S03-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S03-K02-A01",
+      "target": "B01-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S03-K02-A02",
+      "target": "B01-S03-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S03-K02-A01",
+      "target": "B01-S03-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S03-K03-A01",
+      "target": "B01-S03-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S04-K01-A01",
+      "target": "B01-S04-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S04-K01-A02",
+      "target": "B01-S04-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S04-K01-A01",
+      "target": "B01-S04-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S04-K02-A01",
+      "target": "B01-S04-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S05-K01-A01",
+      "target": "B01-S05-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S05-K01-A02",
+      "target": "B01-S05-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S05-K01-A01",
+      "target": "B01-S05-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S05-K02-A01",
+      "target": "B01-S05-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S05-K02-A02",
+      "target": "B01-S05-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S05-K02-A01",
+      "target": "B01-S05-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S06-K01-A01",
+      "target": "B01-S06-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S06-K01-A02",
+      "target": "B01-S06-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S06-K01-A01",
+      "target": "B01-S06-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B01-S06-K02-A01",
+      "target": "B01-S06-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S01-K01-A01",
+      "target": "B02-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S01-K01-A02",
+      "target": "B02-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S01-K01-A01",
+      "target": "B02-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B02-S01-K02-A01",
+      "target": "B02-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S02-K01-A01",
+      "target": "B02-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S02-K01-A02",
+      "target": "B02-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S02-K01-A01",
+      "target": "B02-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B02-S02-K02-A01",
+      "target": "B02-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S03-K01-A01",
+      "target": "B02-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S03-K01-A02",
+      "target": "B02-S03-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S03-K01-A01",
+      "target": "B02-S03-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B02-S03-K02-A01",
+      "target": "B02-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S03-K03-A01",
+      "target": "B02-S03-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S04-K01-A01",
+      "target": "B02-S04-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S04-K01-A02",
+      "target": "B02-S04-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B02-S04-K01-A01",
+      "target": "B02-S04-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B02-S04-K02-A01",
+      "target": "B02-S04-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S01-K01-A01",
+      "target": "B03-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S01-K01-A02",
+      "target": "B03-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S01-K01-A01",
+      "target": "B03-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B03-S01-K02-A01",
+      "target": "B03-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S02-K01-A01",
+      "target": "B03-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S02-K02-A01",
+      "target": "B03-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S03-K01-A01",
+      "target": "B03-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S03-K01-A02",
+      "target": "B03-S03-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S03-K01-A01",
+      "target": "B03-S03-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B03-S03-K02-A01",
+      "target": "B03-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S03-K03-A01",
+      "target": "B03-S03-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B03-S04-K01-A01",
+      "target": "B03-S04-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S01-K01-A01",
+      "target": "B04-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S01-K01-A02",
+      "target": "B04-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S01-K01-A01",
+      "target": "B04-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B04-S01-K02-A01",
+      "target": "B04-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S02-K01-A01",
+      "target": "B04-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S02-K01-A02",
+      "target": "B04-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S02-K01-A01",
+      "target": "B04-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B04-S02-K02-A01",
+      "target": "B04-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S02-K02-A02",
+      "target": "B04-S02-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S02-K02-A01",
+      "target": "B04-S02-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B04-S02-K03-A01",
+      "target": "B04-S02-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S03-K01-A01",
+      "target": "B04-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S03-K01-A02",
+      "target": "B04-S03-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S03-K01-A01",
+      "target": "B04-S03-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B04-S03-K02-A01",
+      "target": "B04-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S03-K02-A02",
+      "target": "B04-S03-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S03-K02-A01",
+      "target": "B04-S03-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B04-S04-K01-A01",
+      "target": "B04-S04-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S04-K02-A01",
+      "target": "B04-S04-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S04-K02-A02",
+      "target": "B04-S04-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S04-K02-A01",
+      "target": "B04-S04-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B04-S05-K01-A01",
+      "target": "B04-S05-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S05-K01-A02",
+      "target": "B04-S05-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B04-S05-K01-A01",
+      "target": "B04-S05-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B05-S01-K01-A01",
+      "target": "B05-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S01-K01-A02",
+      "target": "B05-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S01-K01-A01",
+      "target": "B05-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B05-S01-K02-A01",
+      "target": "B05-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S02-K01-A01",
+      "target": "B05-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S02-K01-A02",
+      "target": "B05-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S02-K01-A01",
+      "target": "B05-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B05-S02-K02-A01",
+      "target": "B05-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S03-K01-A01",
+      "target": "B05-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S03-K01-A02",
+      "target": "B05-S03-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S03-K01-A01",
+      "target": "B05-S03-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B05-S03-K02-A01",
+      "target": "B05-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S04-K01-A01",
+      "target": "B05-S04-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B05-S04-K02-A01",
+      "target": "B05-S04-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S01-K01-A01",
+      "target": "B06-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S01-K02-A01",
+      "target": "B06-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S02-K01-A01",
+      "target": "B06-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S02-K01-A02",
+      "target": "B06-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S02-K01-A01",
+      "target": "B06-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B06-S02-K02-A01",
+      "target": "B06-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S02-K03-A01",
+      "target": "B06-S02-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S03-K01-A01",
+      "target": "B06-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S03-K01-A02",
+      "target": "B06-S03-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S03-K01-A01",
+      "target": "B06-S03-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B06-S03-K02-A01",
+      "target": "B06-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S04-K01-A01",
+      "target": "B06-S04-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B06-S04-K02-A01",
+      "target": "B06-S04-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B07-S01-K01-A01",
+      "target": "B07-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B07-S01-K01-A02",
+      "target": "B07-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B07-S01-K01-A01",
+      "target": "B07-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B07-S01-K02-A01",
+      "target": "B07-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B07-S02-K01-A01",
+      "target": "B07-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B07-S03-K01-A01",
+      "target": "B07-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S01-K01-A01",
+      "target": "B08-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S01-K01-A02",
+      "target": "B08-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S01-K01-A01",
+      "target": "B08-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B08-S01-K02-A01",
+      "target": "B08-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S01-K03-A01",
+      "target": "B08-S01-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S02-K01-A01",
+      "target": "B08-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S02-K01-A02",
+      "target": "B08-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S02-K01-A01",
+      "target": "B08-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B08-S02-K02-A01",
+      "target": "B08-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S02-K03-A01",
+      "target": "B08-S02-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S03-K01-A01",
+      "target": "B08-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S03-K02-A01",
+      "target": "B08-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B08-S03-K03-A01",
+      "target": "B08-S03-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S01-K01-A01",
+      "target": "B09-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S01-K02-A01",
+      "target": "B09-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S01-K02-A02",
+      "target": "B09-S01-K02-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S01-K02-A01",
+      "target": "B09-S01-K02-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B09-S01-K03-A01",
+      "target": "B09-S01-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S02-K01-A01",
+      "target": "B09-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S02-K02-A01",
+      "target": "B09-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S03-K01-A01",
+      "target": "B09-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S03-K02-A01",
+      "target": "B09-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B09-S03-K03-A01",
+      "target": "B09-S03-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S01-K01-A01",
+      "target": "B10-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S01-K01-A02",
+      "target": "B10-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S01-K01-A01",
+      "target": "B10-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B10-S01-K02-A01",
+      "target": "B10-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S01-K03-A01",
+      "target": "B10-S01-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S02-K01-A01",
+      "target": "B10-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S02-K02-A01",
+      "target": "B10-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S02-K03-A01",
+      "target": "B10-S02-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S03-K01-A01",
+      "target": "B10-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B10-S03-K02-A01",
+      "target": "B10-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S01-K01-A01",
+      "target": "B11-S01-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S01-K01-A02",
+      "target": "B11-S01-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S01-K01-A01",
+      "target": "B11-S01-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B11-S01-K02-A01",
+      "target": "B11-S01-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S01-K03-A01",
+      "target": "B11-S01-K03-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S02-K01-A01",
+      "target": "B11-S02-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S02-K01-A02",
+      "target": "B11-S02-K01-A03",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S02-K01-A01",
+      "target": "B11-S02-K01-A03",
+      "type": "contains",
+      "weight": 0.6
+    },
+    {
+      "source": "B11-S02-K02-A01",
+      "target": "B11-S02-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S03-K01-A01",
+      "target": "B11-S03-K01-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B11-S03-K02-A01",
+      "target": "B11-S03-K02-A02",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "B01-S01-K01-A03",
+      "target": "B01-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S01-K02-A03",
+      "target": "B01-S01-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S01-K03-A02",
+      "target": "B01-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S02-K01-A03",
+      "target": "B01-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S02-K02-A03",
+      "target": "B01-S02-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S02-K03-A02",
+      "target": "B01-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S03-K01-A03",
+      "target": "B01-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S03-K02-A03",
+      "target": "B01-S03-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S03-K03-A02",
+      "target": "B01-S04-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S04-K01-A03",
+      "target": "B01-S04-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S04-K02-A02",
+      "target": "B01-S05-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S05-K01-A03",
+      "target": "B01-S05-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S05-K02-A03",
+      "target": "B01-S06-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S06-K01-A03",
+      "target": "B01-S06-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S01-K01-A03",
+      "target": "B02-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S01-K02-A02",
+      "target": "B02-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S02-K01-A03",
+      "target": "B02-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S02-K02-A02",
+      "target": "B02-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S03-K01-A03",
+      "target": "B02-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S03-K02-A02",
+      "target": "B02-S03-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S03-K03-A02",
+      "target": "B02-S04-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B02-S04-K01-A03",
+      "target": "B02-S04-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S01-K01-A03",
+      "target": "B03-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S01-K02-A02",
+      "target": "B03-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S02-K01-A02",
+      "target": "B03-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S02-K02-A02",
+      "target": "B03-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S03-K01-A03",
+      "target": "B03-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S03-K02-A02",
+      "target": "B03-S03-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B03-S03-K03-A02",
+      "target": "B03-S04-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S01-K01-A03",
+      "target": "B04-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S01-K02-A02",
+      "target": "B04-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S02-K01-A03",
+      "target": "B04-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S02-K02-A03",
+      "target": "B04-S02-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S02-K03-A02",
+      "target": "B04-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S03-K01-A03",
+      "target": "B04-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S03-K02-A03",
+      "target": "B04-S04-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S04-K01-A02",
+      "target": "B04-S04-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B04-S04-K02-A03",
+      "target": "B04-S05-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S01-K01-A03",
+      "target": "B05-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S01-K02-A02",
+      "target": "B05-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S02-K01-A03",
+      "target": "B05-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S02-K02-A02",
+      "target": "B05-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S03-K01-A03",
+      "target": "B05-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S03-K02-A02",
+      "target": "B05-S04-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B05-S04-K01-A02",
+      "target": "B05-S04-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S01-K01-A02",
+      "target": "B06-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S01-K02-A02",
+      "target": "B06-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S02-K01-A03",
+      "target": "B06-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S02-K02-A02",
+      "target": "B06-S02-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S02-K03-A02",
+      "target": "B06-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S03-K01-A03",
+      "target": "B06-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S03-K02-A02",
+      "target": "B06-S04-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B06-S04-K01-A02",
+      "target": "B06-S04-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B07-S01-K01-A03",
+      "target": "B07-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B07-S01-K02-A02",
+      "target": "B07-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B07-S02-K01-A02",
+      "target": "B07-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S01-K01-A03",
+      "target": "B08-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S01-K02-A02",
+      "target": "B08-S01-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S01-K03-A02",
+      "target": "B08-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S02-K01-A03",
+      "target": "B08-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S02-K02-A02",
+      "target": "B08-S02-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S02-K03-A02",
+      "target": "B08-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S03-K01-A02",
+      "target": "B08-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B08-S03-K02-A02",
+      "target": "B08-S03-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S01-K01-A02",
+      "target": "B09-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S01-K02-A03",
+      "target": "B09-S01-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S01-K03-A02",
+      "target": "B09-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S02-K01-A02",
+      "target": "B09-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S02-K02-A02",
+      "target": "B09-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S03-K01-A02",
+      "target": "B09-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B09-S03-K02-A02",
+      "target": "B09-S03-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S01-K01-A03",
+      "target": "B10-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S01-K02-A02",
+      "target": "B10-S01-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S01-K03-A02",
+      "target": "B10-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S02-K01-A02",
+      "target": "B10-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S02-K02-A02",
+      "target": "B10-S02-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S02-K03-A02",
+      "target": "B10-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B10-S03-K01-A02",
+      "target": "B10-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B11-S01-K01-A03",
+      "target": "B11-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B11-S01-K02-A02",
+      "target": "B11-S01-K03-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B11-S01-K03-A02",
+      "target": "B11-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B11-S02-K01-A03",
+      "target": "B11-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B11-S02-K02-A02",
+      "target": "B11-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B11-S03-K01-A02",
+      "target": "B11-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "B01-S01-K01-A01",
+      "target": "B01-S01-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S01-K02-A01",
+      "target": "B01-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S03-K03-A01",
+      "target": "B01-S03-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S03-K03-A01",
+      "target": "B04-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S04-K02-A01",
+      "target": "B01-S04-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S06-K02-A01",
+      "target": "B11-S03-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S06-K02-A01",
+      "target": "B11-S03-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B02-S02-K01-A01",
+      "target": "B04-S05-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B02-S02-K02-A01",
+      "target": "B02-S02-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B02-S03-K03-A01",
+      "target": "B02-S03-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B02-S04-K01-A01",
+      "target": "B01-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B03-S01-K01-A01",
+      "target": "B01-S04-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B03-S01-K01-A01",
+      "target": "B04-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B03-S01-K02-A01",
+      "target": "B03-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B03-S03-K01-A01",
+      "target": "B04-S02-K03-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B03-S03-K02-A01",
+      "target": "B03-S03-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B04-S02-K02-A01",
+      "target": "B03-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B04-S02-K03-A01",
+      "target": "B09-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B04-S02-K03-A01",
+      "target": "B03-S03-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B05-S01-K02-A01",
+      "target": "B01-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B05-S02-K01-A01",
+      "target": "B03-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B05-S04-K01-A01",
+      "target": "B04-S01-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B06-S02-K01-A01",
+      "target": "B04-S01-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B06-S02-K01-A01",
+      "target": "B01-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B06-S02-K01-A01",
+      "target": "B04-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B06-S02-K02-A01",
+      "target": "B04-S01-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B07-S02-K01-A01",
+      "target": "B03-S03-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B08-S01-K01-A01",
+      "target": "B04-S04-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B08-S01-K01-A01",
+      "target": "B08-S01-K02-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B08-S02-K03-A01",
+      "target": "B11-S02-K02-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B08-S03-K02-A01",
+      "target": "B04-S04-K02-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B08-S03-K03-A01",
+      "target": "B02-S04-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B09-S01-K01-A01",
+      "target": "B04-S02-K03-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B09-S01-K02-A01",
+      "target": "B04-S02-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B09-S01-K03-A01",
+      "target": "B09-S03-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B09-S03-K01-A01",
+      "target": "B09-S01-K03-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B09-S03-K02-A01",
+      "target": "B10-S03-K02-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S01-K01-A01",
+      "target": "B10-S01-K03-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S01-K02-A01",
+      "target": "B10-S01-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S01-K03-A01",
+      "target": "B10-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S02-K01-A01",
+      "target": "B10-S01-K03-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S02-K03-A01",
+      "target": "B04-S01-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S02-K03-A01",
+      "target": "B02-S04-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B10-S03-K02-A01",
+      "target": "B08-S02-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B11-S02-K02-A01",
+      "target": "B08-S02-K03-A01",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "B11-S03-K01-A01",
+      "target": "B11-S03-K02-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B11-S03-K02-A01",
+      "target": "B11-S03-K01-A01",
+      "type": "analogy",
+      "weight": 0.68
+    },
+    {
+      "source": "B01-S01-K02-A01",
+      "target": "B01-S01-K01-A01",
+      "type": "contrast",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S01-K02-A01",
+      "target": "B01-S04-K01-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S01-K01-A01",
+      "target": "B01-S06-K01-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S05-K01-A01",
+      "target": "B02-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B02-S04-K01-A01",
+      "target": "B01-S02-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S03-K01-A01",
+      "target": "B08-S02-K01-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S03-K02-A01",
+      "target": "B10-S01-K01-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B06-S02-K03-A01",
+      "target": "B04-S01-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B06-S02-K02-A01",
+      "target": "B02-S01-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B01-S06-K02-A01",
+      "target": "B11-S03-K02-A01",
+      "type": "analogy",
+      "weight": 0.7
+    },
+    {
+      "source": "B05-S02-K02-A01",
+      "target": "B04-S01-K02-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B05-S01-K01-A01",
+      "target": "B03-S01-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B05-S03-K01-A01",
+      "target": "B01-S05-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B07-S02-K01-A01",
+      "target": "B04-S03-K01-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B07-S01-K01-A01",
+      "target": "B04-S03-K02-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B01-S05-K02-A01",
+      "target": "B01-S05-K01-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B01-S03-K03-A01",
+      "target": "B01-S03-K01-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B01-S02-K01-A01",
+      "target": "B01-S02-K02-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S01-K01-A01",
+      "target": "B04-S01-K02-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B02-S03-K01-A01",
+      "target": "B02-S03-K02-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B02-S03-K01-A01",
+      "target": "B02-S03-K03-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B05-S03-K02-A01",
+      "target": "B01-S05-K02-A01",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "B01-S04-K01-A01",
+      "target": "B01-S04-K02-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B02-S02-K01-A01",
+      "target": "B02-S02-K02-A01",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "B04-S02-K01-A01",
+      "target": "B01-S03-K03-A01",
+      "type": "contains",
+      "weight": 0.7
+    }
+  ]
+}

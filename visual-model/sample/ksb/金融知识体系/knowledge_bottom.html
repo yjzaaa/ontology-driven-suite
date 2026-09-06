@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>金融知识体系底层知识图谱</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#0f1420;font-family:"Microsoft YaHei",Arial,sans-serif;color:#e8eaf6;}
+#bar{position:fixed;left:0;right:0;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 14px;background:#151c2b;border-bottom:1px solid #29324a;box-sizing:border-box;flex-wrap:wrap;}
+#bar select,#bar button{background:#202a3d;color:#e8eaf6;border:1px solid #4b5b80;border-radius:4px;padding:5px 8px;}
+#c{width:100%;height:100vh;}
+#popup{position:fixed;right:18px;top:68px;width:330px;max-height:72vh;overflow:auto;background:#1b2233;color:#e8eaf6;padding:14px;border-radius:8px;box-shadow:0 4px 20px #0008;display:none;font-size:13px;line-height:1.6;}
+#popup h4{margin:0 0 6px;color:#80d8ff;}
+#stats{position:fixed;left:18px;bottom:18px;width:320px;background:#1b2233cc;border:1px solid #35415e;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.6;color:#cfd6ea;}
+.muted{color:#9aa6c7;}
+</style>
+</head>
+<body>
+<div id="bar">
+  <b>金融知识体系 · 底层分组聚类知识图谱</b>
+  <label>关系筛选：<select id="relFilter" onchange="render()">
+    <option value="all">全部</option><option value="depends">depends 依赖</option><option value="causes">causes 因果</option>
+    <option value="contains">contains 包含</option><option value="analogy">analogy 类比</option><option value="contrast">contrast 对比</option><option value="evolved">evolved 演进</option>
+  </select></label>
+  <button onclick="showHubs()">Top 10 枢纽</button>
+  <button onclick="resetView()">重置视图</button>
+  <span class="muted">点击节点查看定义与一阶邻居；节点大小按重要度和枢纽度缩放。</span>
+</div>
+<div id="c"></div>
+<div id="popup"><h4 id="pt"></h4><div id="pd"></div></div>
+<div id="stats"></div>
+<script>
+const KSB_PALETTE={
+  branches:['#3f51b5','#009688','#ff9800','#e91e63','#4caf50','#00bcd4','#9c27b0','#ff5722'],
+  relation:{contains:'#8896c7',depends:'#4f9bff',causes:'#ff5252',analogy:'#43a047',contrast:'#ffa726',evolved:'#ab47bc'}
+};
+const categories=['金融体系与市场','货币银行与中央银行','公司金融','投资与资产定价','金融工具与资产类别','风险管理','金融科技与数据','监管伦理与个人财务'].map((name,i)=>({name,itemStyle:{color:KSB_PALETTE.branches[i]}}));
+const nodeRows=[
+['N01','资金盈余/短缺',0,'资金供给者与资金需求者之间的差额，是金融活动产生的起点。',0.78,0.61,46],
+['N02','金融中介',0,'银行、券商、基金等连接资金供需并转换期限、风险和信息的机构。',0.86,0.72,52],
+['N03','一级市场',0,'证券首次发行和融资发生的市场。',0.68,0.46,39],
+['N04','二级市场',0,'已发行证券交易转让的市场，提供流动性和价格发现。',0.76,0.64,47],
+['N05','价格发现',0,'市场交易将信息反映到资产价格中的过程。',0.82,0.70,51],
+['N06','流动性',0,'资产以较低成本快速成交或融资的能力。',0.84,0.75,52],
+['N07','清算结算',0,'交易完成后的确认、交收和资金证券划转流程。',0.64,0.45,38],
+['N08','市场效率',0,'价格反映可得信息的程度。',0.72,0.58,44],
+['N09','货币职能',1,'货币作为计价单位、交易媒介和价值储藏的功能。',0.80,0.56,46],
+['N10','存款创造',1,'商业银行通过存贷款活动扩张广义货币的机制。',0.78,0.62,47],
+['N11','商业银行',1,'吸收存款、发放贷款、提供支付和信用创造功能的金融机构。',0.90,0.78,55],
+['N12','资产负债管理',1,'银行管理资产、负债、期限、利率和流动性风险的体系。',0.74,0.59,45],
+['N13','央行政策利率',1,'中央银行影响短期市场利率和金融条件的关键政策价格。',0.90,0.82,56],
+['N14','公开市场操作',1,'央行买卖证券以调节流动性和利率的操作。',0.76,0.58,45],
+['N15','支付系统',1,'使资金在个人、企业和机构之间安全转移的基础设施。',0.72,0.50,42],
+['N16','金融稳定',1,'金融体系能够持续提供支付、融资和风险管理功能的状态。',0.84,0.70,51],
+['N17','财务报表',2,'资产负债表、利润表和现金流量表提供企业经营与财务信息。',0.82,0.64,49],
+['N18','自由现金流',2,'企业可供资本提供者分配的经营现金流。',0.84,0.68,50],
+['N19','净现值',2,'未来现金流按资本成本折现后减去初始投资的价值。',0.90,0.76,54],
+['N20','内部收益率',2,'使项目净现值等于零的折现率。',0.72,0.48,41],
+['N21','加权平均资本成本',2,'企业债务和股权资金成本按资本结构加权后的折现率。',0.88,0.73,53],
+['N22','资本结构',2,'企业债务、股权及其他融资工具的组合。',0.78,0.62,47],
+['N23','股利政策',2,'企业在分红、回购和留存收益之间的分配决策。',0.58,0.35,33],
+['N24','并购估值',2,'评估并购目标价值、协同效应和交易结构的方法。',0.68,0.45,39],
+['N25','风险收益权衡',3,'承担更高不确定性通常要求更高预期收益补偿。',0.95,0.88,60],
+['N26','投资组合',3,'由多种资产构成的投资集合。',0.88,0.78,55],
+['N27','分散化',3,'通过持有不同资产降低单一资产或行业风险。',0.90,0.82,56],
+['N28','系统性风险',3,'无法通过分散化完全消除的市场整体风险。',0.86,0.74,53],
+['N29','CAPM',3,'用系统性风险解释资产预期收益的经典模型。',0.76,0.62,47],
+['N30','因子模型',3,'用多个风险或风格因子解释资产收益差异的模型。',0.72,0.56,44],
+['N31','有效市场假说',3,'认为资产价格在不同程度上反映可得信息的理论。',0.72,0.52,43],
+['N32','行为金融',3,'研究心理偏差和非理性行为如何影响金融决策与价格。',0.70,0.48,41],
+['N33','股票',4,'代表公司所有权和剩余收益索取权的证券。',0.82,0.64,49],
+['N34','债券',4,'发行人承诺按约定支付利息和本金的债务工具。',0.84,0.68,50],
+['N35','久期',4,'衡量债券价格对利率变化敏感度的指标。',0.74,0.60,45],
+['N36','收益率曲线',4,'不同期限债券收益率的期限结构。',0.76,0.62,47],
+['N37','基金',4,'集合投资者资金并由专业机构管理的投资载体。',0.76,0.54,44],
+['N38','ETF',4,'可在交易所交易、通常跟踪指数或资产组合的基金。',0.72,0.52,43],
+['N39','期货',4,'约定未来按指定价格买卖标的资产的标准化合约。',0.68,0.50,41],
+['N40','期权',4,'赋予持有人在未来按约定价格买入或卖出标的资产权利的合约。',0.70,0.54,43],
+['N41','市场风险',5,'市场价格、利率、汇率或波动率变化导致损失的风险。',0.84,0.74,52],
+['N42','信用风险',5,'交易对手或借款人违约造成损失的风险。',0.84,0.72,51],
+['N43','流动性风险',5,'无法及时以合理价格成交或融资的风险。',0.82,0.70,50],
+['N44','操作风险',5,'流程、人员、系统或外部事件造成损失的风险。',0.72,0.50,42],
+['N45','VaR',5,'在给定置信度和期限下潜在最大损失的统计度量。',0.72,0.56,44],
+['N46','压力测试',5,'用极端但可能的情景评估损失和韧性。',0.78,0.62,47],
+['N47','对冲',5,'使用金融工具降低已有风险敞口。',0.78,0.66,49],
+['N48','风险限额',5,'对交易、投资或业务风险敞口设置的边界。',0.70,0.50,42],
+['N49','电子支付',6,'通过数字渠道完成资金转移和交易确认。',0.72,0.50,42],
+['N50','数字银行',6,'以线上渠道和数据系统提供银行服务的模式。',0.68,0.46,39],
+['N51','信用评分',6,'用数据和模型估计借款人违约概率或信用质量。',0.76,0.60,46],
+['N52','量化交易',6,'使用数据、模型和程序执行投资或交易策略。',0.72,0.54,43],
+['N53','智能投顾',6,'基于算法为用户提供资产配置或投资建议的系统。',0.64,0.42,37],
+['N54','区块链',6,'以分布式账本记录和验证交易的数据结构与网络机制。',0.66,0.46,39],
+['N55','数据治理',6,'管理数据质量、权限、血缘、安全和合规使用的体系。',0.82,0.68,50],
+['N56','模型风险',6,'模型设计、数据、实现或使用不当导致决策错误的风险。',0.78,0.64,48],
+['N57','投资者保护',7,'通过规则、教育和救济机制保护投资者免受欺诈和不公平行为。',0.82,0.62,48],
+['N58','信息披露',7,'向市场和投资者公开重大、准确、及时的信息。',0.86,0.74,53],
+['N59','适当性原则',7,'金融产品和服务应与客户目标、风险承受能力和经验相匹配。',0.78,0.58,46],
+['N60','反洗钱',7,'识别并阻断犯罪资金进入金融体系的制度和流程。',0.74,0.52,43],
+['N61','预算管理',7,'跟踪收入、支出和储蓄，形成可持续财务计划。',0.72,0.50,42],
+['N62','应急金',7,'用于覆盖突发支出的高流动性安全资金。',0.76,0.52,44],
+['N63','保险',7,'通过风险转移机制覆盖低频高损失事件。',0.70,0.46,40],
+['N64','退休规划',7,'围绕长期现金流、资产配置和风险保障安排养老资金。',0.78,0.58,46]
+];
+const edgeRows=[
+['N01','N02','causes',0.82],['N02','N03','contains',0.58],['N03','N04','evolved',0.62],['N04','N05','causes',0.78],['N04','N06','causes',0.80],['N07','N06','depends',0.66],['N05','N08','depends',0.72],['N58','N08','causes',0.76],
+['N09','N10','depends',0.70],['N10','N11','depends',0.78],['N11','N12','contains',0.70],['N13','N14','contains',0.62],['N14','N06','causes',0.76],['N13','N36','causes',0.82],['N15','N49','depends',0.72],['N16','N43','depends',0.70],['N11','N16','depends',0.76],
+['N17','N18','depends',0.82],['N18','N19','depends',0.88],['N21','N19','depends',0.86],['N19','N20','analogy',0.56],['N22','N21','depends',0.78],['N21','N24','depends',0.68],['N18','N23','depends',0.56],
+['N25','N26','depends',0.86],['N26','N27','contains',0.84],['N28','N29','depends',0.84],['N29','N30','evolved',0.62],['N31','N05','depends',0.62],['N32','N31','contrast',0.58],['N27','N62','analogy',0.44],
+['N33','N25','depends',0.72],['N34','N35','contains',0.74],['N36','N34','depends',0.76],['N35','N41','depends',0.78],['N37','N27','depends',0.64],['N38','N37','contains',0.72],['N39','N47','depends',0.70],['N40','N47','depends',0.72],['N39','N40','analogy',0.46],
+['N41','N45','depends',0.68],['N42','N51','depends',0.74],['N43','N06','depends',0.82],['N44','N56','analogy',0.50],['N45','N46','analogy',0.62],['N46','N48','depends',0.70],['N47','N41','depends',0.72],['N48','N43','depends',0.62],
+['N49','N15','depends',0.70],['N50','N11','evolved',0.54],['N51','N42','depends',0.78],['N52','N30','depends',0.64],['N53','N26','depends',0.70],['N54','N07','analogy',0.46],['N55','N56','depends',0.82],['N55','N51','depends',0.76],['N56','N52','depends',0.68],
+['N57','N58','depends',0.74],['N58','N33','depends',0.58],['N59','N40','depends',0.68],['N59','N53','depends',0.62],['N60','N49','depends',0.62],['N61','N62','depends',0.72],['N62','N26','depends',0.56],['N63','N43','analogy',0.42],['N64','N27','depends',0.72],['N64','N63','depends',0.58],
+['N13','N21','causes',0.74],['N36','N21','depends',0.66],['N25','N41','contains',0.72],['N27','N37','depends',0.58],['N06','N43','causes',0.64],['N58','N57','causes',0.68],['N55','N60','depends',0.54],['N52','N41','depends',0.62],['N24','N33','depends',0.52],['N22','N34','depends',0.50],['N31','N52','contrast',0.46],['N32','N61','depends',0.40]
+];
+const nodes=nodeRows.map(r=>({id:r[0],name:r[1],category:r[2],value:r[3],importance:r[4],degreeScore:r[5],symbolSize:r[6],draggable:true}));
+const nameById=Object.fromEntries(nodes.map(n=>[n.id,n.name]));
+function buildLinks(filter){
+  return edgeRows.filter(e=>filter==='all'||e[2]===filter).map(e=>({
+    source:e[0],target:e[1],type:e[2],weight:e[3],
+    lineStyle:{color:KSB_PALETTE.relation[e[2]],width:e[3]*4+1,type:e[2]==='causes'?'dashed':(e[2]==='analogy'?'dotted':'solid'),opacity:0.72},
+    symbol:e[2]==='depends'||e[2]==='causes'||e[2]==='evolved'?['none','arrow']:['none','none'],
+    label:e[2]==='evolved'?{show:true,formatter:'演进',color:KSB_PALETTE.relation.evolved,fontSize:10}:undefined
+  }));
+}
+const chart=echarts.init(document.getElementById('c'));
+function render(){
+  const filter=document.getElementById('relFilter').value;
+  const links=buildLinks(filter);
+  chart.setOption({
+    color:KSB_PALETTE.branches,
+    title:{text:'最底层 · 金融知识网络图谱',subtext:'64 个核心知识点 / 分组聚类 / 关系筛选 / 局部聚焦',left:'center',top:48,textStyle:{color:'#e8eaf6'},subtextStyle:{color:'#9aa6c7'}},
+    tooltip:{formatter:p=>p.dataType==='node'?`${p.data.name}<br>${p.data.value}<br>重要度：${p.data.importance} ｜ 枢纽度：${p.data.degreeScore}`:`${nameById[p.data.source]} → ${nameById[p.data.target]}<br>${p.data.type} / 权重 ${p.data.weight}`},
+    legend:[{data:categories.map(c=>c.name),top:94,textStyle:{color:'#e8eaf6'},type:'scroll'}],
+    series:[{type:'graph',layout:'force',top:128,bottom:20,roam:true,data:nodes,links,categories,label:{show:true,color:'#e8eaf6',fontSize:11,formatter:p=>p.data.symbolSize>=50?p.data.name:(p.data.name.length>6?p.data.name.slice(0,6)+'…':p.data.name)},edgeSymbol:['none','none'],force:{repulsion:280,edgeLength:[90,170],gravity:0.08},emphasis:{focus:'adjacency'},lineStyle:{curveness:0.12}}]
+  },true);
+  updateStats(links);
+}
+function updateStats(links){
+  const deg=Object.fromEntries(nodes.map(n=>[n.id,0]));
+  links.forEach(l=>{deg[l.source]++;deg[l.target]++;});
+  const avg=(links.length*2/nodes.length).toFixed(2);
+  const islands=Object.values(deg).filter(x=>x===0).length;
+  const hubs=nodes.slice().sort((a,b)=>b.degreeScore-a.degreeScore).slice(0,10).map(n=>n.name).join('、');
+  document.getElementById('stats').innerHTML=`节点总数：${nodes.length}<br>当前边数：${links.length}<br>平均度：${avg}<br>孤岛节点：${islands}<br>Top 10 枢纽：${hubs}`;
+}
+chart.on('click',p=>{
+  if(p.dataType!=='node')return;
+  const id=p.data.id;
+  const neigh=edgeRows.filter(e=>e[0]===id||e[1]===id).map(e=>`${nameById[e[0]]} → ${nameById[e[1]]}（${e[2]}, ${e[3]}）`);
+  document.getElementById('pt').textContent=p.data.name;
+  document.getElementById('pd').innerHTML=`${p.data.value}<br><br><b>所属主干：</b>${categories[p.data.category].name}<br><b>重要度：</b>${p.data.importance}<br><b>枢纽度：</b>${p.data.degreeScore}<br><br><b>一阶关系：</b><br>${neigh.length?neigh.join('<br>'):'无'}`;
+  document.getElementById('popup').style.display='block';
+});
+function showHubs(){document.getElementById('relFilter').value='all';render();document.getElementById('popup').style.display='block';document.getElementById('pt').textContent='Top 10 枢纽节点';document.getElementById('pd').innerHTML=nodes.slice().sort((a,b)=>b.degreeScore-a.degreeScore).slice(0,10).map((n,i)=>`${i+1}. ${n.name}：${n.value}`).join('<br>');}
+function resetView(){document.getElementById('relFilter').value='all';render();}
+window.addEventListener('resize',()=>chart.resize());
+render();
+</script>
+</body>
+</html>

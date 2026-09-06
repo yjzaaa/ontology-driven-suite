@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "本体驱动 Agentic 应用架构（Human-in-the-Loop）",
+    "output": "ontology-agent-arch.html",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 820]
+  },
+  "components": [
+    { "id": "users", "type": "external", "label": "业务人员", "sublabel": "人 · 监督与审批", "pos": [60, 70], "size": [240, 64] },
+    { "id": "webui", "type": "frontend", "label": "工作台前端", "sublabel": "人操作 · Agent 对话 · 审批中心", "pos": [60, 250], "size": [240, 72] },
+    { "id": "model", "type": "database", "label": "本体模型", "sublabel": "M1~M7 + MU（YAML）", "pos": [60, 700], "size": [240, 64], "tag": "唯一真相源" },
+    { "id": "agent", "type": "external", "label": "Agent 底座（可插拔）", "sublabel": "DSH / LangChain / AutoGen / AgentScope", "pos": [980, 70], "size": [240, 64], "tag": "MCP client" },
+    { "id": "mcp", "type": "messagebus", "label": "MCP Server", "sublabel": "本体工具协议（标准）", "pos": [980, 240], "size": [240, 66] },
+    { "id": "gate", "type": "security", "label": "HITL 审批网关", "sublabel": "风险分级 · 高风险挂起", "pos": [980, 400], "size": [240, 66], "tag": "B 方案" },
+    { "id": "runtime", "type": "backend", "label": "本体运行时", "sublabel": "对象 · 行为 · 规则 · 权限 引擎", "pos": [510, 480], "size": [240, 72] },
+    { "id": "db", "type": "database", "label": "业务数据", "sublabel": "SQLite（受控写回）", "pos": [980, 700], "size": [240, 64] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "本体平台（技术中立核心）", "wraps": ["mcp", "gate", "runtime", "model", "db"] }
+  ],
+  "connections": [
+    { "id": "users-webui", "from": "users", "to": "webui", "label": "手动操作", "variant": "emphasis", "labelDy": 24 },
+    { "id": "webui-runtime", "from": "webui", "to": "runtime", "label": "人通道 · 行为 API", "variant": "emphasis" },
+    { "id": "agent-mcp", "from": "agent", "to": "mcp", "label": "MCP 调用", "labelDy": 24 },
+    { "id": "mcp-gate", "from": "mcp", "to": "gate", "label": "工具调用", "labelDy": 24 },
+    { "id": "gate-runtime", "from": "gate", "to": "runtime", "label": "放行 / 审批后执行", "variant": "security" },
+    { "id": "gate-webui", "from": "gate", "to": "webui", "label": "高风险挂起审批", "variant": "dashed" },
+    { "id": "runtime-model", "from": "runtime", "to": "model", "label": "读取模型" },
+    { "id": "runtime-db", "from": "runtime", "to": "db", "label": "受控写回", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "人机双通道", "items": ["业务人员经工作台前端手动操作全部功能", "Agent 经 MCP 自主调用本体行为", "两通道汇入同一本体运行时"] },
+    { "dot": "rose", "title": "Human-in-the-Loop", "items": ["审批网关按风险分级", "高风险动作挂起 → 人审批 → 才执行", "普通动作直通，全量审计日志"] },
+    { "dot": "emerald", "title": "底座可插拔", "items": ["MCP 是标准协议，与具体 agent 框架解耦", "DSH / LangChain / AutoGen / AgentScope 均可接入", "本体模型是唯一真相源，不随框架变化"] }
+  ]
+}

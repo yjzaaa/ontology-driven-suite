@@ -1,0 +1,167 @@
+id: SCN-CHURN-001
+name: 客户流失分析
+icon: 👥
+description: 识别流失用户群体特征并给出召回策略
+intent: 用户希望了解用户流失情况，识别高风险流失群体
+
+key_metrics:
+  - MTR-USR-001   # 新用户数
+  - MTR-USR-003   # 活跃用户数
+  - MTR-USR-004   # 复购率
+  - MTR-USR-006   # 用户流失率
+
+triggers:
+  - 流失
+  - 客户流失
+  - 用户流失
+  - 复购
+  - 留存
+
+steps:
+  - id: S1
+    type: SQL
+    description: 月度活跃用户、新用户、回访用户趋势
+    sql_intent: |
+      按月统计：
+      - 新用户数（首次下单成功且 status NOT IN (5) 的月份）
+      - 活跃用户数（该月有下单的用户去重）
+      覆盖近 12 个月。
+      列：period, new_users, active_users
+    fallback_sql: |
+      WITH first_order AS (
+        SELECT buyer_id, MIN(date(gmt_create)) AS first_dt
+        FROM t_order WHERE status NOT IN (5)
+        GROUP BY buyer_id
+      ),
+      monthly_active AS (
+        SELECT strftime('%Y-%m', gmt_create) AS period,
+               buyer_id
+        FROM t_order WHERE status NOT IN (5) GROUP BY 1, 2
+      )
+      SELECT
+        ma.period,
+        COUNT(DISTINCT CASE WHEN strftime('%Y-%m', fo.first_dt) = ma.period
+                            THEN ma.buyer_id END) AS new_users,
+        COUNT(DISTINCT ma.buyer_id) AS active_users
+      FROM monthly_active ma
+      LEFT JOIN first_order fo ON fo.buyer_id = ma.buyer_id
+      GROUP BY ma.period
+      ORDER BY ma.period
+
+  - id: S2
+    type: SQL
+    description: 用户最近 30 天活跃度分布（识别流失候选）
+    sql_intent: |
+      为每个曾下单用户计算"距今最后下单天数 (recency_days)"、"历史订单数 (frequency)"、
+      "历史 GMV (monetary)"。按距今天数分桶：0-30 / 31-90 / 91-180 / >180。
+      列：bucket, user_count, avg_monetary
+    fallback_sql: |
+      WITH last_order AS (
+        SELECT
+          buyer_id,
+          CAST(julianday('2026-05-17') - julianday(MAX(date(gmt_create))) AS INTEGER) AS recency_days,
+          COUNT(*) AS frequency,
+          ROUND(SUM(payment_amount), 2) AS monetary
+        FROM t_order WHERE status NOT IN (5)
+        GROUP BY buyer_id
+      )
+      SELECT
+        CASE
+          WHEN recency_days <= 30 THEN '1) 0-30天 (活跃)'
+          WHEN recency_days <= 90 THEN '2) 31-90天 (一般)'
+          WHEN recency_days <= 180 THEN '3) 91-180天 (沉睡)'
+          ELSE '4) >180天 (流失)'
+        END AS bucket,
+        COUNT(*) AS user_count,
+        ROUND(AVG(monetary), 2) AS avg_monetary
+      FROM last_order
+      GROUP BY bucket
+      ORDER BY bucket
+
+  - id: S3
+    type: SQL
+    description: 流失候选用户的画像（按等级、注册渠道、地区）
+    sql_intent: |
+      关联 t_user 表，统计"距今超过 30 天未下单的曾购用户"按 user_level / register_channel /
+      province 的分布。列：dimension_name, dimension_value, user_count。
+    fallback_sql: |
+      WITH last_order AS (
+        SELECT buyer_id,
+               CAST(julianday('2026-05-17') - julianday(MAX(date(gmt_create))) AS INTEGER) AS recency_days
+        FROM t_order WHERE status NOT IN (5)
+        GROUP BY buyer_id
+      ),
+      churn_users AS (
+        SELECT u.* FROM t_user u
+        JOIN last_order lo ON lo.buyer_id = u.user_id
+        WHERE lo.recency_days > 30
+      )
+      SELECT '用户等级' AS dimension_name, user_level AS dimension_value, COUNT(*) AS user_count
+      FROM churn_users GROUP BY user_level
+      UNION ALL
+      SELECT '注册渠道', register_channel, COUNT(*) FROM churn_users GROUP BY register_channel
+      UNION ALL
+      SELECT '所在地区', province, COUNT(*) FROM churn_users GROUP BY province
+      ORDER BY dimension_name, user_count DESC
+
+  - id: S4
+    type: SQL
+    description: RFM 输入数据（每个用户的 R / F / M 值）
+    sql_intent: |
+      为每个曾购用户输出 user_id, recency_days, frequency (历史订单数), monetary (历史 GMV)。
+      用于后续 RFM 分层算法。仅保留前 800 个用户避免数据过大。
+    fallback_sql: |
+      SELECT
+        buyer_id AS user_id,
+        CAST(julianday('2026-05-17') - julianday(MAX(date(gmt_create))) AS INTEGER) AS recency_days,
+        COUNT(*) AS frequency,
+        ROUND(SUM(payment_amount), 2) AS monetary
+      FROM t_order WHERE status NOT IN (5)
+      GROUP BY buyer_id
+      ORDER BY monetary DESC
+      LIMIT 800
+
+  - id: S5
+    type: STAT
+    description: RFM 分层（按 R/F/M 评分）
+    algorithm: rfm_score
+    input_step: S4
+    params:
+      r_key: recency_days
+      f_key: frequency
+      m_key: monetary
+
+  - id: S6
+    type: SQL
+    description: 复购率月度趋势
+    sql_intent: |
+      按月统计：当月有 ≥2 笔有效订单的用户数 / 当月下单用户总数 = 复购率
+      列：period, repurchase_users, total_users, repurchase_rate
+    fallback_sql: |
+      SELECT
+        strftime('%Y-%m', gmt_create) AS period,
+        COUNT(DISTINCT CASE WHEN n >= 2 THEN buyer_id END) AS repurchase_users,
+        COUNT(DISTINCT buyer_id) AS total_users,
+        ROUND(100.0 * COUNT(DISTINCT CASE WHEN n >= 2 THEN buyer_id END)
+              / NULLIF(COUNT(DISTINCT buyer_id), 0), 2) AS repurchase_rate
+      FROM (
+        SELECT buyer_id, gmt_create,
+               COUNT(*) OVER (PARTITION BY buyer_id, strftime('%Y-%m', gmt_create)) AS n
+        FROM t_order WHERE status NOT IN (5)
+      )
+      WHERE gmt_create >= date('2025-05-17')
+      GROUP BY period
+      ORDER BY period
+
+  - id: S7
+    type: AI_REASONING
+    description: AI 分析用户流失原因 + 召回策略
+    task: |
+      综合所有数据：
+      1) 流失规模量化：30 天以上未下单的用户占曾购用户多少？是否有显著上升趋势？
+      2) 流失用户画像：哪类用户（等级 / 渠道 / 地区）流失风险最高？为什么？
+      3) RFM 分层结果：哪几类用户（高 LTV 但近期沉默？）最值得优先召回？
+      4) 复购率趋势：是否在下行？背后可能的业务原因？
+      5) 给出 3-4 条召回策略建议（含目标用户群、动作、预期 ROI、责任团队、优先级）
+      展示思维链：先观察数据，再归纳特征，最后给出策略推断。
+    input_steps: [S1, S2, S3, S5, S6]

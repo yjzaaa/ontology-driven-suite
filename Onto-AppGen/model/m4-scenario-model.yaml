@@ -1,0 +1,48 @@
+domain: 本体工作台 V3 应用生成机制
+model_type: SCENARIO
+use_cases:
+  - actors:
+      - ACTOR-LLM
+      - ACTOR-EXEC
+      - ACTOR-RENDERER
+    id: UC-SCHEMA-TO-APP
+    name: 模型→Schema→校验→应用 闭环
+    postconditions:
+      - App Schema 已生成并通过校验，应用已启动
+    preconditions:
+      - 本体模型 M1~M5+ME 已落盘
+    primaryFlow:
+      - behaviorRef: Schema_Generate
+        stepId: S01
+        stepType: BEHAVIOR_CALL
+      - eventRef: Schema.Generated
+        stepId: S02
+        stepType: EVENT_EMIT
+      - behaviorRef: Schema_Validate
+        stepId: S03
+        stepType: BEHAVIOR_CALL
+      - eventRef: Schema.Validated
+        stepId: S04
+        stepType: EVENT_EMIT
+      - behaviorRef: API_GenerateCRUD
+        stepId: S05
+        stepType: BEHAVIOR_CALL
+      - behaviorRef: API_GenerateBehavior
+        stepId: S06
+        stepType: BEHAVIOR_CALL
+      - behaviorRef: Renderer_Render
+        stepId: S07
+        stepType: BEHAVIOR_CALL
+      - behaviorRef: App_Generate
+        stepId: S08
+        stepType: BEHAVIOR_CALL
+      - eventRef: App.Generated
+        stepId: S09
+        stepType: EVENT_EMIT
+      - behaviorRef: App_Run
+        stepId: S10
+        stepType: BEHAVIOR_CALL
+      - eventRef: App.Started
+        stepId: S11
+        stepType: EVENT_EMIT
+    qualityAnnotation: QA-SCHEMA-TO-APP

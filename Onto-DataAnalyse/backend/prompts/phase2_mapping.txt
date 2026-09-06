@@ -1,0 +1,73 @@
+你是数据建模架构师，正在生成"本体实体 → 数据库表/字段"的映射。
+
+## 数据库 Schema 文档
+{db_schema_doc}
+
+## 本批需要映射的实体（M1 节选）
+{entities_yaml}
+
+## 任务
+
+为**以上每个实体**生成与数据库表的映射配置，输出**严格的 JSON**（不要 Markdown 代码块包裹，不要解释）：
+
+```json
+{{
+  "entity_mappings": [
+    {{
+      "entity_id": "ENT-XXX-001",
+      "entity_name": "实体名",
+      "confidence": 0.95,
+      "tables": [
+        {{"table": "t_xxx", "alias": "x", "primary": true}}
+      ],
+      "field_mappings": [
+        {{
+          "ontology_field": "fieldName",
+          "ontology_label": "中文名",
+          "db_table": "t_xxx",
+          "db_column": "field_name",
+          "confidence": 1.0
+        }}
+      ],
+      "default_filter": null
+    }}
+  ]
+}}
+```
+
+## 紧凑输出规则（重要 — 节省 token）
+
+1. **省略 null 字段**：`db_expression`、`note`、`value_mapping`、`join_on`、`default_filter` 如果值为 null，**不要写出来**
+2. **只在字段需要表达式/转换时**才写 `db_expression`
+3. **只在 confidence < 0.85** 时才写 `note` 解释原因
+4. **只对枚举字段**才写 `value_mapping`（如 status 状态码 → 中文）
+5. 不要重复字段名两次（如不要写 `"db_column": "user_id", "alias_for_user_id": ...`）
+
+## 严格要求
+
+1. 必须为**本批**列出的所有实体都生成映射（不能跳过）
+2. 输出**纯 JSON**（不要 ```code block``` 包裹，不要解释文字）
+3. confidence 范围 0.5-1.0；低于 0.5 的字段直接跳过
+4. 所有 `db_table` / `db_column` 必须真实存在于 Schema 中
+5. `tables[].primary: true` 必须有且仅有一个
+
+紧凑示例（理想输出形式）：
+
+```json
+{{
+  "entity_mappings": [
+    {{
+      "entity_id": "ENT-ORD-001",
+      "entity_name": "订单",
+      "confidence": 0.95,
+      "tables": [{{"table": "t_order", "alias": "ord", "primary": true}}],
+      "field_mappings": [
+        {{"ontology_field": "orderId", "ontology_label": "订单号", "db_table": "t_order", "db_column": "order_id", "confidence": 1.0}},
+        {{"ontology_field": "status", "ontology_label": "订单状态", "db_table": "t_order", "db_column": "status", "confidence": 0.95,
+          "value_mapping": {{"1": "待付款", "2": "已付款", "5": "已取消", "6": "退款完成"}}}}
+      ],
+      "default_filter": "ord.status NOT IN (5, 6)"
+    }}
+  ]
+}}
+```

@@ -1,0 +1,813 @@
+domain: 销售合同执行管理
+model_type: REPORT
+query_reports:
+- alias: contractList
+  behaviorRef: Contract_QueryList
+  conditions:
+  - conditionId: C01
+    group: BASE
+    leftExpression: contract.contractNo
+    logicalConnector: AND
+    operator: LIKE
+    parameterRef: contractNo
+    skipWhenParameterEmpty: true
+  - conditionId: C02
+    group: BASE
+    leftExpression: contract.contractName
+    logicalConnector: AND
+    operator: LIKE
+    parameterRef: contractName
+    skipWhenParameterEmpty: true
+  - conditionId: C03
+    group: BASE
+    leftExpression: product.productType
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: productType
+    skipWhenParameterEmpty: true
+  - conditionId: C04
+    group: BASE
+    leftExpression: contract.customerId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: customerId
+    skipWhenParameterEmpty: true
+  - conditionId: C05
+    group: BASE
+    leftExpression: contract.departmentId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: departmentId
+    skipWhenParameterEmpty: true
+  - conditionId: C06
+    group: BASE
+    leftExpression: contract.ownerId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: ownerId
+    skipWhenParameterEmpty: true
+  - conditionId: C07
+    group: BASE
+    leftExpression: contract.status
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: status
+    skipWhenParameterEmpty: true
+  - conditionId: C08
+    group: BASE
+    leftExpression: contract.signDate
+    logicalConnector: AND
+    operator: GE
+    parameterRef: signDateFrom
+    skipWhenParameterEmpty: true
+  - conditionId: C09
+    group: BASE
+    leftExpression: contract.signDate
+    logicalConnector: AND
+    operator: LE
+    parameterRef: signDateTo
+    skipWhenParameterEmpty: true
+  description: 按多种业务条件模糊查找合同并进入合同详情
+  groupBy: []
+  having: []
+  id: REP-CONTRACT-LIST
+  joins:
+  - conditionExpression: contract.productId == product.productId
+    joinId: J01
+    joinType: LEFT
+    leftSource: contract
+    rightSource: product
+  - conditionExpression: contract.customerId == customer.customerId
+    joinId: J02
+    joinType: LEFT
+    leftSource: contract
+    rightSource: customer
+  - conditionExpression: contract.departmentId == department.departmentId
+    joinId: J03
+    joinType: LEFT
+    leftSource: contract
+    rightSource: department
+  - conditionExpression: contract.ownerId == employee.employeeId
+    joinId: J04
+    joinType: LEFT
+    leftSource: contract
+    rightSource: employee
+  name: 合同综合查询
+  objectType: LIST_QUERY
+  orderBy:
+  - direction: DESC
+    expression: contract.signDate
+  - direction: ASC
+    expression: contract.contractNo
+  pagination:
+    defaultPageSize: 20
+    enabled: true
+    maxPageSize: 100
+  parameters:
+  - allowedOperators:
+    - LIKE
+    dataType: String
+    label: 合同编号
+    name: contractNo
+    required: false
+    sourceField: contract.contractNo
+  - allowedOperators:
+    - LIKE
+    dataType: String
+    label: 合同名称
+    name: contractName
+    required: false
+    sourceField: contract.contractName
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 产品类型
+    name: productType
+    required: false
+    sourceField: product.productType
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 客户
+    name: customerId
+    required: false
+    sourceField: contract.customerId
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 部门
+    name: departmentId
+    required: false
+    sourceField: contract.departmentId
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 责任人
+    name: ownerId
+    required: false
+    sourceField: contract.ownerId
+  - allowedOperators:
+    - EQ
+    dataType: Enum
+    label: 管理状态
+    name: status
+    required: false
+    sourceField: contract.status
+  - allowedOperators:
+    - GE
+    dataType: Date
+    label: 签订日期起
+    name: signDateFrom
+    required: false
+    sourceField: contract.signDate
+  - allowedOperators:
+    - LE
+    dataType: Date
+    label: 签订日期止
+    name: signDateTo
+    required: false
+    sourceField: contract.signDate
+  reportOptions: null
+  resultColumns:
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同编号
+    name: contractNo
+    sortable: true
+    sourceExpression: contract.contractNo
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同名称
+    name: contractName
+    sortable: true
+    sourceExpression: contract.contractName
+  - aggregateFunction: NONE
+    dataType: String
+    label: 产品类型
+    name: productType
+    sourceExpression: product.productType
+  - aggregateFunction: NONE
+    dataType: String
+    label: 产品名称
+    name: productName
+    sourceExpression: product.productName
+  - aggregateFunction: NONE
+    dataType: String
+    label: 客户名称
+    name: customerName
+    sourceExpression: customer.customerName
+  - aggregateFunction: NONE
+    dataType: String
+    label: 所属部门
+    name: departmentName
+    sourceExpression: department.departmentName
+  - aggregateFunction: NONE
+    dataType: String
+    label: 责任人
+    name: ownerName
+    sourceExpression: employee.employeeName
+  - aggregateFunction: NONE
+    dataType: Date
+    label: 签订日期
+    name: signDate
+    sortable: true
+    sourceExpression: contract.signDate
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 合同总金额
+    name: totalAmount
+    sortable: true
+    sourceExpression: contract.totalAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 对外采购金额
+    name: purchaseAmount
+    sourceExpression: contract.purchaseAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: 0.00%
+    label: 税率
+    name: taxRate
+    sourceExpression: contract.taxRate
+  - aggregateFunction: NONE
+    dataType: Enum
+    label: 管理状态
+    name: status
+    sourceExpression: contract.status
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 合同含税价差
+    name: taxInclusiveSpread
+    sourceExpression: contract.totalAmount - contract.purchaseAmount
+  sourceObjects:
+  - alias: contract
+    objectRef: AGG-CONTRACT-001
+    primary: true
+  - alias: product
+    objectRef: AGG-PRODUCT-001
+    primary: false
+  - alias: customer
+    objectRef: AGG-CUSTOMER-001
+    primary: false
+  - alias: department
+    objectRef: AGG-DEPARTMENT-001
+    primary: false
+  - alias: employee
+    objectRef: AGG-EMPLOYEE-001
+    primary: false
+  version: '1.0'
+- alias: contractDetail
+  behaviorRef: Contract_QueryDetail
+  conditions:
+  - conditionId: C01
+    group: BASE
+    leftExpression: contract.contractNo
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: contractNo
+    skipWhenParameterEmpty: false
+  description: 查看单个合同的完整执行信息和可追溯历史
+  groupBy: []
+  having: []
+  id: REP-CONTRACT-DETAIL
+  joins: []
+  name: 合同详情查询
+  objectType: DETAIL_QUERY
+  orderBy: []
+  pagination:
+    defaultPageSize: 0
+    enabled: false
+    maxPageSize: 0
+  parameters:
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 合同编号
+    name: contractNo
+    required: true
+    sourceField: contract.contractNo
+  reportOptions: null
+  resultColumns:
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同基本信息
+    name: contractInfo
+    sourceExpression: contract.*
+  - aggregateFunction: NONE
+    dataType: String
+    label: 付款阶段及开票状态
+    name: paymentStages
+    sourceExpression: contract.stages
+  - aggregateFunction: NONE
+    dataType: String
+    label: 开票及分摊
+    name: invoices
+    sourceExpression: invoice.*
+  - aggregateFunction: NONE
+    dataType: String
+    label: 收款记录
+    name: receipts
+    sourceExpression: receipt.*
+  - aggregateFunction: NONE
+    dataType: String
+    label: 审批历史
+    name: approvalHistory
+    sourceExpression: approvalRecord.*
+  sourceObjects:
+  - alias: contract
+    objectRef: AGG-CONTRACT-001
+    primary: true
+  version: '1.0'
+- alias: contractExecutionAnalysis
+  behaviorRef: Contract_QueryExecutionAnalysis
+  conditions:
+  - conditionId: C01
+    group: BASE
+    leftExpression: contract.departmentId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: departmentId
+    skipWhenParameterEmpty: true
+  - conditionId: C02
+    group: BASE
+    leftExpression: contract.ownerId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: ownerId
+    skipWhenParameterEmpty: true
+  - conditionId: C03
+    group: BASE
+    leftExpression: contract.signDate
+    logicalConnector: AND
+    operator: GE
+    parameterRef: signDateFrom
+    skipWhenParameterEmpty: true
+  - conditionId: C04
+    group: BASE
+    leftExpression: contract.signDate
+    logicalConnector: AND
+    operator: LE
+    parameterRef: signDateTo
+    skipWhenParameterEmpty: true
+  description: 按合同汇总收款进度，识别合同执行与回款情况
+  groupBy:
+  - contract.contractNo
+  - contract.contractName
+  having: []
+  id: REP-CONTRACT-EXECUTION
+  joins:
+  - conditionExpression: invoiceAgg.contractId == contract.contractNo
+    joinId: J01
+    joinType: LEFT
+    leftSource: contract
+    rightSource: invoiceAgg
+  - conditionExpression: receiptAgg.contractId == contract.contractNo
+    joinId: J02
+    joinType: LEFT
+    leftSource: contract
+    rightSource: receiptAgg
+  name: 合同执行情况分析
+  objectType: STATISTICAL_QUERY
+  orderBy:
+  - direction: ASC
+    expression: receiptRate
+  pagination:
+    defaultPageSize: 20
+    enabled: true
+    maxPageSize: 100
+  parameters:
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 所属部门
+    name: departmentId
+    required: false
+    sourceField: contract.departmentId
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 责任人
+    name: ownerId
+    required: false
+    sourceField: contract.ownerId
+  - allowedOperators:
+    - GE
+    dataType: Date
+    label: 签订日期起
+    name: signDateFrom
+    required: false
+    sourceField: contract.signDate
+  - allowedOperators:
+    - LE
+    dataType: Date
+    label: 签订日期止
+    name: signDateTo
+    required: false
+    sourceField: contract.signDate
+  reportOptions: null
+  resultColumns:
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同编号
+    name: contractNo
+    sourceExpression: contract.contractNo
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同名称
+    name: contractName
+    sourceExpression: contract.contractName
+  - aggregateFunction: MAX
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 合同金额
+    name: totalAmount
+    sourceExpression: contract.totalAmount
+  - aggregateFunction: MAX
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 累计开票金额
+    name: invoicedAmount
+    sourceExpression: invoiceAgg.invoicedAmount
+  - aggregateFunction: MAX
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 累计收款金额
+    name: receivedAmount
+    sourceExpression: receiptAgg.receivedAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 未收款金额
+    name: unreceivedAmount
+    sourceExpression: MAX(contract.totalAmount) - COALESCE(MAX(receiptAgg.receivedAmount),
+      0)
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: 0.00%
+    label: 收款完成率
+    name: receiptRate
+    sourceExpression: COALESCE(MAX(receiptAgg.receivedAmount), 0) / NULLIF(MAX(contract.totalAmount),
+      0)
+  sourceObjects:
+  - alias: contract
+    objectRef: AGG-CONTRACT-001
+    primary: true
+  - alias: invoiceAgg
+    objectRef: AGG-INVOICE-001
+    preAggregation:
+      columns:
+      - aggregateFunction: SUM
+        name: invoicedAmount
+        sourceExpression: invoiceAmount
+      groupBy:
+      - contractId
+    primary: false
+  - alias: receiptAgg
+    objectRef: AGG-RECEIPT-001
+    preAggregation:
+      columns:
+      - aggregateFunction: SUM
+        name: receivedAmount
+        sourceExpression: receiptAmount
+      groupBy:
+      - contractId
+    primary: false
+  version: '1.0'
+- alias: departmentContractSummary
+  behaviorRef: Contract_QueryDepartmentSummary
+  conditions:
+  - conditionId: C01
+    group: BASE
+    leftExpression: contract.signDate
+    logicalConnector: AND
+    operator: GE
+    parameterRef: signDateFrom
+    skipWhenParameterEmpty: false
+  - conditionId: C02
+    group: BASE
+    leftExpression: contract.signDate
+    logicalConnector: AND
+    operator: LE
+    parameterRef: signDateTo
+    skipWhenParameterEmpty: false
+  - conditionId: C03
+    group: BASE
+    leftExpression: contract.departmentId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: departmentId
+    skipWhenParameterEmpty: true
+  description: 按部门汇总合同规模、开票和回款执行情况
+  groupBy:
+  - department.departmentId
+  - department.departmentName
+  having: []
+  id: REP-DEPT-CONTRACT-SUMMARY
+  joins:
+  - conditionExpression: contract.departmentId == department.departmentId
+    joinId: J01
+    joinType: INNER
+    leftSource: contract
+    rightSource: department
+  - conditionExpression: invoiceAgg.contractId == contract.contractNo
+    joinId: J02
+    joinType: LEFT
+    leftSource: contract
+    rightSource: invoiceAgg
+  - conditionExpression: receiptAgg.contractId == contract.contractNo
+    joinId: J03
+    joinType: LEFT
+    leftSource: contract
+    rightSource: receiptAgg
+  name: 部门合同统计分析报表
+  objectType: REPORT
+  orderBy:
+  - direction: DESC
+    expression: contractAmount
+  pagination:
+    defaultPageSize: 0
+    enabled: false
+    maxPageSize: 0
+  parameters:
+  - allowedOperators:
+    - GE
+    dataType: Date
+    label: 签订日期起
+    name: signDateFrom
+    required: true
+    sourceField: contract.signDate
+  - allowedOperators:
+    - LE
+    dataType: Date
+    label: 签订日期止
+    name: signDateTo
+    required: true
+    sourceField: contract.signDate
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 部门
+    name: departmentId
+    required: false
+    sourceField: contract.departmentId
+  reportOptions:
+    emptyValueDisplay: '-'
+    exportFormats:
+    - XLSX
+    - CSV
+    - PDF
+    groupFields:
+    - departmentName
+    layout: TABLE
+    subtotalFields: []
+    title: 部门合同统计分析报表
+    totalFields:
+    - contractCount
+    - contractAmount
+    - purchaseAmount
+    - taxInclusiveSpread
+    - invoicedAmount
+    - receivedAmount
+    - unreceivedAmount
+    - settledContractCount
+  resultColumns:
+  - aggregateFunction: NONE
+    dataType: String
+    label: 部门
+    name: departmentName
+    sourceExpression: department.departmentName
+  - aggregateFunction: COUNT_DISTINCT
+    dataType: Integer
+    format: '#,##0'
+    label: 合同数量
+    name: contractCount
+    sourceExpression: contract.contractNo
+  - aggregateFunction: SUM
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 合同总金额
+    name: contractAmount
+    sourceExpression: contract.totalAmount
+  - aggregateFunction: SUM
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 对外采购金额
+    name: purchaseAmount
+    sourceExpression: contract.purchaseAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 含税价差
+    name: taxInclusiveSpread
+    sourceExpression: SUM(contract.totalAmount) - SUM(contract.purchaseAmount)
+  - aggregateFunction: SUM
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 有效开票金额
+    name: invoicedAmount
+    sourceExpression: invoiceAgg.invoicedAmount
+  - aggregateFunction: SUM
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 有效收款金额
+    name: receivedAmount
+    sourceExpression: receiptAgg.receivedAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 未收款金额
+    name: unreceivedAmount
+    sourceExpression: SUM(invoiceAgg.invoicedAmount) - COALESCE(SUM(receiptAgg.receivedAmount),
+      0)
+  - aggregateFunction: NONE
+    dataType: Integer
+    format: '#,##0'
+    label: 已结清合同数量
+    name: settledContractCount
+    sourceExpression: contract.status
+  sourceObjects:
+  - alias: contract
+    objectRef: AGG-CONTRACT-001
+    primary: true
+  - alias: department
+    objectRef: AGG-DEPARTMENT-001
+    primary: false
+  - alias: invoiceAgg
+    objectRef: AGG-INVOICE-001
+    preAggregation:
+      columns:
+      - aggregateFunction: SUM
+        name: invoicedAmount
+        sourceExpression: invoiceAmount
+      groupBy:
+      - contractId
+    primary: false
+  - alias: receiptAgg
+    objectRef: AGG-RECEIPT-001
+    preAggregation:
+      columns:
+      - aggregateFunction: SUM
+        name: receivedAmount
+        sourceExpression: receiptAmount
+      groupBy:
+      - contractId
+    primary: false
+  version: '1.0'
+- alias: invoicedUnreceivedContracts
+  behaviorRef: Contract_QueryInvoicedUnreceived
+  conditions:
+  - conditionId: C01
+    fixedValue: 已批准
+    group: BASE
+    leftExpression: invoice.approvalStatus
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: null
+    skipWhenParameterEmpty: false
+  - conditionId: C02
+    group: BASE
+    leftExpression: contract.departmentId
+    logicalConnector: AND
+    operator: EQ
+    parameterRef: departmentId
+    skipWhenParameterEmpty: true
+  - conditionId: C03
+    group: BASE
+    leftExpression: invoice.invoiceDate
+    logicalConnector: AND
+    operator: GE
+    parameterRef: invoiceDateFrom
+    skipWhenParameterEmpty: true
+  - conditionId: C04
+    group: BASE
+    leftExpression: invoice.invoiceDate
+    logicalConnector: AND
+    operator: LE
+    parameterRef: invoiceDateTo
+    skipWhenParameterEmpty: true
+  description: 识别已批准开票但尚未全部收款的合同和开票记录（欠款清单）
+  groupBy:
+  - invoice.invoiceNo
+  having:
+  - conditionId: H01
+    fixedValue: COALESCE(receiptAgg.receivedAmount, 0)
+    group: HAVING
+    leftExpression: invoice.invoiceAmount
+    logicalConnector: AND
+    operator: GT
+    parameterRef: null
+    skipWhenParameterEmpty: false
+  id: REP-INVOICED-UNRECEIVED
+  joins:
+  - conditionExpression: invoice.contractId == contract.contractNo
+    joinId: J01
+    joinType: INNER
+    leftSource: invoice
+    rightSource: contract
+  - conditionExpression: receiptAgg.invoiceId == invoice.invoiceNo
+    joinId: J02
+    joinType: LEFT
+    leftSource: invoice
+    rightSource: receiptAgg
+  name: 已开票未收款合同分析
+  objectType: STATISTICAL_QUERY
+  orderBy:
+  - direction: DESC
+    expression: outstandingAmount
+  pagination:
+    defaultPageSize: 20
+    enabled: true
+    maxPageSize: 100
+  parameters:
+  - allowedOperators:
+    - EQ
+    dataType: String
+    label: 部门
+    name: departmentId
+    required: false
+    sourceField: contract.departmentId
+  - allowedOperators:
+    - GE
+    dataType: Date
+    label: 开票日期起
+    name: invoiceDateFrom
+    required: false
+    sourceField: invoice.invoiceDate
+  - allowedOperators:
+    - LE
+    dataType: Date
+    label: 开票日期止
+    name: invoiceDateTo
+    required: false
+    sourceField: invoice.invoiceDate
+  reportOptions: null
+  resultColumns:
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同编号
+    name: contractNo
+    sourceExpression: contract.contractNo
+  - aggregateFunction: NONE
+    dataType: String
+    label: 合同名称
+    name: contractName
+    sourceExpression: contract.contractName
+  - aggregateFunction: NONE
+    dataType: String
+    label: 开票编号
+    name: invoiceNo
+    sourceExpression: invoice.invoiceNo
+  - aggregateFunction: NONE
+    dataType: Date
+    label: 开票日期
+    name: invoiceDate
+    sourceExpression: invoice.invoiceDate
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 开票金额
+    name: invoiceAmount
+    sourceExpression: invoice.invoiceAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 已收款金额
+    name: receivedAmount
+    sourceExpression: receiptAgg.receivedAmount
+  - aggregateFunction: NONE
+    dataType: Decimal
+    format: '#,##0.00'
+    label: 未收款金额
+    name: outstandingAmount
+    sourceExpression: invoice.invoiceAmount - COALESCE(receiptAgg.receivedAmount,
+      0)
+  - aggregateFunction: NONE
+    dataType: DateTime
+    label: 最近收款时间
+    name: latestReceiptTime
+    sourceExpression: receiptAgg.latestReceiptTime
+  sourceObjects:
+  - alias: invoice
+    objectRef: AGG-INVOICE-001
+    primary: true
+  - alias: contract
+    objectRef: AGG-CONTRACT-001
+    primary: false
+  - alias: receiptAgg
+    objectRef: AGG-RECEIPT-001
+    preAggregation:
+      columns:
+      - aggregateFunction: SUM
+        name: receivedAmount
+        sourceExpression: receiptAmount
+      - aggregateFunction: MAX
+        name: latestReceiptTime
+        sourceExpression: receiptTime
+      groupBy:
+      - invoiceId
+    primary: false
+  version: '1.0'
+version: '1.0'

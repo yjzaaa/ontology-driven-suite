@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>人工智能知识体系依赖路径视图</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#f7f8fa;font-family:"Microsoft YaHei",Arial,sans-serif;color:#1a1a2e;}
+#bar{position:fixed;left:0;right:0;top:0;z-index:10;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;background:#fff;border-bottom:1px solid #dfe4f2;box-shadow:0 1px 5px #0001;}
+#bar select,#bar button{padding:5px 9px;border:1px solid #b8c2dd;border-radius:4px;background:#fff;color:#1a1a2e;}
+#bar .hint{font-size:12px;color:#667085;margin-left:auto;}
+#c{width:100%;height:100vh;}
+#panel{position:fixed;right:18px;top:70px;width:320px;max-height:74vh;overflow:auto;background:#fff;border:1px solid #d7dbe8;border-radius:8px;padding:12px 14px;box-shadow:0 4px 18px #0002;font-size:13px;line-height:1.65;display:none;}
+#panel h3{margin:0 0 8px;color:#1a237e;font-size:16px;}
+.legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;}
+</style>
+</head>
+<body>
+<div id="bar">
+  <b>人工智能 depends 依赖路径视图</b>
+  <label>目标节点：<select id="targetSelect" onchange="focusNode(this.value)"></select></label>
+  <button onclick="resetFocus()">显示全图</button>
+  <span class="hint">点击节点高亮：蓝色=前置依赖，绿色=后续影响，红色=当前目标</span>
+</div>
+<div id="c"></div>
+<div id="panel"><h3 id="panelTitle"></h3><div id="panelBody"></div></div>
+<script>
+const layerNames=['基础建模','机器学习','深度学习','大模型','AI工程','评估安全','应用软件','硬件具身'];
+const colors=['#3f51b5','#009688','#ff9800','#e91e63','#4caf50','#00bcd4','#9c27b0','#ff5722'];
+const names=['AI任务','搜索','知识表示','概率统计','优化','损失函数','评价指标','数据分布','监督学习','无监督学习','强化学习','特征工程','线性模型','决策树','集成学习','交叉验证','神经网络','反向传播','梯度下降','CNN','RNN','Transformer','自注意力','扩散模型','基础模型','LLM','Token','Embedding','预训练','指令微调','对齐训练','RAG','Agent','工具调用','数据管道','训练流水线','模型注册','推理服务','特征库','模型监控','漂移检测','LLMOps','数据治理','标注质量','基准测试','红队测试','幻觉','可解释性','公平性','隐私保护','AI安全','智能搜索','推荐系统','代码助手','客服机器人','文档助手','数据分析助手','行业AI应用','GPU/TPU/NPU','量化','推理加速','边缘AI','机器人','仿真环境'];
+const desc=['把问题形式化为输入、输出、目标和约束。','在状态空间中寻找可行路径或解。','用符号、图或向量表达知识。','不确定性建模和统计估计基础。','训练目标和参数搜索的数学基础。','衡量预测与目标差异的函数。','衡量模型效果、成本和风险。','训练、验证、线上数据的生成规律。','从带标签数据学习映射。','从无标签数据发现结构。','通过奖励信号学习策略。','构造和筛选输入变量。','线性回归、逻辑回归等基础模型。','树形规则分类或回归模型。','组合多个模型提升泛化。','评估模型泛化能力的方法。','多层可学习函数逼近模型。','用链式法则计算梯度。','迭代优化模型参数。','适合视觉局部结构。','早期序列建模架构。','现代大模型核心架构。','动态建模上下文依赖。','图像、音频等生成模型。','大规模可迁移预训练模型。','语言理解与生成大模型。','模型处理文本的基本单位。','对象的向量表示。','用大规模数据学习通用能力。','学习按自然语言指令工作。','使输出符合偏好和安全约束。','检索增强生成。','规划和执行多步任务的系统。','调用 API、数据库和软件工具。','数据采集、清洗、转换流程。','训练、验证、发布自动化。','模型版本和元数据管理。','在线提供模型 API。','训练与在线一致特征管理。','监测效果、延迟、成本和异常。','发现数据或概念分布变化。','大模型应用工程化体系。','数据质量、权限和合规治理。','标注一致性和准确性控制。','标准任务与指标评测。','主动寻找安全漏洞。','生成无依据内容的风险。','解释模型输出原因。','缓解群体不公平影响。','防止敏感信息泄露。','防越狱、滥用和高风险损害。','检索、排序与生成结合。','个性化排序应用。','代码生成、调试和测试辅助。','自动问答与工单处理。','文档读取、总结和生成。','自然语言查询与分析数据。','面向行业流程的软件应用。','训练与推理加速硬件。','降低精度以提升推理效率。','优化延迟、吞吐和成本。','本地设备运行 AI。','物理世界智能体。','虚拟训练和测试环境。'];
+const layer=[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7];
+const depends=[['N01','N09'],['N02','N03'],['N03','N14'],['N04','N11'],['N05','N10'],['N06','N19'],['N07','N21'],['N09','N17'],['N10','N13'],['N11','N14'],['N12','N16'],['N13','N26'],['N14','N41'],['N16','N15'],['N17','N18'],['N18','N19'],['N19','N21'],['N22','N25'],['N23','N32'],['N24','N30'],['N26','N27'],['N27','N28'],['N28','N29'],['N29','N30'],['N30','N31'],['N31','N32'],['N32','N55'],['N25','N35'],['N31','N36'],['N33','N34'],['N34','N35'],['N35','N36'],['N36','N37'],['N37','N38'],['N38','N40'],['N39','N35'],['N40','N54'],['N41','N33'],['N42','N34'],['N43','N35'],['N44','N45'],['N46','N47'],['N47','N56'],['N48','N56'],['N49','N31'],['N50','N25'],['N51','N36'],['N52','N31'],['N53','N55'],['N54','N31'],['N56','N40'],['N57','N35'],['N58','N43'],['N59','N44'],['N60','N35'],['N61','N36'],['N62','N64'],['N63','N64'],['N64','N52'],['N29','N52'],['N36','N52'],['N40','N56'],['N58','N60']];
+
+const idOf=i=>'N'+String(i+1).padStart(2,'0');
+const nameById=Object.fromEntries(names.map((n,i)=>[idOf(i),n]));
+const descById=Object.fromEntries(desc.map((d,i)=>[idOf(i),d]));
+const pred={},succ={};
+depends.forEach(([a,b])=>{(succ[a]??=[]).push(b);(pred[b]??=[]).push(a);});
+
+function closure(start,map){
+  const seen=new Set(),stack=[...(map[start]||[])];
+  while(stack.length){const n=stack.pop();if(seen.has(n))continue;seen.add(n);(map[n]||[]).forEach(x=>stack.push(x));}
+  return seen;
+}
+
+function baseNodes(){
+  const countByLayer={};
+  layer.forEach(l=>countByLayer[l]=(countByLayer[l]||0)+1);
+  const seen={};
+  return names.map((name,i)=>{
+    const l=layer[i],idx=seen[l]||0;seen[l]=idx+1;
+    const x=135+l*205,y=122+idx*58;
+    return {id:idOf(i),name,x,y,category:l,symbolSize:32,itemStyle:{color:colors[l],opacity:1},label:{show:true,formatter:name,fontSize:11,color:'#1a1a2e'}};
+  });
+}
+
+function makeOption(focus){
+  const pre=focus?closure(focus,pred):new Set();
+  const post=focus?closure(focus,succ):new Set();
+  const related=new Set([...(pre||[]),...(post||[]),focus].filter(Boolean));
+  const nodes=baseNodes().map(n=>{
+    if(!focus)return n;
+    const isFocus=n.id===focus,isPre=pre.has(n.id),isPost=post.has(n.id),active=related.has(n.id);
+    return {...n,
+      symbolSize:isFocus?44:(active?36:24),
+      itemStyle:{color:isFocus?'#ef4444':(isPre?'#2563eb':(isPost?'#16a34a':'#cbd5e1')),opacity:active?1:.22},
+      label:{...n.label,color:active?'#111827':'#94a3b8',fontWeight:isFocus?'700':'400'}
+    };
+  });
+  const links=depends.map(([a,b])=>{
+    const active=!focus||(related.has(a)&&related.has(b)&&(a===focus||b===focus||pre.has(a)||post.has(b)||pre.has(b)||post.has(a)));
+    return {source:a,target:b,symbol:['none','arrow'],lineStyle:{color:active?(focus?(pre.has(a)||pre.has(b)?'#2563eb':'#16a34a'):'#4f9bff'):'#cbd5e1',width:active?2.7:1,curveness:.08,opacity:active?.78:.18}};
+  });
+  return {
+    color:colors,
+    title:{text:'最底层 · AI 分层学习路线 DAG',subtext:'点击节点查看递归前置依赖与后续影响',left:'center',top:44,textStyle:{color:'#1a1a2e'},subtextStyle:{color:'#667085'}},
+    tooltip:{formatter:p=>p.dataType==='edge'?`${nameById[p.data.source]} → ${nameById[p.data.target]}`:`${p.data.name}<br>${descById[p.data.id]}`},
+    legend:[{data:layerNames,top:82,type:'scroll'}],
+    graphic:layerNames.map((name,i)=>({type:'text',left:90+i*205,top:112,style:{text:name,fill:colors[i],font:'bold 13px Microsoft YaHei'}})),
+    series:[{type:'graph',layout:'none',roam:true,top:118,bottom:20,data:nodes,links,categories:layerNames.map((name,i)=>({name,itemStyle:{color:colors[i]}})),edgeSymbol:['none','arrow'],emphasis:{focus:'adjacency'},lineStyle:{opacity:.65}}]
+  };
+}
+
+const chart=echarts.init(document.getElementById('c'));
+function fillSelect(){
+  const important=['N32','N33','N42','N38','N40','N51','N54','N56','N58','N61'];
+  const opts=['<option value="">选择一个目标节点</option>'].concat(important.map(id=>`<option value="${id}">${nameById[id]}</option>`));
+  document.getElementById('targetSelect').innerHTML=opts.join('');
+}
+function focusNode(id){
+  chart.setOption(makeOption(id||null),true);
+  if(!id){document.getElementById('panel').style.display='none';return;}
+  const pre=[...closure(id,pred)].map(x=>nameById[x]);
+  const post=[...closure(id,succ)].map(x=>nameById[x]);
+  document.getElementById('panelTitle').textContent=nameById[id];
+  document.getElementById('panelBody').innerHTML=`${descById[id]}<br><br><span class="legend-dot" style="background:#2563eb"></span><b>前置依赖：</b><br>${pre.length?pre.join('、'):'无'}<br><br><span class="legend-dot" style="background:#16a34a"></span><b>后续影响：</b><br>${post.length?post.join('、'):'无'}`;
+  document.getElementById('panel').style.display='block';
+}
+function resetFocus(){document.getElementById('targetSelect').value='';focusNode('');}
+chart.on('click',p=>{if(p.dataType==='node'){document.getElementById('targetSelect').value=p.data.id;focusNode(p.data.id);}});
+window.addEventListener('resize',()=>chart.resize());
+fillSelect();
+chart.setOption(makeOption(null));
+</script>
+</body>
+</html>

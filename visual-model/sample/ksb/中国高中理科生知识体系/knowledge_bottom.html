@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中国高中理科生知识图谱 - 力导向图</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+body{margin:0;background:#f7f8fb;color:#18212f;font-family:"Microsoft YaHei",Arial,sans-serif}.head{height:68px;background:#fff;border-bottom:1px solid #dde3ec;padding:12px 22px;display:flex;align-items:center;justify-content:space-between}h1{font-size:20px;margin:0}.sub{font-size:13px;color:#657287;margin-top:4px}.wrap{display:grid;grid-template-columns:270px 1fr;height:calc(100vh - 68px)}aside{background:#fff;border-right:1px solid #dde3ec;padding:18px;overflow:auto}#chart{width:100%;height:100%}.metric{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.metric div{border:1px solid #dde3ec;border-radius:8px;padding:10px;background:#fbfcfe}.metric b{display:block;font-size:20px}.metric span{font-size:12px;color:#657287}.item{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}.dot{width:12px;height:12px;border-radius:50%}.tip{margin-top:16px;font-size:12px;color:#657287;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="head"><div><h1>中国高中理科生知识图谱</h1><div class="sub">64 个核心知识点，71 条依赖关系；节点越大表示越基础或越枢纽</div></div></div>
+<div class="wrap"><aside><div class="metric"><div><b id="nc">64</b><span>知识点</span></div><div><b id="ec">71</b><span>依赖边</span></div></div><div id="legend"></div><div class="tip">拖拽节点、滚轮缩放；点击节点可聚焦相邻知识点。适合查看理科生知识体系中的枢纽概念和跨学科依赖。</div></aside><main id="chart"></main></div>
+<script>
+const colors=["#2f6fed","#15a36d","#e4572e","#8f5bd6","#d99a00","#0f8b8d","#c23b73","#506176"];
+const nodesCSV=`N01,函数与映射,数学,59
+N02,三角函数,数学,52
+N03,数列,数学,47
+N04,不等式,数学,51
+N05,导数,数学,58
+N06,解析几何,数学,54
+N07,立体几何,数学,45
+N08,概率统计,数学,53
+N09,受力分析,物理,57
+N10,牛顿定律,物理,59
+N11,运动学,物理,54
+N12,功和能,物理,55
+N13,动量,物理,47
+N14,电场,物理,52
+N15,电路,物理,53
+N16,电磁感应,物理,50
+N17,物质的量,化学,56
+N18,离子反应,化学,54
+N19,氧化还原,化学,55
+N20,化学平衡,化学,54
+N21,电化学,化学,48
+N22,有机结构,化学,49
+N23,化学实验操作,化学,52
+N24,元素周期律,化学,47
+N25,细胞结构,生物,51
+N26,物质运输,生物,48
+N27,酶与代谢,生物,54
+N28,遗传规律,生物,56
+N29,DNA表达,生物,52
+N30,生命活动调节,生物,50
+N31,生态系统,生物,45
+N32,生物实验设计,生物,53
+N33,现代文阅读,语文,49
+N34,文言文,语文,46
+N35,古诗鉴赏,语文,42
+N36,作文立意,语文,54
+N37,论证结构,语文,51
+N38,语言表达,语文,47
+N39,材料整合,语文,53
+N40,审题,语文,56
+N41,词汇语法,英语,57
+N42,长难句,英语,55
+N43,阅读理解,英语,56
+N44,完形填空,英语,45
+N45,七选五,英语,44
+N46,英语写作,英语,52
+N47,听说能力,英语,39
+N48,翻译表达,英语,46
+N49,算法思维,信息与通用能力,45
+N50,数据处理,信息与通用能力,52
+N51,图表解读,信息与通用能力,54
+N52,计算工具,信息与通用能力,38
+N53,模型意识,信息与通用能力,56
+N54,信息检索,信息与通用能力,39
+N55,错题系统,信息与通用能力,53
+N56,时间管理,信息与通用能力,51
+N57,目标拆解,学习与考试策略,54
+N58,预习听课,学习与考试策略,46
+N59,复盘总结,学习与考试策略,57
+N60,刷题策略,学习与考试策略,55
+N61,考试节奏,学习与考试策略,54
+N62,实验安全,学习与考试策略,41
+N63,变量控制,学习与考试策略,52
+N64,心理调节,学习与考试策略,49`;
+const edgesCSV=`N01,N02,.78
+N01,N03,.75
+N01,N04,.82
+N04,N05,.86
+N01,N06,.8
+N02,N06,.72
+N06,N07,.66
+N03,N08,.68
+N08,N51,.7
+N09,N10,.92
+N10,N11,.9
+N10,N12,.88
+N12,N13,.82
+N14,N15,.86
+N15,N16,.84
+N02,N11,.7
+N05,N12,.72
+N06,N14,.65
+N17,N18,.86
+N18,N19,.88
+N19,N20,.8
+N20,N21,.78
+N24,N18,.76
+N17,N20,.72
+N22,N19,.7
+N23,N62,.82
+N23,N63,.78
+N25,N26,.82
+N26,N27,.86
+N27,N30,.78
+N28,N29,.9
+N29,N30,.74
+N30,N31,.72
+N32,N63,.86
+N51,N32,.68
+N33,N39,.76
+N34,N35,.65
+N36,N37,.82
+N37,N39,.74
+N40,N36,.86
+N39,N46,.62
+N38,N46,.7
+N41,N42,.9
+N42,N43,.88
+N43,N44,.72
+N43,N45,.74
+N41,N46,.7
+N42,N48,.78
+N47,N46,.64
+N49,N50,.76
+N50,N51,.82
+N51,N53,.78
+N52,N50,.66
+N54,N39,.62
+N55,N59,.84
+N56,N61,.82
+N57,N56,.78
+N58,N59,.86
+N59,N60,.82
+N60,N61,.86
+N61,N64,.7
+N40,N61,.76
+N55,N60,.8
+N63,N32,.72
+N05,N53,.74
+N10,N53,.76
+N20,N53,.7
+N28,N08,.62
+N50,N08,.68
+N51,N23,.64
+N57,N60,.76`;
+const categories=[...new Set(nodesCSV.split("\n").map(r=>r.split(",")[2]))].map((name,i)=>({name,itemStyle:{color:colors[i]}})),catIndex=Object.fromEntries(categories.map((c,i)=>[c.name,i]));
+const nodes=nodesCSV.split("\n").map(r=>{const [id,name,cat,size]=r.split(",");return{id,name,category:catIndex[cat],symbolSize:+size,value:cat,draggable:true,label:{show:+size>=54}}});
+const nameById=Object.fromEntries(nodes.map(n=>[n.id,n.name]));
+const links=edgesCSV.split("\n").map(r=>{const [source,target,w]=r.split(",");return{source,target,value:+w,lineStyle:{width:1+(+w)*3,curveness:.08,opacity:.45},tooltip:{formatter:`${nameById[source]} -> ${nameById[target]}<br>依赖强度：${w}`}}});
+document.getElementById("legend").innerHTML=categories.map((c,i)=>`<div class="item"><span class="dot" style="background:${colors[i]}"></span>${c.name}</div>`).join("");
+const chart=echarts.init(document.getElementById("chart"));
+chart.setOption({tooltip:{trigger:"item"},series:[{type:"graph",layout:"force",roam:true,categories,nodes,links,edgeSymbol:["none","arrow"],edgeSymbolSize:8,force:{repulsion:360,edgeLength:[90,220],gravity:.08,friction:.45},label:{position:"right",fontSize:12,color:"#26364a"},emphasis:{focus:"adjacency",lineStyle:{opacity:1,width:4}},itemStyle:{borderColor:"#fff",borderWidth:2,shadowBlur:8,shadowColor:"rgba(21,31,51,.16)"}}]});
+window.addEventListener("resize",()=>chart.resize());
+</script>
+</body>
+</html>

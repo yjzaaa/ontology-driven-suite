@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>华为 ISC 集成供应链 · 细化架构与逻辑图 · D3.js</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;}
+  body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;background:#FAFBFC;color:#37474F;}
+  .wrap{width:100%;max-width:1760px;margin:0 auto;padding:16px;}
+  .header{background:linear-gradient(90deg,#AD1457,#C2185B);color:#fff;padding:18px 26px;border-radius:8px 8px 0 0;}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:4px;}
+  .header p{font-size:13px;color:#F8BBD0;}
+  .stage-bar{display:flex;background:#fff;border-left:1px solid #E0E0E0;border-right:1px solid #E0E0E0;padding:6px 0;}
+  .stage-item{flex:1;text-align:center;font-size:12px;font-weight:600;color:#90A4AE;border-right:1px dashed #ECEFF1;padding:4px 2px;}
+  .stage-item:last-child{border-right:none;}
+  .canvas-box{width:100%;background:#fff;border:1px solid #E0E0E0;border-top:none;border-radius:0 0 8px 8px;}
+  #viz{display:block;width:100%;height:auto;}
+  .d3-tooltip{position:absolute;pointer-events:none;background:rgba(173,20,87,0.95);color:#fff;padding:10px 14px;border-radius:6px;font-size:12px;line-height:1.6;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;z-index:100;}
+  .d3-tooltip .tt-title{font-size:13px;font-weight:700;margin-bottom:4px;color:#FFF9C4;}
+  .d3-tooltip .tt-role{font-size:11px;color:#F8BBD0;margin-bottom:6px;}
+  .d3-tooltip .tt-body{font-size:11px;color:#FFFFFF;}
+  .detail-panel{position:fixed;top:20px;right:20px;width:340px;max-width:90vw;background:#fff;border:1px solid #CFD8DC;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.12);padding:18px 20px;z-index:200;display:none;font-size:12px;line-height:1.7;max-height:85vh;overflow-y:auto;}
+  .detail-panel.show{display:block;animation:slideIn .25s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+  .detail-panel .dp-close{float:right;cursor:pointer;color:#90A4AE;font-size:18px;line-height:1;}
+  .detail-panel .dp-close:hover{color:#C2185B;}
+  .detail-panel .dp-shape{display:inline-block;width:14px;height:14px;border-radius:2px;vertical-align:middle;margin-right:6px;}
+  .detail-panel h3{font-size:15px;color:#AD1457;margin-bottom:8px;}
+  .detail-panel .dp-label{font-weight:700;color:#546E7A;}
+  .detail-panel .dp-section{margin-top:10px;padding-top:10px;border-top:1px solid #ECEFF1;}
+  .legend-box{margin-top:16px;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:16px 20px;display:flex;gap:32px;flex-wrap:wrap;}
+  .legend-section h4{font-size:13px;color:#AD1457;margin-bottom:8px;}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#37474F;margin-bottom:5px;}
+  .legend-line{display:flex;align-items:center;gap:8px;font-size:12px;color:#37474F;margin-bottom:5px;}
+  .footer-tip{margin-top:12px;font-size:12px;color:#78909C;text-align:center;}
+  .footer-tip b{color:#546E7A;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>华为 ISC 集成供应链 · 细化架构与逻辑图</h1>
+    <p>主流程层 + 子组件细化层 + 底层 IT 系统底座 · 三层架构深度呈现 · 基于 SBR 建模法 · D3.js 交互</p>
+  </div>
+  <div class="stage-bar" id="stageBar"></div>
+  <div class="canvas-box">
+    <svg id="viz" viewBox="0 0 1700 1620" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="legend-box">
+    <div class="legend-section">
+      <h4>组件形状（Structure）</h4>
+      <div class="legend-item"><svg width="20" height="16"><rect x="1" y="1" width="18" height="14" rx="2" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/></svg>矩形：基础功能组件</div>
+      <div class="legend-item"><svg width="20" height="16"><rect x="1" y="1" width="18" height="14" rx="6" fill="#FFE0B2" stroke="#E65100" stroke-width="1.5"/></svg>圆角矩形：有状态/输出组件</div>
+      <div class="legend-item"><svg width="24" height="16"><polygon points="6,1 18,1 23,8 18,15 6,15 1,8" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="1.5"/></svg>六边形：决策/控制组件</div>
+      <div class="legend-item"><svg width="20" height="16"><rect x="1" y="3" width="18" height="10" rx="2" fill="#E1BEE7" stroke="#8E24AA" stroke-width="1.2"/></svg>小矩形：子组件（细化层）</div>
+      <div class="legend-item"><svg width="20" height="16"><circle cx="10" cy="8" r="7" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5"/></svg>圆形：数据存储/平台</div>
+      <div class="legend-item"><svg width="24" height="16"><path d="M3,14 C1,14 1,9 5,8 C4,3 12,2 14,6 C16,1 22,3 21,8 C24,8 24,14 20,14 Z" fill="#F5F5F5" stroke="#757575" stroke-width="1.2"/></svg>云形：外部系统/环境</div>
+    </div>
+    <div class="legend-section">
+      <h4>连接线类型（Relation）</h4>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#D32F2F" stroke-width="3"/><polygon points="36,1 44,5 36,9" fill="#D32F2F"/></svg>关键路径（端到端主流程）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#1565C0" stroke-width="2"/><polygon points="36,1 44,5 36,9" fill="#1565C0"/></svg>信息流（计划/数据传递）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="6,3"/><polygon points="36,1 44,5 36,9" fill="#2E7D32"/></svg>控制流（控制塔调度）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#F57C00" stroke-width="1.6" stroke-dasharray="4,3"/><polygon points="36,1 44,5 36,9" fill="#F57C00"/></svg>反馈流（闭环反馈）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#9E9E9E" stroke-width="1" stroke-dasharray="2,3"/></svg>展开关系（主组件→子组件）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#7B1FA2" stroke-width="1.5" stroke-dasharray="5,2"/><polygon points="36,1 44,5 36,9" fill="#7B1FA2"/></svg>系统支撑（IT底座→业务）</div>
+    </div>
+    <div class="legend-section" style="flex:1;min-width:420px;">
+      <h4>三层架构核心逻辑</h4>
+      <div style="font-size:12px;line-height:1.8;color:#37474F;">
+        <div><b style="color:#D32F2F;">主流程层：</b>客户需求→需求管理→S&amp;OP→MPS/MRP→采购→制造→仓储交付→客户交付</div>
+        <div><b style="color:#8E24AA;">子组件细化层：</b>每个主组件向下展开 3-5 个子模块，体现 ISC 流程的具体执行步骤</div>
+        <div><b style="color:#7B1FA2;">IT 系统底座：</b>ERP/MES/WMS/SRM/APS/CRM 六大核心系统 + 主数据治理，支撑全流程在线化</div>
+        <div><b style="color:#F57C00;">闭环反馈：</b>执行实绩→计划刷新；客户交付→需求管理，形成端到端持续闭环</div>
+        <div><b style="color:#2E7D32;">控制塔协同：</b>监控全链路三层状态，异常预警与跨部门协同调度</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-tip">
+    交互方式：<b>悬停组件</b>查看摘要 · <b>点击组件</b>查看详情 · <b>双击空白</b>重置高亮 · 红色主路径带流动动画 · 灰色虚线表示主组件向子组件的展开关系
+  </div>
+</div>
+<div class="d3-tooltip" id="tooltip"></div>
+<div class="detail-panel" id="detailPanel">
+  <span class="dp-close" onclick="document.getElementById('detailPanel').classList.remove('show')">&times;</span>
+  <div id="detailContent"></div>
+</div>
+<script>
+// ====== 阶段标签 ======
+const stages = ["① 需求获取","② 供需计划","③ 物料计划","④ 采购执行","⑤ 制造执行","⑥ 订单交付"];
+const stageBar = d3.select("#stageBar");
+stages.forEach(s=>{ stageBar.append("div").attr("class","stage-item").style("flex","1").text(s); });
+
+const VBW = 1700, VBH = 1620;
+
+// ====== 主组件数据（顶层）======
+const mainNodes = [
+  // 外部协同层 y≈110
+  {id:"customer_demand", shape:"cloud", cx:160, cy:120, w:210, h:90, layer:"ext",
+   fill:"#F5F5F5", stroke:"#757575", textColor:"#424242",
+   title:"客户需求", sub:"订单·预测·价值起点",
+   role:"外部协同 · 需求源头",
+   desc:"ISC的起点。客户订单与市场预测需求是整个供应链的拉动源。华为ISC以客户需求为驱动，确保供应链所有活动围绕客户价值展开。",
+   behavior:"输出：订单+预测需求 → 驱动需求管理",
+   props:["客户订单","市场预测","客户优先级","需求波动"]},
+  {id:"control_tower", shape:"hexagon", cx:850, cy:120, w:300, h:95, layer:"ext",
+   fill:"#F3E5F5", stroke:"#6A1B9A", textColor:"#4A148C",
+   title:"供应链控制塔", sub:"全链路监控·三层协同调度",
+   role:"支撑协同 · 全链路监控决策中枢",
+   desc:"ISC的大脑。实时监控从需求到交付的全链路三层状态（主流程/子组件/IT系统），进行异常预警、供需平衡决策、跨部门协同调度。",
+   behavior:"输入：全链路状态 → 处理：监控预警/协同决策 → 输出：调度指令",
+   props:["端到端可视","异常预警","协同调度","KPI监控","风险管控"]},
+  {id:"customer_delivery", shape:"cloud", cx:1540, cy:120, w:230, h:90, layer:"ext",
+   fill:"#F5F5F5", stroke:"#757575", textColor:"#424242",
+   title:"客户交付", sub:"价值终点·OTIF准时交付",
+   role:"外部协同 · 价值终点",
+   desc:"ISC的终点。将产品按时按质交付给客户，实现客户价值闭环。交付绩效(OTIF)是ISC核心KPI。客户交付的反馈信息驱动下一轮需求管理。",
+   behavior:"输入：仓储发运 → 输出：客户满意度+交付反馈",
+   props:["OTIF准时率","交付周期","客户满意度","回款"]},
+
+  // 计划主层 y≈310
+  {id:"demand_mgmt", shape:"rect", cx:300, cy:320, w:220, h:90, layer:"plan",
+   fill:"#E3F2FD", stroke:"#1565C0", textColor:"#0D47A1",
+   title:"需求管理", sub:"需求收集·预测分析",
+   role:"计划层 · 需求收集与预测",
+   desc:"收集、分析、预测客户需求，将订单与预测转化为可执行的需求计划。是S&OP的核心输入。华为通过需求管理提升预测准确性，减少牛鞭效应。",
+   behavior:"输入：客户需求 → 处理：需求分析/预测建模 → 输出：需求计划",
+   props:["需求预测","订单管理","需求分类","预测准确率"]},
+  {id:"sop", shape:"hexagon", cx:680, cy:320, w:280, h:95, layer:"plan",
+   fill:"#F3E5F5", stroke:"#6A1B9A", textColor:"#4A148C",
+   title:"S&OP 销售与运营计划", sub:"供需平衡·月度/周度",
+   role:"计划层 · 供需平衡中枢决策",
+   desc:"ISC计划体系的核心。月度/周度进行供需平衡决策，协调销售、市场、生产、采购、财务等部门，生成可执行的供应计划。打破部门墙。",
+   behavior:"输入：需求计划+供应能力 → 决策：供需平衡 → 输出：供应计划",
+   props:["供需平衡","产能规划","库存策略","财务协同","共识计划"]},
+  {id:"mps_mrp", shape:"hexagon", cx:1060, cy:320, w:280, h:95, layer:"plan",
+   fill:"#F3E5F5", stroke:"#6A1B9A", textColor:"#4A148C",
+   title:"MPS / MRP 计划", sub:"主生产计划·物料需求",
+   role:"计划层 · 主生产与物料计划",
+   desc:"MPS确定生产什么、何时生产、生产多少；MRP基于BOM展开计算物料需求量和需求时间，驱动采购与制造。将宏观计划细化为可执行指令。",
+   behavior:"输入：供应计划 → 处理：MPS排产/MRP展开 → 输出：生产计划+物料计划",
+   props:["主生产计划MPS","BOM展开","物料需求MRP","产能排程","计划订单"]},
+  {id:"capacity_plan", shape:"rect", cx:1430, cy:320, w:240, h:90, layer:"plan",
+   fill:"#E3F2FD", stroke:"#1565C0", textColor:"#0D47A1",
+   title:"产能与库存规划", sub:"产能配置·库存策略",
+   role:"计划层 · 资源规划",
+   desc:"根据S&OP供需平衡结果，进行产能配置与库存策略规划。确定自有产能、外协产能分配，以及安全库存、周转库存策略。为MPS/MRP提供资源约束。",
+   behavior:"输入：供应计划 → 处理：产能评估/库存建模 → 输出：产能与库存约束",
+   props:["产能规划","安全库存","外协策略","库存周转"]},
+
+  // 执行主层 y≈820
+  {id:"procurement", shape:"rect", cx:450, cy:820, w:220, h:90, layer:"exec",
+   fill:"#E3F2FD", stroke:"#1565C0", textColor:"#0D47A1",
+   title:"采购执行", sub:"下单·跟催·收货",
+   role:"执行层 · 物料获取",
+   desc:"根据MRP输出的物料计划，向供应商下达采购订单，跟踪到货、检验入库。华为ISC强调战略采购与执行采购分离，供应商分级管理。",
+   behavior:"输入：物料计划 → 处理：下单/跟催/收货/质检 → 输出：物料入库",
+   props:["采购订单","到货跟踪","质量检验","供应商管理","战略采购"]},
+  {id:"manufacturing", shape:"rect", cx:950, cy:820, w:220, h:90, layer:"exec",
+   fill:"#E3F2FD", stroke:"#1565C0", textColor:"#0D47A1",
+   title:"制造执行", sub:"排产·制造·质检",
+   role:"执行层 · 生产制造",
+   desc:"根据MPS生产计划进行生产排程与车间执行，完成产品制造并入库。华为推行精益生产与柔性制造，提升产能利用率与交付柔性。",
+   behavior:"输入：生产计划+物料 → 处理：排产/制造/质检 → 输出：完工产品",
+   props:["生产排程","车间执行","质量管控","完工入库","柔性制造"]},
+  {id:"warehouse_delivery", shape:"roundrect", cx:1380, cy:820, w:240, h:90, layer:"exec",
+   fill:"#FFE0B2", stroke:"#E65100", textColor:"#BF360C",
+   title:"仓储与交付", sub:"库存·拣配·发运",
+   role:"执行层 · 库存与订单履行",
+   desc:"管理成品与在途库存，根据客户订单进行拣配、打包、发运，完成订单履行。是ISC实物交付的最后一环。",
+   behavior:"输入：完工产品+订单 → 处理：库存管理/拣配/发运 → 输出：客户交付",
+   props:["库存管理","订单拣配","物流发运","订单履行","库存周转"]}
+];
+
+// ====== 子组件数据（细化层）======
+// 子组件用小矩形表示，分组归属到各主组件
+const subNodes = [
+  // 需求管理子组件 (cx=300, y≈450)
+  {id:"s_demand_collect", parent:"demand_mgmt", cx:170, cy:470, w:130, h:42, title:"需求收集"},
+  {id:"s_demand_forecast", parent:"demand_mgmt", cx:310, cy:470, w:130, h:42, title:"需求预测"},
+  {id:"s_demand_analysis", parent:"demand_mgmt", cx:450, cy:470, w:130, h:42, title:"需求分析评审"},
+
+  // S&OP 子组件 (cx=680, y≈450)
+  {id:"s_sop_demand_rev", parent:"sop", cx:530, cy:470, w:130, h:42, title:"需求评审"},
+  {id:"s_sop_supply_rev", parent:"sop", cx:670, cy:470, w:130, h:42, title:"供应评审"},
+  {id:"s_sop_balance", parent:"sop", cx:810, cy:470, w:130, h:42, title:"供需平衡决策"},
+  {id:"s_sop_consensus", parent:"sop", cx:530, cy:530, w:130, h:42, title:"共识计划"},
+
+  // MPS/MRP 子组件 (cx=1060, y≈450)
+  {id:"s_mps_schedule", parent:"mps_mrp", cx:920, cy:470, w:130, h:42, title:"MPS主生产排程"},
+  {id:"s_rccp", parent:"mps_mrp", cx:1060, cy:470, w:130, h:42, title:"粗能力计划RCCP"},
+  {id:"s_mrp_bom", parent:"mps_mrp", cx:1200, cy:470, w:130, h:42, title:"BOM展开"},
+  {id:"s_mrp_net", parent:"mps_mrp", cx:920, cy:530, w:130, h:42, title:"净需求计算"},
+  {id:"s_mrp_order", parent:"mps_mrp", cx:1060, cy:530, w:130, h:42, title:"计划订单生成"},
+
+  // 产能库存子组件 (cx=1430, y≈470)
+  {id:"s_cap_crp", parent:"capacity_plan", cx:1360, cy:470, w:130, h:42, title:"产能需求CRP"},
+  {id:"s_cap_safety", parent:"capacity_plan", cx:1500, cy:470, w:130, h:42, title:"安全库存计算"},
+  {id:"s_cap_opt", parent:"capacity_plan", cx:1430, cy:530, w:130, h:42, title:"库存优化"},
+
+  // 采购执行子组件 (cx=450, y≈950)
+  {id:"s_pur_req", parent:"procurement", cx:230, cy:950, w:130, h:42, title:"采购申请"},
+  {id:"s_pur_supplier", parent:"procurement", cx:370, cy:950, w:130, h:42, title:"供应商选择"},
+  {id:"s_pur_po", parent:"procurement", cx:510, cy:950, w:130, h:42, title:"采购订单PO"},
+  {id:"s_pur_track", parent:"procurement", cx:300, cy:1010, w:130, h:42, title:"到货跟踪"},
+  {id:"s_pur_qc", parent:"procurement", cx:440, cy:1010, w:130, h:42, title:"入库质检"},
+  {id:"s_pur_pay", parent:"procurement", cx:580, cy:1010, w:130, h:42, title:"应付对账"},
+
+  // 制造执行子组件 (cx=950, y≈950)
+  {id:"s_mfg_order", parent:"manufacturing", cx:760, cy:950, w:130, h:42, title:"生产订单"},
+  {id:"s_mfg_dispatch", parent:"manufacturing", cx:900, cy:950, w:130, h:42, title:"车间排程派工"},
+  {id:"s_mfg_execute", parent:"manufacturing", cx:1040, cy:950, w:130, h:42, title:"工序执行报工"},
+  {id:"s_mfg_qc", parent:"manufacturing", cx:1180, cy:950, w:130, h:42, title:"质量检验SPC"},
+  {id:"s_mfg_gr", parent:"manufacturing", cx:830, cy:1010, w:130, h:42, title:"完工入库"},
+  {id:"s_mfg_lean", parent:"manufacturing", cx:970, cy:1010, w:130, h:42, title:"精益柔性制造"},
+  {id:"s_mfg_cost", parent:"manufacturing", cx:1110, cy:1010, w:130, h:42, title:"制造成本归集"},
+
+  // 仓储交付子组件 (cx=1380, y≈950)
+  {id:"s_wh_stock", parent:"warehouse_delivery", cx:1240, cy:950, w:130, h:42, title:"库存管理"},
+  {id:"s_wh_pick", parent:"warehouse_delivery", cx:1380, cy:950, w:130, h:42, title:"波次拣配"},
+  {id:"s_wh_pack", parent:"warehouse_delivery", cx:1520, cy:950, w:130, h:42, title:"打包集货"},
+  {id:"s_wh_ship", parent:"warehouse_delivery", cx:1310, cy:1010, w:130, h:42, title:"发运管理TMS"},
+  {id:"s_wh_track", parent:"warehouse_delivery", cx:1450, cy:1010, w:130, h:42, title:"在途跟踪签收"}
+];
+
+// ====== 供应商协同 ======
+const supplier = {
+  id:"supplier", shape:"cloud", cx:450, cy:1170, w:260, h:80,
+  fill:"#F5F5F5", stroke:"#757575", textColor:"#424242",
+  title:"供应商协同", sub:"VMI·协同预测·战略供应",
+  role:"外部协同 · 物料供应方",
+  desc:"华为ISC强调供应商协同：将核心供应商纳入计划体系，实现需求信息共享、协同预测、VMI（供应商管理库存）等模式，降低供应链不确定性。",
+  behavior:"输入：采购订单/需求信息 → 处理：供应商生产/交付 → 输出：物料供应",
+  props:["供应商协同","VMI库存","协同预测","供应韧性","分级管理"]
+};
+
+// ====== IT 系统底座 ======
+const itSystems = [
+  {id:"erp", cx:200, cy:1320, w:160, h:60, title:"ERP", sub:"核心财务与订单", color:"#E1BEE7", stroke:"#8E24AA", desc:"企业资源规划系统，承载订单、财务、库存主数据，是ISC的核心数据中枢。"},
+  {id:"aps", cx:410, cy:1320, w:160, h:60, title:"APS", sub:"高级计划排程", color:"#E1BEE7", stroke:"#8E24AA", desc:"高级计划与排程系统，支撑S&OP/MPS/MRP的计划优化与求解，提升计划精度。"},
+  {id:"srm", cx:620, cy:1320, w:160, h:60, title:"SRM", sub:"供应商关系管理", color:"#E1BEE7", stroke:"#8E24AA", desc:"供应商关系管理系统，支撑供应商分级、协同、寻源、绩效评估全流程。"},
+  {id:"mes", cx:830, cy:1320, w:160, h:60, title:"MES", sub:"制造执行系统", color:"#E1BEE7", stroke:"#8E24AA", desc:"制造执行系统，承接MPS生产订单，管理车间排程、报工、质量、设备全流程。"},
+  {id:"wms", cx:1040, cy:1320, w:160, h:60, title:"WMS", sub:"仓储管理系统", color:"#E1BEE7", stroke:"#8E24AA", desc:"仓储管理系统，管理库存、拣配、打包、发运，是仓储交付子组件的承载系统。"},
+  {id:"tms", cx:1250, cy:1320, w:160, h:60, title:"TMS", sub:"运输管理系统", color:"#E1BEE7", stroke:"#8E24AA", desc:"运输管理系统，管理物流发运、在途跟踪、承运商协同、运费结算。"},
+  {id:"crm", cx:1460, cy:1320, w:160, h:60, title:"CRM", sub:"客户关系管理", color:"#E1BEE7", stroke:"#8E24AA", desc:"客户关系管理系统，承载客户需求、订单、交付承诺，是需求管理的客户侧入口。"}
+];
+
+// 主数据治理底座
+const masterData = { cx:850, cy:1430, w:1500, h:42, title:"主数据治理平台 · 物料主数据 · BOM · 客户主数据 · 供应商主数据 · 价格主数据 · 工艺路线 · 统一标识" };
+
+// ====== 连接线 ======
+// 主流程连线（顶层主组件之间）
+const mainLinks = [
+  {from:"customer_demand", to:"demand_mgmt", type:"main", label:"需求", ctrl:null},
+  {from:"demand_mgmt", to:"sop", type:"main", label:"需求计划", ctrl:null},
+  {from:"sop", to:"mps_mrp", type:"main", label:"供应计划", ctrl:null},
+  {from:"mps_mrp", to:"procurement", type:"main", label:"物料计划", ctrl:{c1x:1000,c1y:700,c2x:520,c2y:720}},
+  {from:"procurement", to:"manufacturing", type:"main", label:"物料", ctrl:null},
+  {from:"manufacturing", to:"warehouse_delivery", type:"main", label:"成品", ctrl:null},
+  {from:"warehouse_delivery", to:"customer_delivery", type:"main", label:"交付", ctrl:{c1x:1480,c1y:740,c2x:1540,c2y:200}}
+];
+
+// 信息流
+const dataLinks = [
+  {from:"mps_mrp", to:"manufacturing", type:"data", label:"生产计划", ctrl:null},
+  {from:"sop", to:"capacity_plan", type:"data", label:"产能约束", ctrl:null},
+  {from:"supplier", to:"procurement", type:"data", label:"物料供应", bidir:true, ctrl:null}
+];
+
+// 控制流
+const controlLinks = [
+  {from:"control_tower", to:"sop", type:"control", label:"协同调度", ctrl:{c1x:780,c1y:200,c2x:700,c2y:270}},
+  {from:"control_tower", to:"mps_mrp", type:"control", label:"计划校准", ctrl:{c1x:880,c1y:180,c2x:1040,c2y:270}},
+  {from:"control_tower", to:"warehouse_delivery", type:"control", label:"交付监控", ctrl:{c1x:920,c1y:200,c2x:1340,c2y:770}}
+];
+
+// 反馈流
+const feedbackLinks = [
+  {from:"customer_delivery", to:"demand_mgmt", type:"feedback", label:"需求闭环反馈", ctrl:{c1x:1480,c1y:30,c2x:300,c2y:30}},
+  {from:"procurement", to:"control_tower", type:"feedback", label:"执行反馈", ctrl:{c1x:540,c1y:770,c2x:820,c2y:200}},
+  {from:"manufacturing", to:"mps_mrp", type:"feedback", label:"实绩反馈", ctrl:{c1x:990,c1y:770,c2x:1060,c2y:380}}
+];
+
+// 展开关系（主组件 → 子组件，灰色细虚线）
+const expandLinks = [];
+subNodes.forEach(s=>{
+  expandLinks.push({from:s.parent, to:s.id, type:"expand"});
+});
+
+// IT 系统支撑关系（系统 → 对应主组件/子组件，紫色虚线）
+const itSupportLinks = [
+  {from:"erp", to:"demand_mgmt", type:"itsupport"},
+  {from:"erp", to:"procurement", type:"itsupport"},
+  {from:"erp", to:"warehouse_delivery", type:"itsupport"},
+  {from:"aps", to:"sop", type:"itsupport"},
+  {from:"aps", to:"mps_mrp", type:"itsupport"},
+  {from:"aps", to:"capacity_plan", type:"itsupport"},
+  {from:"srm", to:"procurement", type:"itsupport"},
+  {from:"mes", to:"manufacturing", type:"itsupport"},
+  {from:"wms", to:"warehouse_delivery", type:"itsupport"},
+  {from:"tms", to:"warehouse_delivery", type:"itsupport"},
+  {from:"crm", to:"demand_mgmt", type:"itsupport"}
+];
+
+const linkColor = {main:"#D32F2F", data:"#1565C0", control:"#2E7D32", feedback:"#F57C00", expand:"#9E9E9E", itsupport:"#7B1FA2"};
+const linkWidth = {main:3, data:2, control:1.5, feedback:1.6, expand:1, itsupport:1.3};
+const linkDash = {main:null, data:null, control:"6,3", feedback:"4,3", expand:"2,3", itsupport:"5,2"};
+const linkArrowKey = {main:"red", data:"blue", control:"green", feedback:"orange", expand:"grey", itsupport:"purple"};
+
+// ====== SVG 初始化 ======
+const svg = d3.select("#viz");
+const g = svg.append("g");
+
+// 箭头定义
+const defs = svg.append("defs");
+[["blue","#1565C0"],["green","#2E7D32"],["orange","#F57C00"],["red","#D32F2F"],["purple","#7B1FA2"],["grey","#9E9E9E"]].forEach(([key,color])=>{
+  defs.append("marker").attr("id","arrow-"+key).attr("markerWidth",10).attr("markerHeight",8)
+    .attr("refX",9).attr("refY",4).attr("orient","auto")
+    .append("polygon").attr("points","0 0, 10 4, 0 8").attr("fill",color);
+});
+defs.append("marker").attr("id","arrow-blue-start").attr("markerWidth",10).attr("markerHeight",8)
+  .attr("refX",1).attr("refY",4).attr("orient","auto")
+  .append("polygon").attr("points","10 0, 0 4, 10 8").attr("fill","#1565C0");
+
+// ====== 背景层带 ======
+const layerData = [
+  {y:50, h:160, label:"外部协同层（客户·控制塔·交付）", color:"#FFF3E0"},
+  {y:230, h:160, label:"供应链计划层（需求管理·S&OP·MPS/MRP·产能库存）", color:"#F3E5F5"},
+  {y:410, h:160, label:"计划细化层（各计划主组件的子模块展开）", color:"#FCE4EC"},
+  {y:590, h:80, label:"计划↔执行 协同过渡", color:"#F5F5F5"},
+  {y:690, h:160, label:"供应链执行层（采购·制造·仓储交付）", color:"#E8F5E9"},
+  {y:870, h:160, label:"执行细化层（各执行主组件的子模块展开）", color:"#F1F8E9"},
+  {y:1050, h:130, label:"外部供应层（供应商协同）", color:"#FFF3E0"},
+  {y:1200, h:130, label:"ISC-IT 信息化系统底座（七大核心业务系统）", color:"#F3E5F5"},
+  {y:1380, h:80, label:"主数据治理底座", color:"#ECEFF1"}
+];
+const layerG = g.append("g").attr("class","layers");
+layerData.forEach(d=>{
+  layerG.append("rect").attr("x",0).attr("y",d.y).attr("width",VBW).attr("height",d.h).attr("fill",d.color).attr("opacity",0.4);
+  layerG.append("text").attr("x",16).attr("y",d.y+18).attr("font-size",11).attr("fill","#90A4AE").attr("font-weight",600).text(d.label);
+});
+
+// ====== 阶段竖向分隔虚线 ======
+[280, 540, 900, 1260, 1500].forEach(x=>{
+  layerG.append("line").attr("x1",x).attr("y1",230).attr("x2",x).attr("y2",1030)
+    .attr("stroke","#E0E0E0").attr("stroke-width",1).attr("stroke-dasharray","3,4").attr("opacity",0.5);
+});
+
+// ====== 工具函数：边界点 ======
+function getEdgePoint(node, towardNode){
+  const cx=node.cx, cy=node.cy;
+  const dx=towardNode.cx-cx, dy=towardNode.cy-cy;
+  const rx=node.w/2, ry=node.h/2;
+  const ang=Math.atan2(dy,dx);
+  return {x:cx+rx*Math.cos(ang)*0.88, y:cy+ry*Math.sin(ang)*0.88};
+}
+
+// 所有节点合并（用于查找）
+const allNodes = [...mainNodes, ...subNodes, supplier, ...itSystems];
+
+function findNode(id){ return allNodes.find(n=>n.id===id); }
+
+// ====== 绘制连线层（先连线，后节点）======
+const linkG = g.append("g").attr("class","links");
+const allLinks = [...mainLinks, ...dataLinks, ...controlLinks, ...feedbackLinks, ...expandLinks, ...itSupportLinks];
+const linkPaths = [];
+
+allLinks.forEach((lk,i)=>{
+  const sNode=findNode(lk.from), tNode=findNode(lk.to);
+  if(!sNode||!tNode) return;
+  const sp=getEdgePoint(sNode,tNode), tp=getEdgePoint(tNode,sNode);
+  let pathD;
+  if(lk.ctrl){
+    pathD=`M ${sp.x},${sp.y} C ${lk.ctrl.c1x},${lk.ctrl.c1y} ${lk.ctrl.c2x},${lk.ctrl.c2y} ${tp.x},${tp.y}`;
+  } else {
+    const mx=(sp.x+tp.x)/2;
+    pathD=`M ${sp.x},${sp.y} C ${mx},${sp.y} ${mx},${tp.y} ${tp.x},${tp.y}`;
+  }
+  const color=linkColor[lk.type], colorKey=linkArrowKey[lk.type];
+  const path=linkG.append("path")
+    .attr("d",pathD).attr("fill","none")
+    .attr("stroke",color).attr("stroke-width",linkWidth[lk.type])
+    .attr("stroke-dasharray",linkDash[lk.type]||"none")
+    .attr("marker-end",lk.type==="expand"?null:`url(#arrow-${colorKey})`)
+    .attr("class","link-path")
+    .attr("data-from",lk.from).attr("data-to",lk.to).attr("data-type",lk.type)
+    .style("cursor","pointer").style("transition","opacity .2s, stroke-width .2s");
+  if(lk.bidir){ path.attr("marker-start","url(#arrow-blue-start)"); }
+  // 标签（仅主流程、信息流、控制流、反馈流有标签，展开关系和IT支撑不标）
+  if(lk.label){
+    let midX, midY;
+    if(lk.ctrl){
+      midX=(sp.x+3*lk.ctrl.c1x+3*lk.ctrl.c2x+tp.x)/8;
+      midY=(sp.y+3*lk.ctrl.c1y+3*lk.ctrl.c2y+tp.y)/8;
+    } else {
+      midX=(sp.x+tp.x)/2; midY=(sp.y+tp.y)/2;
+    }
+    const labelW=lk.label.length*12+16;
+    linkG.append("rect")
+      .attr("x",midX-labelW/2).attr("y",midY-9).attr("width",labelW).attr("height",16).attr("rx",8)
+      .attr("fill","#fff").attr("stroke",color).attr("stroke-width",1).attr("opacity",0.95)
+      .attr("class","link-label-bg").attr("data-link-idx",i);
+    linkG.append("text")
+      .attr("x",midX).attr("y",midY+3).attr("text-anchor","middle")
+      .attr("font-size",10).attr("fill",color).attr("font-weight",600)
+      .attr("class","link-label").attr("data-link-idx",i).text(lk.label);
+  }
+  linkPaths.push({el:path,data:lk});
+});
+
+// 主流程流动动画
+linkPaths.filter(p=>p.data.type==="main").forEach(p=>{
+  p.flow=linkG.append("circle").attr("r",4).attr("fill","#FFEB3B").attr("opacity",0.95)
+    .style("filter","drop-shadow(0 0 5px #FFC107)");
+  function moveFlow(){
+    p.flow.transition().duration(2600).ease(d3.easeLinear)
+      .attrTween("transform",()=>{
+        const pa=p.el.node();
+        return (t)=>{
+          const pt=pa.getPointAtLength(pa.getTotalLength()*t);
+          return `translate(${pt.x},${pt.y})`;
+        };
+      }).on("end",moveFlow);
+  }
+  moveFlow();
+});
+
+// ====== 绘制主组件 ======
+const nodeG=g.append("g").attr("class","nodes");
+const tooltip=d3.select("#tooltip");
+const detailPanel=d3.select("#detailPanel");
+const detailContent=d3.select("#detailContent");
+const shapeLabel={rect:"矩形·基础功能",roundrect:"圆角矩形·有状态输出",hexagon:"六边形·决策控制",circle:"圆形·数据池/平台",cloud:"云形·外部环境",sub:"小矩形·子组件",itsys:"小矩形·IT系统"};
+
+function drawMainNode(node){
+  const ng=nodeG.append("g").attr("class","node-group").attr("data-id",node.id)
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  const hw=node.w/2, hh=node.h/2;
+  let shape;
+  if(node.shape==="cloud"){
+    const w=node.w,h=node.h;
+    shape=ng.append("path")
+      .attr("d",`M ${-w/2+14},${h/2} C ${-w/2-8},${h/2} ${-w/2-8},${-h/4-2} ${-w/4+6},${-h/4-2} C ${-w/4+2},${-h/2-12} ${w/4-2},${-h/2-12} ${w/4-6},${-h/4-2} C ${w/2+12},${-h/4-2} ${w/2+12},${h/2} ${w/2-14},${h/2} Z`)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="rect"){
+    shape=ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",4)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="roundrect"){
+    shape=ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",14)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="hexagon"){
+    const w=node.w,h=node.h;
+    shape=ng.append("polygon")
+      .attr("points",`${-w/2+h/3},0 ${-w/2+h/3},${-h/2} ${w/2-h/3},${-h/2} ${w/2-h/3},0 ${w/2-h/3},${h/2} ${-w/2+h/3},${h/2}`)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  }
+  shape.attr("class","node-shape");
+  // 标题自动换行
+  const titleText=node.title;
+  const maxChars=Math.floor(node.w/14);
+  if(titleText.length>maxChars){
+    const mid=Math.ceil(titleText.length/2);
+    ng.append("text").attr("text-anchor","middle").attr("y",-10)
+      .attr("font-size",14).attr("font-weight",700).attr("fill",node.textColor).text(titleText.slice(0,mid));
+    ng.append("text").attr("text-anchor","middle").attr("y",8)
+      .attr("font-size",14).attr("font-weight",700).attr("fill",node.textColor).text(titleText.slice(mid));
+    ng.append("text").attr("text-anchor","middle").attr("y",24)
+      .attr("font-size",10).attr("fill",node.textColor).attr("opacity",0.8).text(node.sub);
+  } else {
+    ng.append("text").attr("text-anchor","middle").attr("y",-6)
+      .attr("font-size",14).attr("font-weight",700).attr("fill",node.textColor).text(titleText);
+    ng.append("text").attr("text-anchor","middle").attr("y",12)
+      .attr("font-size",10).attr("fill",node.textColor).attr("opacity",0.8).text(node.sub);
+  }
+  // 端口圆点
+  if(["demand_mgmt","procurement","manufacturing","mps_mrp"].includes(node.id)){
+    ng.append("circle").attr("cx",-hw-2).attr("cy",0).attr("r",3.5).attr("fill",node.stroke);
+    ng.append("circle").attr("cx",hw+2).attr("cy",0).attr("r",3.5).attr("fill","none").attr("stroke",node.stroke).attr("stroke-width",1.5);
+  }
+  // 交互
+  ng.on("mouseenter",function(event){
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title}</div><div class="tt-role">${node.role||"主流程组件"}</div><div class="tt-body">${node.desc||""}</div>`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+    highlightNode(node.id,true);
+  })
+  .on("mousemove",function(event){
+    tooltip.style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+  })
+  .on("mouseleave",function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show")||detailPanel.attr("data-active")!==node.id){ resetHighlight(); }
+  })
+  .on("click",function(){ showDetail(node); });
+  ng.attr("opacity",0).transition().duration(500).delay(mainNodes.indexOf(node)*50).attr("opacity",1);
+}
+
+// ====== 绘制子组件 ======
+function drawSubNode(node){
+  const ng=nodeG.append("g").attr("class","node-group sub-node").attr("data-id",node.id)
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  const hw=node.w/2, hh=node.h/2;
+  ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",3)
+    .attr("fill","#E1BEE7").attr("stroke","#8E24AA").attr("stroke-width",1.3)
+    .style("filter","drop-shadow(1px 1px 1.5px rgba(0,0,0,.1))");
+  // 标题自动换行
+  const titleText=node.title;
+  const maxChars=Math.floor(node.w/11);
+  if(titleText.length>maxChars){
+    const mid=Math.ceil(titleText.length/2);
+    ng.append("text").attr("text-anchor","middle").attr("y",-3)
+      .attr("font-size",11).attr("font-weight",600).attr("fill","#4A148C").text(titleText.slice(0,mid));
+    ng.append("text").attr("text-anchor","middle").attr("y",11)
+      .attr("font-size",11).attr("font-weight",600).attr("fill","#4A148C").text(titleText.slice(mid));
+  } else {
+    ng.append("text").attr("text-anchor","middle").attr("y",4)
+      .attr("font-size",11).attr("font-weight",600).attr("fill","#4A148C").text(titleText);
+  }
+  // 子组件详情
+  node.role = `子组件 · 隶属于 ${findNode(node.parent)?.title||""}`;
+  node.behavior = `执行 ${node.title} 的具体操作步骤`;
+  node.props = [node.title, "细化执行"];
+  node.shape = "sub";
+  // 交互
+  ng.on("mouseenter",function(event){
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title}</div><div class="tt-role">${node.role}</div>`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+    highlightNode(node.id,true);
+  })
+  .on("mouseleave",function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show")||detailPanel.attr("data-active")!==node.id){ resetHighlight(); }
+  })
+  .on("click",function(){ showDetail(node); });
+  ng.attr("opacity",0).transition().duration(400).delay(400+subNodes.indexOf(node)*30).attr("opacity",1);
+}
+
+// ====== 绘制供应商 ======
+function drawSupplier(){
+  const node=supplier;
+  const ng=nodeG.append("g").attr("class","node-group").attr("data-id",node.id)
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  const w=node.w,h=node.h;
+  ng.append("path")
+    .attr("d",`M ${-w/2+14},${h/2} C ${-w/2-8},${h/2} ${-w/2-8},${-h/4-2} ${-w/4+6},${-h/4-2} C ${-w/4+2},${-h/2-12} ${w/4-2},${-h/2-12} ${w/4-6},${-h/4-2} C ${w/2+12},${-h/4-2} ${w/2+12},${h/2} ${w/2-14},${h/2} Z`)
+    .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+    .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  ng.append("text").attr("text-anchor","middle").attr("y",-6)
+    .attr("font-size",14).attr("font-weight",700).attr("fill",node.textColor).text(node.title);
+  ng.append("text").attr("text-anchor","middle").attr("y",12)
+    .attr("font-size",10).attr("fill",node.textColor).attr("opacity",0.8).text(node.sub);
+  ng.on("mouseenter",function(event){
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title}</div><div class="tt-role">${node.role}</div><div class="tt-body">${node.desc}</div>`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+    highlightNode(node.id,true);
+  })
+  .on("mouseleave",function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show")||detailPanel.attr("data-active")!==node.id){ resetHighlight(); }
+  })
+  .on("click",function(){ showDetail(node); });
+  ng.attr("opacity",0).transition().duration(500).delay(700).attr("opacity",1);
+}
+
+// ====== 绘制 IT 系统 ======
+function drawITSystem(node){
+  const ng=nodeG.append("g").attr("class","node-group it-node").attr("data-id",node.id)
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  const hw=node.w/2, hh=node.h/2;
+  ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",6)
+    .attr("fill",node.color).attr("stroke",node.stroke).attr("stroke-width",1.8)
+    .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  ng.append("text").attr("text-anchor","middle").attr("y",-6)
+    .attr("font-size",14).attr("font-weight",700).attr("fill","#4A148C").text(node.title);
+  ng.append("text").attr("text-anchor","middle").attr("y",12)
+    .attr("font-size",10).attr("fill","#6A1B9A").attr("opacity",0.85).text(node.sub);
+  // 详情补充
+  node.role="ISC-IT 系统底座 · 业务承载系统";
+  node.behavior=`支撑 ${node.title} 相关业务流程的在线化与数据流转`;
+  node.props=[node.title, node.sub, "系统集成", "数据接口"];
+  node.shape="itsys";
+  ng.on("mouseenter",function(event){
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title} · ${node.sub}</div><div class="tt-role">ISC-IT 系统底座</div><div class="tt-body">${node.desc}</div>`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+    highlightNode(node.id,true);
+  })
+  .on("mouseleave",function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show")||detailPanel.attr("data-active")!==node.id){ resetHighlight(); }
+  })
+  .on("click",function(){ showDetail(node); });
+  ng.attr("opacity",0).transition().duration(400).delay(800+itSystems.indexOf(node)*40).attr("opacity",1);
+}
+
+// ====== 绘制主数据底座 ======
+function drawMasterData(){
+  const node=masterData;
+  const ng=nodeG.append("g").attr("class","node-group").attr("data-id","master_data")
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  ng.append("rect").attr("x",-node.w/2).attr("y",-node.h/2).attr("width",node.w).attr("height",node.h).attr("rx",8)
+    .attr("fill","#ECEFF1").attr("stroke","#546E7A").attr("stroke-width",2)
+    .style("filter","drop-shadow(1px 2px 3px rgba(0,0,0,.1))");
+  ng.append("text").attr("x",0).attr("y",5).attr("text-anchor","middle")
+    .attr("font-size",13).attr("font-weight",700).attr("fill","#37474F").text(node.title);
+  node.title="主数据治理平台";
+  node.role="底座 · 主数据治理";
+  node.desc="统一管理物料、BOM、客户、供应商、价格、工艺路线等核心主数据，确保全链路数据一致性，是ISC-IT系统协同的基础。";
+  node.behavior="提供统一主数据标识与口径 → 支撑所有业务系统数据互通";
+  node.props=["物料主数据","BOM","客户主数据","供应商主数据","价格主数据","工艺路线","统一标识"];
+  node.shape="rect";
+  node.cx=node.cx; node.cy=node.cy;
+  ng.on("mouseenter",function(event){
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">主数据治理平台</div><div class="tt-role">底座 · 主数据治理</div><div class="tt-body">${node.desc}</div>`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+  })
+  .on("mouseleave",function(){ tooltip.style("opacity",0); })
+  .on("click",function(){ showDetail(node); });
+  ng.attr("opacity",0).transition().duration(500).delay(1200).attr("opacity",1);
+}
+
+// 绘制顺序
+mainNodes.forEach(drawMainNode);
+subNodes.forEach(drawSubNode);
+drawSupplier();
+itSystems.forEach(drawITSystem);
+drawMasterData();
+
+// ====== 高亮逻辑 ======
+function highlightNode(nodeId,dimOthers){
+  const connected=new Set([nodeId]);
+  allLinks.forEach(lk=>{
+    if(lk.from===nodeId) connected.add(lk.to);
+    if(lk.to===nodeId) connected.add(lk.from);
+  });
+  nodeG.selectAll(".node-group").each(function(){
+    const id=d3.select(this).attr("data-id");
+    const op=dimOthers?(connected.has(id)?1:0.2):1;
+    d3.select(this).transition().duration(200).style("opacity",op);
+  });
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const f=el.attr("data-from"),t=el.attr("data-to");
+    const active=(f===nodeId||t===nodeId)||!dimOthers;
+    const baseW=linkWidth[el.attr("data-type")];
+    el.transition().duration(200)
+      .style("opacity",active?1:0.1)
+      .attr("stroke-width",active?baseW+0.5:baseW);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=allLinks[+idx];
+    if(!lk) return;
+    const active=(lk.from===nodeId||lk.to===nodeId)||!dimOthers;
+    d3.select(this).transition().duration(200).style("opacity",active?1:0.1);
+  });
+}
+function resetHighlight(){
+  nodeG.selectAll(".node-group").transition().duration(200).style("opacity",1);
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const base=linkWidth[el.attr("data-type")];
+    el.transition().duration(200).style("opacity",1).attr("stroke-width",base);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").transition().duration(200).style("opacity",1);
+}
+
+// ====== 详情面板 ======
+function showDetail(node){
+  const radius=node.shape==='circle'?'50%':(node.shape==='roundrect'||node.shape==='sub'||node.shape==='itsys')?'6px':'2px';
+  const fillMap={sub:"#E1BEE7",itsys:node.color||"#E1BEE7"};
+  const bgFill=fillMap[node.shape]||node.fill||"#ECEFF1";
+  const strokeColor=node.stroke||(node.shape==="sub"?"#8E24AA":node.shape==="itsys"?"#8E24AA":"#546E7A");
+  const html=`
+    <h3><span class="dp-shape" style="background:${bgFill};border:1.5px solid ${strokeColor};border-radius:${radius};"></span>${node.title}</h3>
+    <div class="dp-label">角色定位</div>
+    <div style="color:#455A64;">${node.role||"-"}</div>
+    <div class="dp-label" style="margin-top:8px;">形状语义</div>
+    <div style="color:#455A64;">${shapeLabel[node.shape]||"-"}</div>
+    ${node.desc?`<div class="dp-section"><div class="dp-label">职责说明</div><div style="color:#455A64;">${node.desc}</div></div>`:""}
+    ${node.behavior?`<div class="dp-section"><div class="dp-label">行为（Behavior）</div><div style="color:#455A64;">${node.behavior}</div></div>`:""}
+    ${node.props?`<div class="dp-section"><div class="dp-label">关键属性（Structure）</div><div style="color:#455A64;">${node.props.map(p=>`<span style="display:inline-block;background:#ECEFF1;border-radius:10px;padding:2px 10px;margin:2px 4px 2px 0;font-size:11px;">${p}</span>`).join("")}</div></div>`:""}
+  `;
+  detailContent.html(html);
+  detailPanel.classed("show",true).attr("data-active",node.id);
+  highlightNode(node.id,true);
+}
+
+// 双击空白重置
+svg.on("dblclick",function(event){
+  if(event.target.tagName==="svg"||event.target===svg.node()){
+    detailPanel.classed("show",false);
+    resetHighlight();
+  }
+});
+</script>
+</body>
+</html>

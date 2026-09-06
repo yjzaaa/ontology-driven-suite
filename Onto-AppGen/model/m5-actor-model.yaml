@@ -1,0 +1,74 @@
+actors:
+  - actorId: ACTOR-LLM
+    actorType: SYSTEM
+    attributes:
+      deptScope: ALL
+    name: LLM 决策者
+    roles:
+      - ROLE-SCHEMA-GENERATOR
+  - actorId: ACTOR-EXEC
+    actorType: SYSTEM
+    attributes:
+      deptScope: ALL
+    name: 执行层
+    roles:
+      - ROLE-VALIDATOR
+      - ROLE-API-GENERATOR
+      - ROLE-APP-BUILDER
+  - actorId: ACTOR-RENDERER
+    actorType: SYSTEM
+    attributes:
+      deptScope: ALL
+    name: 前端渲染器
+    roles:
+      - ROLE-RENDERER
+domain: 本体工作台 V3 应用生成机制
+model_type: ACTOR
+permissions:
+  - dataScope: ALL
+    permissionId: PERM-SCHEMA-GENERATE
+    targetRef: Schema_Generate
+    targetType: BEHAVIOR
+  - dataScope: ALL
+    permissionId: PERM-SCHEMA-VALIDATE
+    targetRef: Schema_Validate
+    targetType: BEHAVIOR
+  - dataScope: ALL
+    permissionId: PERM-API-GENERATE
+    targetRef: API_GenerateCRUD
+    targetType: BEHAVIOR
+  - dataScope: ALL
+    permissionId: PERM-APP-GENERATE
+    targetRef: App_Generate
+    targetType: BEHAVIOR
+  - dataScope: ALL
+    permissionId: PERM-APP-RUN
+    targetRef: App_Run
+    targetType: BEHAVIOR
+  - dataScope: ALL
+    permissionId: PERM-RENDER
+    targetRef: Renderer_Render
+    targetType: BEHAVIOR
+roles:
+  - name: Schema 生成角色
+    permissions:
+      - PERM-SCHEMA-GENERATE
+    roleId: ROLE-SCHEMA-GENERATOR
+  - name: 校验角色
+    permissions:
+      - PERM-SCHEMA-VALIDATE
+    roleId: ROLE-VALIDATOR
+  - name: API 生成角色
+    permissions:
+      - PERM-API-GENERATE
+    roleId: ROLE-API-GENERATOR
+  - name: 应用构建角色
+    permissions:
+      - PERM-APP-GENERATE
+      - PERM-APP-RUN
+    roleId: ROLE-APP-BUILDER
+  - name: 渲染角色
+    permissions:
+      - PERM-RENDER
+    roleId: ROLE-RENDERER
+version: '1.1'

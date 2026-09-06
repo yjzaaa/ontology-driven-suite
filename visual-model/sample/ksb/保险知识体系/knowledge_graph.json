@@ -1,0 +1,1172 @@
+{
+  "nodes": [
+    {
+      "name": "风险转移",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.9,
+      "value": "通过支付保费将不确定损失转移给保险机制。",
+      "degreeScore": 0.26,
+      "symbolSize": 43
+    },
+    {
+      "name": "大数法则",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.88,
+      "value": "风险池足够大时，整体损失呈现更稳定的统计规律。",
+      "degreeScore": 0.443,
+      "symbolSize": 46
+    },
+    {
+      "name": "可保风险",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.86,
+      "value": "满足偶然性、可计量、损失可界定、风险大量同质等条件的风险。",
+      "degreeScore": 1.0,
+      "symbolSize": 56
+    },
+    {
+      "name": "逆选择",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.8,
+      "value": "高风险个体更倾向投保导致风险池恶化。",
+      "degreeScore": 0.267,
+      "symbolSize": 40
+    },
+    {
+      "name": "道德风险",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.76,
+      "value": "投保后行为改变导致损失概率或程度上升。",
+      "degreeScore": 0.231,
+      "symbolSize": 38
+    },
+    {
+      "name": "保险利益",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.82,
+      "value": "投保人或被保险人对保险标的具有法律认可的利益关系。",
+      "degreeScore": 0.112,
+      "symbolSize": 38
+    },
+    {
+      "name": "最大诚信",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.78,
+      "value": "保险合同双方应如实告知重要事实。",
+      "degreeScore": 0.23,
+      "symbolSize": 39
+    },
+    {
+      "name": "近因原则",
+      "categoryName": "保险基础与风险",
+      "category": 0,
+      "layer": 0,
+      "importance": 0.76,
+      "value": "以导致损失的直接有效原因为赔付判断依据。",
+      "degreeScore": 0.246,
+      "symbolSize": 39
+    },
+    {
+      "name": "寿险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.82,
+      "value": "以人的寿命为保险标的，提供身故、生存或年金给付。",
+      "degreeScore": 0.412,
+      "symbolSize": 44
+    },
+    {
+      "name": "健康险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.84,
+      "value": "覆盖疾病、医疗费用、失能或护理等健康风险。",
+      "degreeScore": 0.259,
+      "symbolSize": 41
+    },
+    {
+      "name": "意外险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.72,
+      "value": "覆盖外来、突发、非本意、非疾病原因导致的伤害。",
+      "degreeScore": 0.134,
+      "symbolSize": 35
+    },
+    {
+      "name": "车险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.82,
+      "value": "覆盖机动车损失、第三者责任等车辆相关风险。",
+      "degreeScore": 0.134,
+      "symbolSize": 38
+    },
+    {
+      "name": "责任险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.78,
+      "value": "覆盖被保险人依法应承担的赔偿责任。",
+      "degreeScore": 0.14,
+      "symbolSize": 37
+    },
+    {
+      "name": "企财险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.7,
+      "value": "覆盖企业财产因火灾、自然灾害等造成的损失。",
+      "degreeScore": 0.075,
+      "symbolSize": 34
+    },
+    {
+      "name": "再保险",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.82,
+      "value": "保险公司将部分风险转移给再保险人的机制。",
+      "degreeScore": 0.504,
+      "symbolSize": 45
+    },
+    {
+      "name": "比例再保",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.66,
+      "value": "按约定比例分出保费和赔款的再保险安排。",
+      "degreeScore": 0.156,
+      "symbolSize": 34
+    },
+    {
+      "name": "非比例再保",
+      "categoryName": "产品与险种",
+      "category": 1,
+      "layer": 1,
+      "importance": 0.68,
+      "value": "超过自留额后由再保险承担赔付的安排。",
+      "degreeScore": 0.156,
+      "symbolSize": 35
+    },
+    {
+      "name": "纯保费",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.86,
+      "value": "反映期望赔付成本的保费部分。",
+      "degreeScore": 0.362,
+      "symbolSize": 44
+    },
+    {
+      "name": "附加保费",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.76,
+      "value": "覆盖费用、佣金、利润和风险边际的保费部分。",
+      "degreeScore": 0.166,
+      "symbolSize": 37
+    },
+    {
+      "name": "费率厘定",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.9,
+      "value": "根据风险成本、费用、利润和竞争因素确定费率。",
+      "degreeScore": 0.434,
+      "symbolSize": 46
+    },
+    {
+      "name": "赔付率",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.84,
+      "value": "赔款支出与保费收入之比，是承保质量核心指标。",
+      "degreeScore": 0.534,
+      "symbolSize": 46
+    },
+    {
+      "name": "综合成本率",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.82,
+      "value": "赔付率与费用率之和，衡量承保盈利能力。",
+      "degreeScore": 0.31,
+      "symbolSize": 42
+    },
+    {
+      "name": "准备金",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.86,
+      "value": "为未来赔付和责任履行计提的负债。",
+      "degreeScore": 0.671,
+      "symbolSize": 50
+    },
+    {
+      "name": "未决赔款准备金",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.78,
+      "value": "为已发生未结案赔案计提的准备金。",
+      "degreeScore": 0.166,
+      "symbolSize": 38
+    },
+    {
+      "name": "经验分析",
+      "categoryName": "精算与定价",
+      "category": 2,
+      "layer": 2,
+      "importance": 0.72,
+      "value": "基于历史赔付、费用和风险暴露分析业务表现。",
+      "degreeScore": 0.14,
+      "symbolSize": 35
+    },
+    {
+      "name": "核保",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.9,
+      "value": "保险公司接受风险前对风险进行识别、评估和选择。",
+      "degreeScore": 0.666,
+      "symbolSize": 51
+    },
+    {
+      "name": "健康告知",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.76,
+      "value": "人身险中投保人披露健康状况的重要环节。",
+      "degreeScore": 0.15,
+      "symbolSize": 37
+    },
+    {
+      "name": "财务核保",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.68,
+      "value": "评估保额与收入、资产、保险需求是否匹配。",
+      "degreeScore": 0.121,
+      "symbolSize": 34
+    },
+    {
+      "name": "承保",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.84,
+      "value": "保险人同意承担风险并签发保单的过程。",
+      "degreeScore": 0.3,
+      "symbolSize": 42
+    },
+    {
+      "name": "保单",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.82,
+      "value": "记载保险合同权利义务和保障内容的凭证。",
+      "degreeScore": 0.602,
+      "symbolSize": 47
+    },
+    {
+      "name": "批改",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.66,
+      "value": "保险期间对保单内容进行变更。",
+      "degreeScore": 0.121,
+      "symbolSize": 33
+    },
+    {
+      "name": "续保",
+      "categoryName": "核保与承保",
+      "category": 3,
+      "layer": 3,
+      "importance": 0.72,
+      "value": "保险期满后延续保障。",
+      "degreeScore": 0.123,
+      "symbolSize": 35
+    },
+    {
+      "name": "报案",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.7,
+      "value": "保险事故发生后通知保险公司的起点。",
+      "degreeScore": 0.259,
+      "symbolSize": 37
+    },
+    {
+      "name": "查勘定损",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.78,
+      "value": "调查事故原因、损失范围和金额。",
+      "degreeScore": 0.289,
+      "symbolSize": 40
+    },
+    {
+      "name": "责任认定",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.84,
+      "value": "判断事故是否属于保险责任及赔付范围。",
+      "degreeScore": 0.466,
+      "symbolSize": 45
+    },
+    {
+      "name": "核赔",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.8,
+      "value": "审核理赔材料、责任和赔付金额。",
+      "degreeScore": 0.677,
+      "symbolSize": 48
+    },
+    {
+      "name": "赔付计算",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.82,
+      "value": "根据责任、免赔、比例和限额计算赔款。",
+      "degreeScore": 0.295,
+      "symbolSize": 41
+    },
+    {
+      "name": "理赔时效",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.72,
+      "value": "衡量理赔处理速度和客户体验。",
+      "degreeScore": 0.113,
+      "symbolSize": 35
+    },
+    {
+      "name": "反欺诈",
+      "categoryName": "理赔与服务",
+      "category": 4,
+      "layer": 4,
+      "importance": 0.82,
+      "value": "识别和处置虚假事故、夸大损失、带病投保等欺诈行为。",
+      "degreeScore": 0.425,
+      "symbolSize": 44
+    },
+    {
+      "name": "代理人渠道",
+      "categoryName": "销售渠道运营",
+      "category": 5,
+      "layer": 5,
+      "importance": 0.72,
+      "value": "由保险代理人开展销售和服务。",
+      "degreeScore": 0.204,
+      "symbolSize": 37
+    },
+    {
+      "name": "经纪渠道",
+      "categoryName": "销售渠道运营",
+      "category": 5,
+      "layer": 5,
+      "importance": 0.68,
+      "value": "经纪人代表客户选择保险方案。",
+      "degreeScore": 0.094,
+      "symbolSize": 33
+    },
+    {
+      "name": "银保渠道",
+      "categoryName": "销售渠道运营",
+      "category": 5,
+      "layer": 5,
+      "importance": 0.66,
+      "value": "通过银行网点和客户资源销售保险。",
+      "degreeScore": 0.102,
+      "symbolSize": 33
+    },
+    {
+      "name": "互联网保险",
+      "categoryName": "销售渠道运营",
+      "category": 5,
+      "layer": 5,
+      "importance": 0.78,
+      "value": "通过线上平台完成获客、投保、服务和理赔。",
+      "degreeScore": 0.242,
+      "symbolSize": 39
+    },
+    {
+      "name": "嵌入式保险",
+      "categoryName": "销售渠道运营",
+      "category": 5,
+      "layer": 5,
+      "importance": 0.72,
+      "value": "将保险嵌入交易、出行、医疗、电商等场景。",
+      "degreeScore": 0.255,
+      "symbolSize": 38
+    },
+    {
+      "name": "客户分层",
+      "categoryName": "销售渠道运营",
+      "category": 5,
+      "layer": 5,
+      "importance": 0.76,
+      "value": "基于价值、风险、生命周期和需求进行客户经营。",
+      "degreeScore": 0.371,
+      "symbolSize": 41
+    },
+    {
+      "name": "偿付能力",
+      "categoryName": "风控合规监管",
+      "category": 6,
+      "layer": 6,
+      "importance": 0.9,
+      "value": "保险公司履行未来赔付责任的资本充足能力。",
+      "degreeScore": 0.614,
+      "symbolSize": 50
+    },
+    {
+      "name": "风险综合评级",
+      "categoryName": "风控合规监管",
+      "category": 6,
+      "layer": 6,
+      "importance": 0.74,
+      "value": "监管或公司对风险管理能力和风险水平的综合评价。",
+      "degreeScore": 0.134,
+      "symbolSize": 36
+    },
+    {
+      "name": "销售适当性",
+      "categoryName": "风控合规监管",
+      "category": 6,
+      "layer": 6,
+      "importance": 0.78,
+      "value": "确保产品销售与客户需求、风险承受能力匹配。",
+      "degreeScore": 0.266,
+      "symbolSize": 40
+    },
+    {
+      "name": "消费者保护",
+      "categoryName": "风控合规监管",
+      "category": 6,
+      "layer": 6,
+      "importance": 0.82,
+      "value": "保护投保人、被保险人和受益人的合法权益。",
+      "degreeScore": 0.191,
+      "symbolSize": 39
+    },
+    {
+      "name": "反洗钱",
+      "categoryName": "风控合规监管",
+      "category": 6,
+      "layer": 6,
+      "importance": 0.68,
+      "value": "识别和防范保险业务被用于洗钱。",
+      "degreeScore": 0.094,
+      "symbolSize": 33
+    },
+    {
+      "name": "三道防线",
+      "categoryName": "风控合规监管",
+      "category": 6,
+      "layer": 6,
+      "importance": 0.7,
+      "value": "业务、风控合规、审计构成风险管理分工。",
+      "degreeScore": 0.113,
+      "symbolSize": 34
+    },
+    {
+      "name": "保险资金运用",
+      "categoryName": "投资与资产负债",
+      "category": 7,
+      "layer": 7,
+      "importance": 0.78,
+      "value": "保险公司对保费资金进行投资配置。",
+      "degreeScore": 0.39,
+      "symbolSize": 42
+    },
+    {
+      "name": "资产负债管理",
+      "categoryName": "投资与资产负债",
+      "category": 7,
+      "layer": 7,
+      "importance": 0.86,
+      "value": "协调资产久期、收益、流动性与负债责任特征。",
+      "degreeScore": 0.566,
+      "symbolSize": 48
+    },
+    {
+      "name": "久期匹配",
+      "categoryName": "投资与资产负债",
+      "category": 7,
+      "layer": 7,
+      "importance": 0.74,
+      "value": "管理资产与负债现金流期限错配。",
+      "degreeScore": 0.15,
+      "symbolSize": 36
+    },
+    {
+      "name": "承保利润",
+      "categoryName": "投资与资产负债",
+      "category": 7,
+      "layer": 7,
+      "importance": 0.76,
+      "value": "保费扣除赔款和费用后的承保结果。",
+      "degreeScore": 0.166,
+      "symbolSize": 37
+    },
+    {
+      "name": "投资收益",
+      "categoryName": "投资与资产负债",
+      "category": 7,
+      "layer": 7,
+      "importance": 0.72,
+      "value": "保险资金投资产生的收益。",
+      "degreeScore": 0.14,
+      "symbolSize": 35
+    },
+    {
+      "name": "内含价值",
+      "categoryName": "投资与资产负债",
+      "category": 7,
+      "layer": 7,
+      "importance": 0.7,
+      "value": "寿险公司有效业务未来利润的现值度量。",
+      "degreeScore": 0.121,
+      "symbolSize": 34
+    },
+    {
+      "name": "客户数据",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.74,
+      "value": "描述客户身份、行为、需求和风险的信息。",
+      "degreeScore": 0.338,
+      "symbolSize": 40
+    },
+    {
+      "name": "保单数据",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.78,
+      "value": "保险合同、责任、保费、状态和变更信息。",
+      "degreeScore": 0.284,
+      "symbolSize": 40
+    },
+    {
+      "name": "理赔数据",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.82,
+      "value": "事故、损失、责任、赔款和处理过程数据。",
+      "degreeScore": 0.424,
+      "symbolSize": 44
+    },
+    {
+      "name": "智能核保",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.78,
+      "value": "用规则、模型和外部数据辅助核保决策。",
+      "degreeScore": 0.301,
+      "symbolSize": 40
+    },
+    {
+      "name": "智能理赔",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.8,
+      "value": "用OCR、规则、模型和工作流提升理赔效率。",
+      "degreeScore": 0.311,
+      "symbolSize": 41
+    },
+    {
+      "name": "欺诈模型",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.76,
+      "value": "用规则和机器学习识别异常理赔或投保行为。",
+      "degreeScore": 0.263,
+      "symbolSize": 39
+    },
+    {
+      "name": "保险核心系统",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.82,
+      "value": "支撑产品、投保、承保、保全、理赔、收付费等流程的系统。",
+      "degreeScore": 0.354,
+      "symbolSize": 42
+    },
+    {
+      "name": "产品工厂",
+      "categoryName": "数据与数字化",
+      "category": 8,
+      "layer": 8,
+      "importance": 0.72,
+      "value": "通过参数化配置产品责任、费率和规则。",
+      "degreeScore": 0.255,
+      "symbolSize": 38
+    },
+    {
+      "name": "普惠保险",
+      "categoryName": "行业战略与创新",
+      "category": 9,
+      "layer": 9,
+      "importance": 0.68,
+      "value": "面向小微、农业、低收入或保障不足群体的保险服务。",
+      "degreeScore": 0.091,
+      "symbolSize": 33
+    },
+    {
+      "name": "养老金融",
+      "categoryName": "行业战略与创新",
+      "category": 9,
+      "layer": 9,
+      "importance": 0.72,
+      "value": "围绕养老储备、长期护理和退休规划的金融保险服务。",
+      "degreeScore": 0.121,
+      "symbolSize": 35
+    },
+    {
+      "name": "健康管理",
+      "categoryName": "行业战略与创新",
+      "category": 9,
+      "layer": 9,
+      "importance": 0.74,
+      "value": "从赔付补偿延伸到疾病预防、慢病管理和服务协同。",
+      "degreeScore": 0.14,
+      "symbolSize": 36
+    },
+    {
+      "name": "场景保险",
+      "categoryName": "行业战略与创新",
+      "category": 9,
+      "layer": 9,
+      "importance": 0.7,
+      "value": "围绕具体交易或生活场景设计保险保障。",
+      "degreeScore": 0.297,
+      "symbolSize": 38
+    },
+    {
+      "name": "精细化运营",
+      "categoryName": "行业战略与创新",
+      "category": 9,
+      "layer": 9,
+      "importance": 0.76,
+      "value": "用数据和分群提升获客、续保、赔付和服务效率。",
+      "degreeScore": 0.161,
+      "symbolSize": 37
+    },
+    {
+      "name": "生态合作",
+      "categoryName": "行业战略与创新",
+      "category": 9,
+      "layer": 9,
+      "importance": 0.66,
+      "value": "与医疗、汽车、金融、互联网等生态伙伴协同。",
+      "degreeScore": 0.113,
+      "symbolSize": 33
+    }
+  ],
+  "edges": [
+    {
+      "source": "可保风险",
+      "target": "风险转移",
+      "type": "depends",
+      "weight": 0.75
+    },
+    {
+      "source": "大数法则",
+      "target": "可保风险",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "逆选择",
+      "target": "大数法则",
+      "type": "evolved",
+      "weight": 0.45
+    },
+    {
+      "source": "道德风险",
+      "target": "风险转移",
+      "type": "evolved",
+      "weight": 0.46
+    },
+    {
+      "source": "最大诚信",
+      "target": "保险利益",
+      "type": "contains",
+      "weight": 0.52
+    },
+    {
+      "source": "近因原则",
+      "target": "最大诚信",
+      "type": "analogy",
+      "weight": 0.42
+    },
+    {
+      "source": "寿险",
+      "target": "可保风险",
+      "type": "depends",
+      "weight": 0.55
+    },
+    {
+      "source": "健康险",
+      "target": "可保风险",
+      "type": "depends",
+      "weight": 0.55
+    },
+    {
+      "source": "意外险",
+      "target": "可保风险",
+      "type": "depends",
+      "weight": 0.5
+    },
+    {
+      "source": "车险",
+      "target": "可保风险",
+      "type": "depends",
+      "weight": 0.5
+    },
+    {
+      "source": "责任险",
+      "target": "可保风险",
+      "type": "depends",
+      "weight": 0.52
+    },
+    {
+      "source": "再保险",
+      "target": "偿付能力",
+      "type": "evolved",
+      "weight": 0.55
+    },
+    {
+      "source": "比例再保",
+      "target": "再保险",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "非比例再保",
+      "target": "再保险",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "纯保费",
+      "target": "大数法则",
+      "type": "depends",
+      "weight": 0.74
+    },
+    {
+      "source": "费率厘定",
+      "target": "纯保费",
+      "type": "contains",
+      "weight": 0.76
+    },
+    {
+      "source": "附加保费",
+      "target": "费率厘定",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "赔付率",
+      "target": "理赔数据",
+      "type": "depends",
+      "weight": 0.58
+    },
+    {
+      "source": "综合成本率",
+      "target": "赔付率",
+      "type": "contains",
+      "weight": 0.66
+    },
+    {
+      "source": "准备金",
+      "target": "赔付率",
+      "type": "depends",
+      "weight": 0.58
+    },
+    {
+      "source": "未决赔款准备金",
+      "target": "准备金",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "经验分析",
+      "target": "赔付率",
+      "type": "evolved",
+      "weight": 0.52
+    },
+    {
+      "source": "核保",
+      "target": "逆选择",
+      "type": "depends",
+      "weight": 0.68
+    },
+    {
+      "source": "健康告知",
+      "target": "核保",
+      "type": "contains",
+      "weight": 0.56
+    },
+    {
+      "source": "财务核保",
+      "target": "核保",
+      "type": "contains",
+      "weight": 0.45
+    },
+    {
+      "source": "承保",
+      "target": "核保",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "保单",
+      "target": "承保",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "批改",
+      "target": "保单",
+      "type": "contains",
+      "weight": 0.45
+    },
+    {
+      "source": "续保",
+      "target": "保单",
+      "type": "evolved",
+      "weight": 0.46
+    },
+    {
+      "source": "报案",
+      "target": "保单",
+      "type": "depends",
+      "weight": 0.5
+    },
+    {
+      "source": "查勘定损",
+      "target": "报案",
+      "type": "evolved",
+      "weight": 0.58
+    },
+    {
+      "source": "责任认定",
+      "target": "查勘定损",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "责任认定",
+      "target": "近因原则",
+      "type": "depends",
+      "weight": 0.62
+    },
+    {
+      "source": "核赔",
+      "target": "责任认定",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "赔付计算",
+      "target": "核赔",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "理赔时效",
+      "target": "核赔",
+      "type": "contains",
+      "weight": 0.42
+    },
+    {
+      "source": "反欺诈",
+      "target": "理赔数据",
+      "type": "depends",
+      "weight": 0.62
+    },
+    {
+      "source": "反欺诈",
+      "target": "道德风险",
+      "type": "evolved",
+      "weight": 0.5
+    },
+    {
+      "source": "代理人渠道",
+      "target": "寿险",
+      "type": "evolved",
+      "weight": 0.4
+    },
+    {
+      "source": "经纪渠道",
+      "target": "企财险",
+      "type": "evolved",
+      "weight": 0.35
+    },
+    {
+      "source": "银保渠道",
+      "target": "寿险",
+      "type": "evolved",
+      "weight": 0.38
+    },
+    {
+      "source": "互联网保险",
+      "target": "保险核心系统",
+      "type": "depends",
+      "weight": 0.46
+    },
+    {
+      "source": "嵌入式保险",
+      "target": "互联网保险",
+      "type": "evolved",
+      "weight": 0.55
+    },
+    {
+      "source": "客户分层",
+      "target": "客户数据",
+      "type": "depends",
+      "weight": 0.6
+    },
+    {
+      "source": "偿付能力",
+      "target": "准备金",
+      "type": "depends",
+      "weight": 0.68
+    },
+    {
+      "source": "风险综合评级",
+      "target": "偿付能力",
+      "type": "contains",
+      "weight": 0.5
+    },
+    {
+      "source": "销售适当性",
+      "target": "消费者保护",
+      "type": "contains",
+      "weight": 0.54
+    },
+    {
+      "source": "销售适当性",
+      "target": "代理人渠道",
+      "type": "depends",
+      "weight": 0.45
+    },
+    {
+      "source": "反洗钱",
+      "target": "消费者保护",
+      "type": "analogy",
+      "weight": 0.35
+    },
+    {
+      "source": "三道防线",
+      "target": "偿付能力",
+      "type": "contains",
+      "weight": 0.42
+    },
+    {
+      "source": "保险资金运用",
+      "target": "偿付能力",
+      "type": "depends",
+      "weight": 0.54
+    },
+    {
+      "source": "资产负债管理",
+      "target": "准备金",
+      "type": "depends",
+      "weight": 0.68
+    },
+    {
+      "source": "资产负债管理",
+      "target": "保险资金运用",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "久期匹配",
+      "target": "资产负债管理",
+      "type": "contains",
+      "weight": 0.56
+    },
+    {
+      "source": "承保利润",
+      "target": "综合成本率",
+      "type": "depends",
+      "weight": 0.62
+    },
+    {
+      "source": "投资收益",
+      "target": "保险资金运用",
+      "type": "contains",
+      "weight": 0.52
+    },
+    {
+      "source": "内含价值",
+      "target": "资产负债管理",
+      "type": "evolved",
+      "weight": 0.45
+    },
+    {
+      "source": "保单数据",
+      "target": "保单",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "理赔数据",
+      "target": "核赔",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "客户数据",
+      "target": "客户分层",
+      "type": "analogy",
+      "weight": 0.38
+    },
+    {
+      "source": "智能核保",
+      "target": "核保",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "智能理赔",
+      "target": "核赔",
+      "type": "evolved",
+      "weight": 0.66
+    },
+    {
+      "source": "欺诈模型",
+      "target": "反欺诈",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "保险核心系统",
+      "target": "保单数据",
+      "type": "contains",
+      "weight": 0.55
+    },
+    {
+      "source": "产品工厂",
+      "target": "费率厘定",
+      "type": "contains",
+      "weight": 0.45
+    },
+    {
+      "source": "产品工厂",
+      "target": "保险核心系统",
+      "type": "contains",
+      "weight": 0.5
+    },
+    {
+      "source": "普惠保险",
+      "target": "场景保险",
+      "type": "analogy",
+      "weight": 0.34
+    },
+    {
+      "source": "养老金融",
+      "target": "寿险",
+      "type": "evolved",
+      "weight": 0.45
+    },
+    {
+      "source": "健康管理",
+      "target": "健康险",
+      "type": "evolved",
+      "weight": 0.52
+    },
+    {
+      "source": "场景保险",
+      "target": "嵌入式保险",
+      "type": "evolved",
+      "weight": 0.5
+    },
+    {
+      "source": "精细化运营",
+      "target": "客户分层",
+      "type": "evolved",
+      "weight": 0.6
+    },
+    {
+      "source": "生态合作",
+      "target": "场景保险",
+      "type": "contains",
+      "weight": 0.42
+    },
+    {
+      "source": "智能理赔",
+      "target": "欺诈模型",
+      "type": "contains",
+      "weight": 0.5
+    },
+    {
+      "source": "智能核保",
+      "target": "客户数据",
+      "type": "depends",
+      "weight": 0.5
+    },
+    {
+      "source": "赔付计算",
+      "target": "准备金",
+      "type": "analogy",
+      "weight": 0.42
+    },
+    {
+      "source": "再保险",
+      "target": "可保风险",
+      "type": "evolved",
+      "weight": 0.4
+    }
+  ]
+}

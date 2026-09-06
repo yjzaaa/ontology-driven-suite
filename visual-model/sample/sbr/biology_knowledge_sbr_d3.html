@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高中生物知识体系框架 · SBR 可视化建模 · D3.js</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;}
+  body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;background:#FAFBFC;color:#37474F;}
+  .wrap{width:100%;max-width:1760px;margin:0 auto;padding:16px;}
+  .header{background:linear-gradient(90deg,#00695C,#00897B);color:#fff;padding:18px 26px;border-radius:8px 8px 0 0;}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:4px;}
+  .header p{font-size:13px;color:#B2DFDB;}
+  .stage-bar{display:flex;background:#fff;border-left:1px solid #E0E0E0;border-right:1px solid #E0E0E0;padding:6px 0;}
+  .stage-item{flex:1;text-align:center;font-size:12px;font-weight:600;color:#90A4AE;border-right:1px dashed #ECEFF1;padding:4px 2px;}
+  .stage-item:last-child{border-right:none;}
+  .canvas-box{width:100%;background:#fff;border:1px solid #E0E0E0;border-top:none;border-radius:0 0 8px 8px;}
+  #viz{display:block;width:100%;height:auto;}
+  .d3-tooltip{position:absolute;pointer-events:none;background:rgba(0,77,64,0.95);color:#fff;padding:10px 14px;border-radius:6px;font-size:12px;line-height:1.6;max-width:320px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;z-index:100;}
+  .d3-tooltip .tt-title{font-size:13px;font-weight:700;margin-bottom:4px;color:#A5D6A7;}
+  .d3-tooltip .tt-role{font-size:11px;color:#80CBC4;margin-bottom:6px;}
+  .d3-tooltip .tt-body{font-size:11px;color:#FFFFFF;}
+  .d3-tooltip .tt-pre{font-size:10px;color:#FFCC80;margin-top:4px;}
+  .d3-tooltip .tt-suc{font-size:10px;color:#90CAF9;margin-top:2px;}
+  .detail-panel{position:fixed;top:20px;right:20px;width:360px;max-width:90vw;background:#fff;border:1px solid #CFD8DC;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.12);padding:18px 20px;z-index:200;display:none;font-size:12px;line-height:1.7;max-height:85vh;overflow-y:auto;}
+  .detail-panel.show{display:block;animation:slideIn .25s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+  .detail-panel .dp-close{float:right;cursor:pointer;color:#90A4AE;font-size:18px;line-height:1;}
+  .detail-panel .dp-close:hover{color:#00897B;}
+  .detail-panel .dp-shape{display:inline-block;width:14px;height:14px;border-radius:2px;vertical-align:middle;margin-right:6px;}
+  .detail-panel h3{font-size:15px;color:#00695C;margin-bottom:8px;}
+  .detail-panel .dp-label{font-weight:700;color:#546E7A;}
+  .detail-panel .dp-section{margin-top:10px;padding-top:10px;border-top:1px solid #ECEFF1;}
+  .detail-panel .dp-pre{color:#E65100;}
+  .detail-panel .dp-suc{color:#1565C0;}
+  .legend-box{margin-top:16px;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:16px 20px;display:flex;gap:28px;flex-wrap:wrap;}
+  .legend-section h4{font-size:13px;color:#00695C;margin-bottom:8px;}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#37474F;margin-bottom:5px;}
+  .legend-line{display:flex;align-items:center;gap:8px;font-size:12px;color:#37474F;margin-bottom:5px;}
+  .footer-tip{margin-top:12px;font-size:12px;color:#78909C;text-align:center;}
+  .footer-tip b{color:#546E7A;}
+  .ctrl-bar{margin-top:12px;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:12px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;}
+  .ctrl-bar label{display:flex;align-items:center;gap:6px;cursor:pointer;color:#37474F;}
+  .ctrl-bar input[type=checkbox]{cursor:pointer;}
+  .ctrl-bar .ctrl-title{font-weight:700;color:#00695C;margin-right:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>高中生物知识体系框架 · SBR 可视化建模</h1>
+    <p>五+一模块结构 · 微观→宏观层次演进 · 前导-后继依赖 + 跨模块耦合 · D3.js 交互呈现</p>
+  </div>
+  <div class="stage-bar" id="stageBar"></div>
+  <div class="canvas-box">
+    <svg id="viz" viewBox="0 0 1700 1180" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+
+  <div class="ctrl-bar">
+    <span class="ctrl-title">视图控制：</span>
+    <label><input type="checkbox" id="toggleMain" checked> 主依赖路径（红）</label>
+    <label><input type="checkbox" id="toggleCross" checked> 跨模块耦合（紫）</label>
+    <label><input type="checkbox" id="toggleInner" checked> 模块内关联（蓝）</label>
+    <label><input type="checkbox" id="toggleSupport" checked> M5方法主线（绿）</label>
+    <label><input type="checkbox" id="toggleFlow" checked> 主路径流动动画</label>
+    <span style="margin-left:auto;color:#78909C;">双击空白重置高亮</span>
+  </div>
+
+  <div class="legend-box">
+    <div class="legend-section">
+      <h4>知识模块（Structure · 按层次定位）</h4>
+      <div class="legend-item"><svg width="18" height="14"><rect width="18" height="14" rx="3" fill="#E1F5FE" stroke="#0277BD" stroke-width="1.5"/></svg>M1 分子与细胞 · 微观基础层</div>
+      <div class="legend-item"><svg width="18" height="14"><rect width="18" height="14" rx="3" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="1.5"/></svg>M2 遗传与进化 · 信息核心层</div>
+      <div class="legend-item"><svg width="18" height="14"><rect width="18" height="14" rx="3" fill="#FFF3E0" stroke="#E65100" stroke-width="1.5"/></svg>M3 稳态与调节 · 个体整合层</div>
+      <div class="legend-item"><svg width="18" height="14"><rect width="18" height="14" rx="3" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/></svg>M4 生物与环境 · 宏观系统层</div>
+      <div class="legend-item"><svg width="18" height="14"><rect width="18" height="14" rx="3" fill="#FFFDE7" stroke="#F9A825" stroke-width="1.5"/></svg>M5 实验与探究 · 方法论主线</div>
+      <div class="legend-item"><svg width="18" height="14"><rect width="18" height="14" rx="3" fill="#FCE4EC" stroke="#AD1457" stroke-width="1.5"/></svg>M6 生物技术 · 应用拓展层</div>
+    </div>
+    <div class="legend-section">
+      <h4>依赖关系（Relation）</h4>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#D32F2F" stroke-width="3"/><polygon points="36,1 44,5 36,9" fill="#D32F2F"/></svg>主依赖路径（前导→后继，学习次序）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#7B1FA2" stroke-width="2" stroke-dasharray="6,3"/><polygon points="36,1 44,5 36,9" fill="#7B1FA2"/></svg>跨模块耦合（核心物质/能量/信息交汇）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#1565C0" stroke-width="1.5"/><polygon points="36,1 44,5 36,9" fill="#1565C0"/></svg>模块内关联（同模块知识衔接）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#2E7D32" stroke-width="1.3" stroke-dasharray="4,3"/><polygon points="36,1 44,5 36,9" fill="#2E7D32"/></svg>M5方法主线（贯穿验证所有模块）</div>
+    </div>
+    <div class="legend-section" style="flex:1;min-width:420px;">
+      <h4>核心逻辑 · 生命系统层次演进</h4>
+      <div style="font-size:12px;line-height:1.8;color:#37474F;">
+        <div><b style="color:#D32F2F;">纵向主路径：</b>分子→细胞→遗传信息→个体调节→群体生态，体现"微观奠基、宏观整合"</div>
+        <div><b style="color:#7B1FA2;">横向耦合点：</b>蛋白质（贯穿M1~M4）、能量转换（M1↔M4）、信息传递（M1~M4）、细胞分裂（M1↔M2）、反馈调节（M1↔M3↔M4）</div>
+        <div><b style="color:#2E7D32;">方法论主线：</b>M5实验探究贯穿所有模块，"理论指导实验、实验修正理论"</div>
+        <div><b style="color:#00695C;">SBR三维：</b>Structure=知识组件 · Behavior=结构决定功能/物质-能量-信息流 · Relation=前导-后继-耦合</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-tip">
+    交互方式：<b>悬停节点</b>查看前导/后继摘要 · <b>点击节点</b>查看完整知识详情 · <b>双击空白</b>重置 · <b>下方复选框</b>切换关系类型显示
+  </div>
+</div>
+<div class="d3-tooltip" id="tooltip"></div>
+<div class="detail-panel" id="detailPanel">
+  <span class="dp-close" onclick="document.getElementById('detailPanel').classList.remove('show')">&times;</span>
+  <div id="detailContent"></div>
+</div>
+<script>
+// ====== 阶段标签（生命系统层次）======
+const stages = ["① 分子基础","② 细胞功能","③ 遗传信息","④ 个体调节","⑤ 群体生态"];
+const stageBar = d3.select("#stageBar");
+stages.forEach(s=>{ stageBar.append("div").attr("class","stage-item").style("flex","1").text(s); });
+
+const VBW = 1700, VBH = 1180;
+
+// 模块配色
+const MOD = {
+  M1:{fill:"#E1F5FE",stroke:"#0277BD",text:"#01579B",name:"M1 分子与细胞",layer:"微观基础层"},
+  M2:{fill:"#F3E5F5",stroke:"#6A1B9A",text:"#4A148C",name:"M2 遗传与进化",layer:"信息核心层"},
+  M3:{fill:"#FFF3E0",stroke:"#E65100",text:"#BF360C",name:"M3 稳态与调节",layer:"个体整合层"},
+  M4:{fill:"#E8F5E9",stroke:"#2E7D32",text:"#1B5E20",name:"M4 生物与环境",layer:"宏观系统层"},
+  M5:{fill:"#FFFDE7",stroke:"#F9A825",text:"#F57F17",name:"M5 实验与探究",layer:"方法论主线"},
+  M6:{fill:"#FCE4EC",stroke:"#AD1457",text:"#880E4F",name:"M6 生物技术",layer:"应用拓展层"}
+};
+
+// ====== 知识节点（26个核心知识点）======
+// cx 横向位置, cy 纵向（按层次定位）
+const nodes = [
+  // ===== M1 分子与细胞（y≈160~440）=====
+  {id:"m1_protein", mod:"M1", cx:230, cy:160, w:140, h:60, title:"蛋白质", sub:"氨基酸·多肽·空间结构",
+   role:"M1分子层 · 贯穿全模块的核心物质",
+   desc:"氨基酸通过脱水缩合形成多肽，盘曲折叠成特定空间结构。功能：催化（酶）、运输（载体）、免疫（抗体）、调节（激素）、结构（肌肉）。",
+   behavior:"结构决定功能：氨基酸序列→空间结构→功能",
+   pre:["化学键","脱水缩合"], suc:["酶","载体蛋白","抗体","激素"], cross:["M2基因表达","M3激素受体","M4酶促反应"]},
+  {id:"m1_dna", mod:"M1", cx:430, cy:160, w:140, h:60, title:"核酸 DNA/RNA", sub:"核苷酸·双螺旋·碱基配对",
+   role:"M1分子层 · 遗传信息的物质载体",
+   desc:"DNA双螺旋（反向平行，A-T/C-G配对）；RNA单链。功能：储存和传递遗传信息。",
+   behavior:"碱基互补配对原则→保证遗传信息精确传递",
+   pre:["核苷酸","碱基"], suc:["DNA复制","转录","基因突变"], cross:["M2遗传","M3基因表达调控"]},
+  {id:"m1_lipid", mod:"M1", cx:630, cy:160, w:140, h:60, title:"脂质", sub:"脂肪·磷脂·固醇",
+   role:"M1分子层 · 膜结构与储能物质",
+   desc:"脂肪储能，磷脂构成生物膜骨架，固醇是激素前体。",
+   behavior:"磷脂双分子层→膜流动镶嵌结构基础",
+   pre:["脂肪酸","甘油"], suc:["生物膜结构","性激素合成"], cross:["M3激素调节"]},
+
+  {id:"m1_membrane", mod:"M1", cx:230, cy:300, w:140, h:60, title:"细胞膜", sub:"磷脂双分子层·流动镶嵌",
+   role:"M1细胞层 · 物质运输与信息识别",
+   desc:"磷脂双分子层+镶嵌蛋白+糖萼。特性：流动性、选择透过性。功能：物质运输、细胞识别、信息传递。",
+   behavior:"结构决定功能：流动性→胞吞胞吐；糖蛋白→识别",
+   pre:["磷脂","蛋白质"], suc:["物质运输","细胞识别","受体"], cross:["M3激素/神经递质靶点"]},
+  {id:"m1_organelle", mod:"M1", cx:430, cy:300, w:140, h:60, title:"细胞器", sub:"线粒体·叶绿体·核糖体",
+   role:"M1细胞层 · 细胞代谢的场所",
+   desc:"线粒体（有氧呼吸）、叶绿体（光合）、内质网/高尔基体（分泌）、核糖体（蛋白合成）、溶酶体（消化）。",
+   behavior:"膜结构分化→功能分区→能量转换与合成",
+   pre:["生物膜系统"], suc:["细胞代谢","分泌蛋白合成"], cross:["M2基因表达与蛋白合成"]},
+  {id:"m1_mitosis", mod:"M1", cx:630, cy:300, w:140, h:60, title:"有丝分裂", sub:"细胞周期·染色体行为",
+   role:"M1细胞层 · 遗传物质均等分配",
+   desc:"间期DNA复制，分裂期（前中后末）染色体均等分配到两个子细胞。",
+   behavior:"染色体行为→遗传物质稳定传递",
+   pre:["细胞核","染色质"], suc:["减数分裂","个体生长修复"], cross:["M2遗传物质分配"]},
+
+  {id:"m1_enzyme", mod:"M1", cx:150, cy:440, w:140, h:60, title:"酶与ATP", sub:"生物催化剂·直接能源",
+   role:"M1代谢层 · 代谢反应的催化与供能",
+   desc:"酶（高效性、专一性、温敏/pH敏）；ATP（A-P~P~P，直接能源物质）。",
+   behavior:"酶降低活化能+ATP供能→驱动代谢反应",
+   pre:["蛋白质功能","化学能"], suc:["细胞呼吸","光合作用","主动运输"], cross:["M2基因控制酶合成"]},
+  {id:"m1_transport", mod:"M1", cx:330, cy:440, w:140, h:60, title:"物质运输", sub:"被动·主动·胞吞胞吐",
+   role:"M1代谢层 · 跨膜物质交换",
+   desc:"自由扩散/协助扩散（被动）、主动运输（逆浓度需ATP）、胞吞/胞吐。",
+   behavior:"膜结构+ATP→选择性物质交换",
+   pre:["细胞膜结构","渗透原理"], suc:["内环境交换","神经信号传导"], cross:["M3内环境稳态"]},
+  {id:"m1_respiration", mod:"M1", cx:510, cy:440, w:140, h:60, title:"细胞呼吸", sub:"有氧·无氧·ATP",
+   role:"M1代谢层 · 能量释放与转换",
+   desc:"有氧呼吸三阶段（线粒体）；无氧呼吸（酒精/乳酸）；产物[H]、ATP。",
+   behavior:"有机物氧化→ATP合成→能量供应",
+   pre:["酶","ATP","有机物"], suc:["能量供应","光合暗反应"], cross:["M4碳循环","能量流动"]},
+  {id:"m1_photo", mod:"M1", cx:690, cy:440, w:140, h:60, title:"光合作用", sub:"光反应·暗反应",
+   role:"M1代谢层 · 能量输入与有机物合成",
+   desc:"光反应（类囊体：水的光解、ATP/NADPH）；暗反应（基质：C3/C5循环固定CO₂）。",
+   behavior:"光能→活跃化学能→稳定化学能",
+   pre:["酶","ATP","光能吸收"], suc:["有机物合成","O₂/CO₂平衡"], cross:["M4能量输入","物质循环"]},
+
+  // ===== M2 遗传与进化（y≈620~800）=====
+  {id:"m2_meiosis", mod:"M2", cx:230, cy:620, w:140, h:60, title:"减数分裂", sub:"减Ⅰ·减Ⅱ·配子形成",
+   role:"M2遗传细胞基础 · 遗传多样性的细胞学根源",
+   desc:"减Ⅰ同源分离+交叉互换；减Ⅱ姐妹单体分离；形成染色体减半的配子。",
+   behavior:"染色体行为→遗传重组与分离定律的细胞基础",
+   pre:["有丝分裂","同源染色体"], suc:["配子形成","孟德尔定律"], cross:["M1有丝分裂对照"]},
+  {id:"m2_replication", mod:"M2", cx:430, cy:620, w:140, h:60, title:"DNA复制", sub:"半保留·边解旋边复制",
+   role:"M2遗传分子基础 · 遗传信息精确传递",
+   desc:"边解旋边复制、半保留复制、需解旋酶和DNA聚合酶。",
+   behavior:"碱基配对→精确复制→遗传信息稳定传递",
+   pre:["DNA结构","碱基配对"], suc:["遗传信息传递","细胞分裂"], cross:["M1有丝分裂间期"]},
+  {id:"m2_expression", mod:"M2", cx:630, cy:620, w:140, h:60, title:"基因表达", sub:"转录·翻译·中心法则",
+   role:"M2遗传分子基础 · 基因→性状的桥梁",
+   desc:"转录（DNA→mRNA，RNA聚合酶）；翻译（mRNA→蛋白质，核糖体）；中心法则。",
+   behavior:"DNA→RNA→蛋白质→性状",
+   pre:["DNA结构","RNA种类","核糖体"], suc:["性状表现","基因控制"], cross:["M1核糖体蛋白质","M3激素合成"]},
+
+  {id:"m2_mendel", mod:"M2", cx:330, cy:760, w:160, h:60, title:"孟德尔遗传定律", sub:"分离·自由组合",
+   role:"M2遗传规律 · 遗传概率预测",
+   desc:"分离定律（等位分离3:1）；自由组合定律（非同源非等位自由组合9:3:3:1）。",
+   behavior:"减数分裂→配子组合→概率预测",
+   pre:["减数分裂","受精作用"], suc:["遗传分析","育种"], cross:["M6杂交育种"]},
+  {id:"m2_mutation", mod:"M2", cx:530, cy:760, w:140, h:60, title:"变异", sub:"基因突变·重组·染色体变异",
+   role:"M2变异 · 进化的原材料",
+   desc:"基因突变（碱基替换/增添/缺失）；基因重组；染色体变异（结构/数目）。",
+   behavior:"遗传物质改变→新基因型→进化的原材料",
+   pre:["DNA复制","减数分裂"], suc:["生物变异","进化原材料"], cross:["M1DNA复制错误"]},
+  {id:"m2_evolution", mod:"M2", cx:730, cy:760, w:140, h:60, title:"生物进化", sub:"自然选择·物种形成",
+   role:"M2进化 · 种群基因频率变化",
+   desc:"突变/重组提供原材料，自然选择定向改变基因频率，隔离导致物种形成。",
+   behavior:"变异+选择+隔离→物种形成与适应",
+   pre:["基因突变","基因重组","种群概念"], suc:["物种多样性","适应进化"], cross:["M4种群群落"]},
+
+  // ===== M3 稳态与调节（y≈620~800，右侧）=====
+  {id:"m3_homeostasis", mod:"M3", cx:950, cy:620, w:140, h:60, title:"内环境稳态", sub:"血浆·组织液·淋巴",
+   role:"M3个体调节基础 · 稳态的核心概念",
+   desc:"细胞外液（血浆/组织液/淋巴）；理化性质稳定；神经-体液-免疫调节网络维持。",
+   behavior:"负反馈为主→维持内环境动态平衡",
+   pre:["物质运输","体液"], suc:["个体健康","疾病理解"], cross:["M1膜运输"]},
+  {id:"m3_neural", mod:"M3", cx:1150, cy:620, w:140, h:60, title:"神经调节", sub:"反射弧·突触传递",
+   role:"M3个体调节 · 快速精准的反应系统",
+   desc:"反射弧（感受器→传入→中枢→传出→效应器）；静息/动作电位；突触化学传递。",
+   behavior:"电信号+化学信号→快速单向传导",
+   pre:["离子通道","膜电位"], suc:["激素分泌","反射"], cross:["M1主动运输离子泵","胞吐受体"]},
+  {id:"m3_hormone", mod:"M3", cx:950, cy:760, w:140, h:60, title:"激素调节", sub:"胰岛素·甲状腺激素",
+   role:"M3个体调节 · 缓慢持久的体液调节",
+   desc:"胰岛素/胰高血糖素（血糖）；甲状腺激素（代谢）；微量高效、体液运输、作用于靶细胞。",
+   behavior:"激素-受体→靶细胞反应→负反馈",
+   pre:["基因表达","受体蛋白"], suc:["血糖调节","生长发育"], cross:["M2基因控制激素合成"]},
+  {id:"m3_immune", mod:"M3", cx:1150, cy:760, w:140, h:60, title:"免疫调节", sub:"体液免疫·细胞免疫",
+   role:"M3个体调节 · 防御与监视系统",
+   desc:"免疫器官/细胞/活性物质；体液免疫（B→浆细胞→抗体）；细胞免疫（T→裂解靶细胞）。",
+   behavior:"识别-反应-记忆→防御+监视+自稳",
+   pre:["细胞分化","抗原识别"], suc:["疾病防御","肿瘤监视"], cross:["M6单抗制备"]},
+
+  // ===== M4 生物与环境（y≈960~1080）=====
+  {id:"m4_population", mod:"M4", cx:330, cy:960, w:140, h:60, title:"种群", sub:"密度·增长模型·J/S型",
+   role:"M4宏观层 · 同种个体集合",
+   desc:"种群密度（最基本特征）；J型（指数）和S型（K值）增长；样方法/标志重捕法。",
+   behavior:"出生率/死亡率→种群数量动态",
+   pre:["个体概念","进化理论"], suc:["群落结构","渔业管理"], cross:["M3激素对繁殖的影响"]},
+  {id:"m4_community", mod:"M4", cx:530, cy:960, w:140, h:60, title:"群落", sub:"丰富度·种间关系·演替",
+   role:"M4宏观层 · 不同种群集合",
+   desc:"丰富度（首要特征）；种间关系（捕食/竞争/寄生/共生）；垂直分层与水平镶嵌；群落演替。",
+   behavior:"种间相互作用+演替→群落结构变化",
+   pre:["种群生态"], suc:["生态系统结构","恢复生态"], cross:["M2进化中的种间关系"]},
+  {id:"m4_ecosystem", mod:"M4", cx:730, cy:960, w:140, h:60, title:"生态系统", sub:"组成·结构·稳定性",
+   role:"M4宏观层 · 生物+非生物的整体",
+   desc:"非生物物质能量+生产者/消费者/分解者；食物链/网；抵抗力+恢复力稳定性。",
+   behavior:"负反馈自我调节→系统稳定",
+   pre:["群落","种群"], suc:["能量流动","物质循环"], cross:["M1代谢"]},
+  {id:"m4_energy", mod:"M4", cx:330, cy:1080, w:140, h:60, title:"能量流动", sub:"单向递减·10-20%传递",
+   role:"M4功能 · 能量在营养级间传递",
+   desc:"能量沿食物链单向流动、递减（10-20%传递效率）；能量金字塔。",
+   behavior:"光合输入→各营养级消耗散失→单向流动",
+   pre:["食物链","细胞呼吸"], suc:["生态系统生产力"], cross:["M1光合/呼吸能量转换"]},
+  {id:"m4_cycle", mod:"M4", cx:530, cy:1080, w:140, h:60, title:"物质循环", sub:"碳循环·氮循环",
+   role:"M4功能 · 元素的全球性循环",
+   desc:"碳循环（光合/呼吸/分解/燃烧）；氮循环（固氮/硝化/反硝化）；循环往复、全球性。",
+   behavior:"元素在生物群落↔无机环境间循环",
+   pre:["元素化学","能量流动"], suc:["温室效应","水华"], cross:["M1光合/呼吸"]},
+
+  // ===== M5 实验探究（右侧贯穿）=====
+  {id:"m5_method", mod:"M5", cx:1450, cy:620, w:160, h:60, title:"实验方法论", sub:"对照·单一变量·重复",
+   role:"M5方法论主线 · 科学探究通用方法",
+   desc:"科学探究流程；对照原则（空白/自身/相互）、单一变量、重复性；显微观察、同位素标记、模型构建等。",
+   behavior:"控制变量→因果推断→理论验证与发现",
+   pre:["统计学基础"], suc:["所有模块的实验验证"], cross:["贯穿M1~M4所有实验"]},
+
+  // ===== M6 生物技术（右下）=====
+  {id:"m6_biotech", mod:"M6", cx:1450, cy:760, w:160, h:60, title:"生物技术工程", sub:"基因·细胞·发酵工程",
+   role:"M6应用拓展 · 知识→技术→社会",
+   desc:"基因工程（限制酶/载体）、细胞工程（单抗/克隆）、发酵工程、胚胎工程、蛋白质工程。",
+   behavior:"遗传学+细胞学原理→定向改造生物",
+   pre:["DNA结构","基因表达","细胞培养"], suc:["转基因/基因治疗/单抗"], cross:["M2遗传","M1细胞培养"]}
+];
+
+// ====== 关系连线 ======
+// type: main(主依赖红)/cross(跨模块耦合紫)/inner(模块内蓝)/support(M5支撑绿)
+const links = [
+  // 主依赖路径（前导→后继，学习次序，红色粗线）
+  {from:"m1_protein", to:"m1_enzyme", type:"main", label:"催化"},
+  {from:"m1_dna", to:"m2_replication", type:"main", label:"复制基础"},
+  {from:"m1_membrane", to:"m1_transport", type:"main", label:"运输基础"},
+  {from:"m1_organelle", to:"m1_respiration", type:"main", label:"场所"},
+  {from:"m1_enzyme", to:"m1_respiration", type:"main", label:"催化"},
+  {from:"m1_enzyme", to:"m1_photo", type:"main", label:"催化"},
+  {from:"m1_mitosis", to:"m2_meiosis", type:"main", label:"分裂基础"},
+  {from:"m2_replication", to:"m2_expression", type:"main", label:"表达基础"},
+  {from:"m2_meiosis", to:"m2_mendel", type:"main", label:"定律基础"},
+  {from:"m2_mutation", to:"m2_evolution", type:"main", label:"原材料"},
+  {from:"m2_expression", to:"m3_hormone", type:"main", label:"激素合成"},
+  {from:"m1_membrane", to:"m3_neural", type:"main", label:"膜电位"},
+  {from:"m1_photo", to:"m4_energy", type:"main", label:"能量输入", ctrl:{c1x:760,c1y:600,c2x:380,c2y:920}},
+  {from:"m1_respiration", to:"m4_cycle", type:"main", label:"碳循环", ctrl:{c1x:580,c1y:580,c2x:560,c2y:1040}},
+  {from:"m2_evolution", to:"m4_population", type:"main", label:"种群基础", ctrl:{c1x:780,c1y:820,c2x:380,c2y:920}},
+  {from:"m4_population", to:"m4_community", type:"main", label:"群落基础"},
+  {from:"m4_community", to:"m4_ecosystem", type:"main", label:"系统基础"},
+  {from:"m4_ecosystem", to:"m4_energy", type:"main", label:"能流", ctrl:{c1x:680,c1y:1020,c2x:400,c2y:1060}},
+  {from:"m4_ecosystem", to:"m4_cycle", type:"main", label:"物质循环", ctrl:{c1x:680,c1y:1020,c2x:560,c2y:1060}},
+
+  // 跨模块耦合（紫色虚线，核心物质/能量/信息交汇）
+  {from:"m1_protein", to:"m2_expression", type:"cross", label:"蛋白质耦合"},
+  {from:"m1_protein", to:"m3_hormone", type:"cross", label:"激素受体", ctrl:{c1x:300,c1y:200,c2x:920,c2y:740}},
+  {from:"m1_protein", to:"m3_immune", type:"cross", label:"抗体", ctrl:{c1x:300,c1y:200,c2x:1120,c2y:740}},
+  {from:"m1_respiration", to:"m4_energy", type:"cross", label:"能量耦合", ctrl:{c1x:580,c1y:480,c2x:380,c2y:940}},
+  {from:"m3_homeostasis", to:"m4_ecosystem", type:"cross", label:"反馈耦合", ctrl:{c1x:1020,c1y:660,c2x:760,c2y:940}},
+
+  // 模块内关联（蓝色细线）
+  {from:"m1_protein", to:"m1_membrane", type:"inner", label:"膜蛋白"},
+  {from:"m1_dna", to:"m1_mitosis", type:"inner", label:"染色质"},
+  {from:"m1_lipid", to:"m1_membrane", type:"inner", label:"磷脂"},
+  {from:"m2_meiosis", to:"m2_mutation", type:"inner", label:"交叉互换"},
+  {from:"m2_expression", to:"m2_mendel", type:"inner", label:"性状表达"},
+  {from:"m3_neural", to:"m3_homeostasis", type:"inner", label:"神经稳态"},
+  {from:"m3_hormone", to:"m3_homeostasis", type:"inner", label:"体液稳态"},
+  {from:"m3_immune", to:"m3_homeostasis", type:"inner", label:"免疫稳态"},
+
+  // M5 方法主线（绿色虚线，贯穿支撑）
+  {from:"m5_method", to:"m1_respiration", type:"support", label:"酵母菌呼吸实验", ctrl:{c1x:1380,c1y:600,c2x:580,c2y:460}},
+  {from:"m5_method", to:"m2_mendel", type:"support", label:"遗传杂交实验", ctrl:{c1x:1380,c1y:640,c2x:400,c2y:740}},
+  {from:"m5_method", to:"m4_population", type:"support", label:"种群调查", ctrl:{c1x:1380,c1y:660,c2x:380,c2y:940}},
+  {from:"m5_method", to:"m3_immune", type:"support", label:"免疫模型", ctrl:{c1x:1380,c1y:680,c2x:1180,c2y:740}}
+];
+
+const linkColor = {main:"#D32F2F", cross:"#7B1FA2", inner:"#1565C0", support:"#2E7D32"};
+const linkWidth = {main:3, cross:2, inner:1.5, support:1.3};
+const linkDash = {main:null, cross:"6,3", inner:null, support:"4,3"};
+const linkArrowKey = {main:"red", cross:"purple", inner:"blue", support:"green"};
+
+// ====== SVG 初始化 ======
+const svg = d3.select("#viz");
+const g = svg.append("g");
+
+// 箭头定义
+const defs = svg.append("defs");
+[["blue","#1565C0"],["green","#2E7D32"],["purple","#7B1FA2"],["red","#D32F2F"]].forEach(([key,color])=>{
+  defs.append("marker").attr("id","arrow-"+key).attr("markerWidth",10).attr("markerHeight",8)
+    .attr("refX",9).attr("refY",4).attr("orient","auto")
+    .append("polygon").attr("points","0 0, 10 4, 0 8").attr("fill",color);
+});
+
+// ====== 模块背景带（层次定位）======
+const moduleBands = [
+  {y:100, h:160, mod:"M1", label:"M1 分子与细胞 · 微观基础层（分子→细胞→代谢）"},
+  {y:280, h:180, mod:"M1", label:"M1 细胞与代谢层"},
+  {y:560, h:120, mod:"M2", label:"M2 遗传与进化 · 信息核心层（遗传细胞基础→分子基础）"},
+  {y:700, h:140, mod:"M2", label:"M2 遗传规律与进化（定律→变异→进化）"},
+  {y:560, h:280, mod:"M3", label:"M3 稳态与调节 · 个体整合层（神经-体液-免疫网络）", x:880, w:560},
+  {y:920, h:240, mod:"M4", label:"M4 生物与环境 · 宏观系统层（种群→群落→生态系统）"},
+  {y:560, h:280, mod:"M5", label:"M5 实验与探究 · 方法论主线（贯穿）", x:1370, w:200},
+  {y:700, h:140, mod:"M6", label:"M6 生物技术与工程 · 应用拓展层", x:1370, w:200}
+];
+
+const bandG = g.append("g").attr("class","bands");
+moduleBands.forEach(b=>{
+  const m = MOD[b.mod];
+  const x = b.x||40;
+  const w = b.w||(VBW-80);
+  bandG.append("rect").attr("x",x).attr("y",b.y).attr("width",w).attr("height",b.h)
+    .attr("fill",m.fill).attr("opacity",0.35).attr("rx",8)
+    .attr("stroke",m.stroke).attr("stroke-width",1).attr("stroke-dasharray","4,4").attr("stroke-opacity",0.4);
+  bandG.append("text").attr("x",x+14).attr("y",b.y+18).attr("font-size",11).attr("font-weight",700)
+    .attr("fill",m.text).text(b.label);
+});
+
+// 层次演进大箭头（左侧）
+const arrowG = g.append("g");
+arrowG.append("text").attr("x",18).attr("y",540).attr("font-size",11).attr("font-weight",700)
+  .attr("fill","#00695C").attr("transform","rotate(-90 18 540)").text("生命系统层次演进 →");
+arrowG.append("path").attr("d","M 30 920 L 30 200").attr("stroke","#00897B").attr("stroke-width",2)
+  .attr("fill","none").attr("marker-end","url(#arrow-green)").attr("opacity",0.5);
+
+// ====== 边界点计算 ======
+function getEdgePoint(node, towardNode){
+  const cx=node.cx, cy=node.cy;
+  const dx=towardNode.cx-cx, dy=towardNode.cy-cy;
+  const rx=node.w/2, ry=node.h/2;
+  const ang=Math.atan2(dy,dx);
+  return {x:cx+rx*Math.cos(ang)*0.92, y:cy+ry*Math.sin(ang)*0.92};
+}
+function findNode(id){ return nodes.find(n=>n.id===id); }
+
+// ====== 绘制连线 ======
+const linkG = g.append("g").attr("class","links");
+const linkPaths = [];
+
+links.forEach((lk,i)=>{
+  const sNode=findNode(lk.from), tNode=findNode(lk.to);
+  if(!sNode||!tNode) return;
+  const sp=getEdgePoint(sNode,tNode), tp=getEdgePoint(tNode,sNode);
+  let pathD;
+  if(lk.ctrl){
+    pathD=`M ${sp.x},${sp.y} C ${lk.ctrl.c1x},${lk.ctrl.c1y} ${lk.ctrl.c2x},${lk.ctrl.c2y} ${tp.x},${tp.y}`;
+  } else {
+    const mx=(sp.x+tp.x)/2;
+    pathD=`M ${sp.x},${sp.y} C ${mx},${sp.y} ${mx},${tp.y} ${tp.x},${tp.y}`;
+  }
+  const color=linkColor[lk.type], colorKey=linkArrowKey[lk.type];
+  const path=linkG.append("path")
+    .attr("d",pathD).attr("fill","none")
+    .attr("stroke",color).attr("stroke-width",linkWidth[lk.type])
+    .attr("stroke-dasharray",linkDash[lk.type]||"none")
+    .attr("marker-end",`url(#arrow-${colorKey})`)
+    .attr("class","link-path link-"+lk.type)
+    .attr("data-from",lk.from).attr("data-to",lk.to).attr("data-type",lk.type)
+    .style("cursor","pointer").style("transition","opacity .2s, stroke-width .2s");
+  // 标签（仅主路径和跨模块耦合显示）
+  if(lk.label && (lk.type==="main"||lk.type==="cross")){
+    let midX, midY;
+    if(lk.ctrl){
+      midX=(sp.x+3*lk.ctrl.c1x+3*lk.ctrl.c2x+tp.x)/8;
+      midY=(sp.y+3*lk.ctrl.c1y+3*lk.ctrl.c2y+tp.y)/8;
+    } else {
+      midX=(sp.x+tp.x)/2; midY=(sp.y+tp.y)/2;
+    }
+    const labelW=lk.label.length*11+12;
+    linkG.append("rect")
+      .attr("x",midX-labelW/2).attr("y",midY-8).attr("width",labelW).attr("height",15).attr("rx",7)
+      .attr("fill","#fff").attr("stroke",color).attr("stroke-width",1).attr("opacity",0.92)
+      .attr("class","link-label-bg link-label-"+lk.type).attr("data-link-idx",i);
+    linkG.append("text")
+      .attr("x",midX).attr("y",midY+3).attr("text-anchor","middle")
+      .attr("font-size",9).attr("fill",color).attr("font-weight",600)
+      .attr("class","link-label link-label-"+lk.type).attr("data-link-idx",i).text(lk.label);
+  }
+  linkPaths.push({el:path,data:lk});
+});
+
+// 主路径流动动画
+let flowParticles = [];
+function startFlow(){
+  linkPaths.filter(p=>p.data.type==="main").forEach(p=>{
+    const fl=linkG.append("circle").attr("r",3.5).attr("fill","#FFEB3B").attr("opacity",0.9)
+      .style("filter","drop-shadow(0 0 4px #FFC107)");
+    function move(){
+      fl.transition().duration(2200).ease(d3.easeLinear)
+        .attrTween("transform",()=>{
+          const pa=p.el.node();
+          return (t)=>{
+            const pt=pa.getPointAtLength(pa.getTotalLength()*t);
+            return `translate(${pt.x},${pt.y})`;
+          };
+        }).on("end",move);
+    }
+    move();
+    flowParticles.push(fl);
+  });
+}
+function stopFlow(){
+  flowParticles.forEach(f=>f.remove());
+  flowParticles=[];
+}
+startFlow();
+
+// ====== 绘制节点 ======
+const nodeG=g.append("g").attr("class","nodes");
+const tooltip=d3.select("#tooltip");
+const detailPanel=d3.select("#detailPanel");
+const detailContent=d3.select("#detailContent");
+
+nodes.forEach(node=>{
+  const m=MOD[node.mod];
+  const ng=nodeG.append("g").attr("class","node-group").attr("data-id",node.id)
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  const hw=node.w/2, hh=node.h/2;
+  ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",6)
+    .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+    .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  // 模块标识小标
+  ng.append("text").attr("x",-hw+6).attr("y",-hh+12).attr("font-size",8).attr("font-weight",700)
+    .attr("fill",m.text).attr("opacity",0.7).text(node.mod);
+  // 标题
+  ng.append("text").attr("text-anchor","middle").attr("y",-4)
+    .attr("font-size",12).attr("font-weight",700).attr("fill",m.text).text(node.title);
+  // 副标题
+  ng.append("text").attr("text-anchor","middle").attr("y",12)
+    .attr("font-size",9).attr("fill",m.text).attr("opacity",0.8).text(node.sub);
+
+  // 交互
+  ng.on("mouseenter",function(event){
+    const preTxt = node.pre.length?`<div class="tt-pre">前导：${node.pre.join("、")}</div>`:"";
+    const sucTxt = node.suc.length?`<div class="tt-suc">后继：${node.suc.join("、")}</div>`:"";
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title}</div><div class="tt-role">${node.role}</div><div class="tt-body">${node.desc}</div>${preTxt}${sucTxt}`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+    highlightNode(node.id,true);
+  })
+  .on("mousemove",function(event){
+    tooltip.style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+  })
+  .on("mouseleave",function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show")||detailPanel.attr("data-active")!==node.id){ resetHighlight(); }
+  })
+  .on("click",function(){ showDetail(node); });
+  // 入场动画
+  ng.attr("opacity",0).transition().duration(500).delay(nodes.indexOf(node)*40).attr("opacity",1);
+});
+
+// ====== 高亮逻辑 ======
+function highlightNode(nodeId,dimOthers){
+  const connected=new Set([nodeId]);
+  links.forEach(lk=>{
+    if(lk.from===nodeId) connected.add(lk.to);
+    if(lk.to===nodeId) connected.add(lk.from);
+  });
+  nodeG.selectAll(".node-group").each(function(){
+    const id=d3.select(this).attr("data-id");
+    const op=dimOthers?(connected.has(id)?1:0.18):1;
+    d3.select(this).transition().duration(200).style("opacity",op);
+  });
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const f=el.attr("data-from"),t=el.attr("data-to");
+    const active=(f===nodeId||t===nodeId)||!dimOthers;
+    const baseW=linkWidth[el.attr("data-type")];
+    el.transition().duration(200)
+      .style("opacity",active?1:0.08)
+      .attr("stroke-width",active?baseW+0.8:baseW);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=links[+idx];
+    if(!lk) return;
+    const active=(lk.from===nodeId||lk.to===nodeId)||!dimOthers;
+    d3.select(this).transition().duration(200).style("opacity",active?1:0.08);
+  });
+}
+function resetHighlight(){
+  nodeG.selectAll(".node-group").transition().duration(200).style("opacity",1);
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const t=el.attr("data-type");
+    if(isLinkTypeHidden(t)){ el.transition().duration(200).style("opacity",0); return; }
+    const base=linkWidth[t];
+    el.transition().duration(200).style("opacity",1).attr("stroke-width",base);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=links[+idx];
+    if(!lk) return;
+    if(isLinkTypeHidden(lk.type)){ d3.select(this).transition().duration(200).style("opacity",0); return; }
+    d3.select(this).transition().duration(200).style("opacity",1);
+  });
+}
+
+// ====== 详情面板 ======
+function showDetail(node){
+  const m=MOD[node.mod];
+  const html=`
+    <h3><span class="dp-shape" style="background:${m.fill};border:1.5px solid ${m.stroke};"></span>${node.title}</h3>
+    <div class="dp-label">模块归属</div>
+    <div style="color:#455A64;">${m.name} · ${m.layer}</div>
+    <div class="dp-label" style="margin-top:8px;">角色定位</div>
+    <div style="color:#455A64;">${node.role}</div>
+    <div class="dp-section">
+      <div class="dp-label">知识内容（Structure）</div>
+      <div style="color:#455A64;">${node.desc}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-label">功能逻辑（Behavior）</div>
+      <div style="color:#455A64;">${node.behavior}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-label">前导知识（Prerequisite）</div>
+      <div class="dp-pre">${node.pre.map(p=>`<span style="display:inline-block;background:#FFF3E0;border-radius:10px;padding:2px 10px;margin:2px 4px 2px 0;font-size:11px;border:1px solid #FFCC80;">${p}</span>`).join("")||"-"}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-label">后继知识（Successor）</div>
+      <div class="dp-suc">${node.suc.map(p=>`<span style="display:inline-block;background:#E3F2FD;border-radius:10px;padding:2px 10px;margin:2px 4px 2px 0;font-size:11px;border:1px solid #90CAF9;">${p}</span>`).join("")||"-"}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-label">跨模块关联</div>
+      <div style="color:#7B1FA2;">${node.cross.map(p=>`<span style="display:inline-block;background:#F3E5F5;border-radius:10px;padding:2px 10px;margin:2px 4px 2px 0;font-size:11px;border:1px solid #CE93D8;">${p}</span>`).join("")||"-"}</div>
+    </div>
+  `;
+  detailContent.html(html);
+  detailPanel.classed("show",true).attr("data-active",node.id);
+  highlightNode(node.id,true);
+}
+
+// 双击空白重置
+svg.on("dblclick",function(event){
+  if(event.target.tagName==="svg"||event.target===svg.node()){
+    detailPanel.classed("show",false);
+    resetHighlight();
+  }
+});
+
+// ====== 控制条：切换关系类型显示 ======
+const toggleMap = {toggleMain:"main", toggleCross:"cross", toggleInner:"inner", toggleSupport:"support"};
+function isLinkTypeHidden(t){
+  if(t==="main" && !document.getElementById("toggleMain").checked) return true;
+  if(t==="cross" && !document.getElementById("toggleCross").checked) return true;
+  if(t==="inner" && !document.getElementById("toggleInner").checked) return true;
+  if(t==="support" && !document.getElementById("toggleSupport").checked) return true;
+  return false;
+}
+function applyToggle(){
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const t=el.attr("data-type");
+    const hidden=isLinkTypeHidden(t);
+    el.transition().duration(200).style("opacity",hidden?0:1);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=links[+idx];
+    if(!lk) return;
+    const hidden=isLinkTypeHidden(lk.type);
+    d3.select(this).transition().duration(200).style("opacity",hidden?0:1);
+  });
+}
+Object.keys(toggleMap).forEach(tid=>{
+  document.getElementById(tid).addEventListener("change", applyToggle);
+});
+// 流动动画开关
+document.getElementById("toggleFlow").addEventListener("change", function(){
+  if(this.checked){ startFlow(); }
+  else { stopFlow(); }
+});
+</script>
+</body>
+</html>

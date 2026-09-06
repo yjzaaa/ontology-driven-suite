@@ -1,0 +1,157 @@
+model_type: SCENARIO
+version: '1.0'
+domain: 电商经营分析
+scenarios:
+  - id: SCN-ANOMALY-001
+    name: 经营异常分析
+    description: 识别近期经营指标的异常波动并归因，定位异常集中的类目、店铺和渠道，分析业务原因并提出行动建议
+    intent: 用户希望快速发现哪里有问题并了解根因
+    actors:
+      - 运营人员
+      - 数据分析师
+    relatedBehaviors:
+      - BHV-ANA-001
+      - BHV-ANA-007
+      - BHV-ANA-008
+      - BHV-ANA-010
+    keyMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-TFC-001
+      - MTR-TFC-002
+      - MTR-TFC-003
+      - MTR-USR-005
+    primaryFlow:
+      - stepId: S01
+        type: DATA_COLLECT
+        description: 采集近30天核心指标日度数据，包括GMV、退款率、订单取消率、转化率等
+      - stepId: S02
+        type: STAT_COMPUTE
+        description: 计算各指标同环比与3σ异常检测，标记异常指标及异常程度
+      - stepId: S03
+        type: AI_REASONING
+        description: AI推理异常根因，按类目、店铺、渠道、退款原因等维度拆解
+      - stepId: S04
+        type: REPORT_ASSEMBLE
+        description: 组装异常分析报告，包含异常指标列表、趋势图、归因结论和行动建议
+    preconditions:
+      - 时间范围已指定（默认近30天）
+      - 本体模型与数据库映射已就绪
+      - 异常检测阈值已配置（3σ）
+    outputs:
+      - 异常指标列表（带严重程度标签：严重/中等/轻微）
+      - 异常指标趋势可视化图表
+      - AI推理结论与置信度
+      - 行动建议（带优先级和负责团队）
+  - id: SCN-GMV-001
+    name: GMV与订单趋势分析
+    description: 分析近12个月GMV和有效订单数的月度走势，识别近3个月环比变化的驱动因素（量/价、类目、渠道），并评估11月大促后的恢复情况
+    intent: 用户希望了解GMV整体走势、驱动因素和大促效果
+    actors:
+      - 运营总监
+      - 商品运营
+      - 数据分析师
+    relatedBehaviors:
+      - BHV-ANA-001
+      - BHV-ANA-002
+      - BHV-ANA-003
+      - BHV-ANA-009
+      - BHV-ANA-010
+    keyMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-002
+      - MTR-TXN-003
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-PRD-001
+      - MTR-PRD-002
+      - MTR-USR-001
+      - MTR-MKT-001
+    primaryFlow:
+      - stepId: S01
+        type: DATA_COLLECT
+        description: 采集近12个月月度GMV、有效订单数、客单价、退款率等指标数据
+      - stepId: S02
+        type: STAT_COMPUTE
+        description: 计算月度同环比，识别趋势拐点和异常月份
+      - stepId: S03
+        type: STAT_COMPUTE
+        description: 对近3个月进行量价拆解：GMV变化 = 订单数变化 × 客单价变化
+      - stepId: S04
+        type: STAT_COMPUTE
+        description: 按类目、渠道、店铺维度拆解GMV变化贡献度
+      - stepId: S05
+        type: STAT_COMPUTE
+        description: 评估11月大促效果：拉新用户数、GMV贡献、ROI、对后续月份留存影响
+      - stepId: S06
+        type: AI_REASONING
+        description: AI推理GMV变化的业务原因，结合外部因素（季节、竞品等）
+      - stepId: S07
+        type: REPORT_ASSEMBLE
+        description: 组装趋势分析报告，包含趋势图、拆解图、大促复盘和预测
+    preconditions:
+      - 时间范围已指定（默认近12个月）
+      - 本体模型与数据库映射已就绪
+      - 大促活动数据已标记
+    outputs:
+      - GMV月度趋势图（含同环比标注）
+      - 量价拆解分析表
+      - 类目/渠道/店铺贡献度饼图
+      - 11月大促复盘报告（含ROI、拉新、留存）
+      - 未来3个月GMV预测（含置信区间）
+      - 行动建议
+  - id: SCN-CHURN-001
+    name: 客户流失分析
+    description: 分析平台用户活跃度趋势，识别高流失风险用户群体（按等级/注册渠道/地区），评估30天和90天留存率及复购率变化，给出召回建议
+    intent: 用户希望了解用户健康度、流失风险和留存趋势
+    actors:
+      - 用户运营
+      - 数据分析师
+      - 市场部
+    relatedBehaviors:
+      - BHV-ANA-001
+      - BHV-ANA-004
+      - BHV-ANA-005
+      - BHV-ANA-009
+      - BHV-ANA-010
+    keyMetrics:
+      - MTR-USR-001
+      - MTR-USR-002
+      - MTR-USR-003
+      - MTR-USR-004
+      - MTR-USR-005
+      - MTR-USR-006
+      - MTR-TXN-001
+      - MTR-TXN-002
+    primaryFlow:
+      - stepId: S01
+        type: DATA_COLLECT
+        description: 采集近12个月用户活跃、留存、复购等指标月度数据
+      - stepId: S02
+        type: STAT_COMPUTE
+        description: 计算月度活跃用户数、新增用户数、复购率、30天/90天留存率趋势
+      - stepId: S03
+        type: STAT_COMPUTE
+        description: 识别高流失风险用户群体：按用户等级、注册渠道、地区、注册时长等维度分析流失率
+      - stepId: S04
+        type: STAT_COMPUTE
+        description: 量化流失用户规模，分析流失前行为特征（浏览、加购、下单间隔等）
+      - stepId: S05
+        type: AI_REASONING
+        description: AI推理流失原因，结合用户行为序列和外部因素
+      - stepId: S06
+        type: REPORT_ASSEMBLE
+        description: 组装用户健康度报告，包含留存趋势图、流失用户画像、召回建议
+    preconditions:
+      - 时间范围已指定（默认近12个月）
+      - 本体模型与数据库映射已就绪
+      - 用户活跃定义已配置（30天内任一行为）
+    outputs:
+      - 用户活跃度趋势图（含新增/活跃/流失）
+      - 30天/90天留存率趋势图
+      - 复购率趋势图
+      - 高流失风险用户画像（按等级/渠道/地区）
+      - 流失用户行为特征分析
+      - AI推理的流失原因与置信度
+      - 召回行动建议（含优先级、目标用户群、推荐策略）

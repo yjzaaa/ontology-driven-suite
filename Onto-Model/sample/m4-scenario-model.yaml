@@ -1,0 +1,96 @@
+# M4 场景模型 - 合同管理
+model_type: SCENARIO
+version: "1.1"
+domain: "合同管理"
+
+use_cases:
+  - id: UC-CONTRACT-ENTRY
+    name: 合同录入
+    actors: [ACTOR-SALES]
+    preconditions:
+      - 主数据已维护完成
+      - 合同已完成线下签字盖章并允许录入系统
+    postconditions:
+      - 合同成功保存为生效状态
+      - 系统发布 Contract.Created 事件
+    qualityAnnotation: QA-CONTRACT-SAVE
+    primaryFlow:
+      - stepId: S01
+        stepType: BEHAVIOR_CALL
+        behaviorRef: Contract_Create
+      - stepId: S02
+        stepType: EVENT_EMIT
+        eventRef: Contract.Created
+    exceptionFlows:
+      - flowId: EX01
+        condition: technicalException == true
+        compensationRef: COMP-Contract_Create
+
+  - id: UC-INVOICE-PROCESS
+    name: 合同开票录入
+    actors: [ACTOR-FINANCE]
+    preconditions:
+      - 目标合同处于生效状态
+      - 已选择至少一个合同付款阶段
+    postconditions:
+      - 开票明细已保存
+      - 合同开票累计已异步更新
+    qualityAnnotation: QA-INVOICE-SAVE
+    primaryFlow:
+      - stepId: S01
+        stepType: BEHAVIOR_CALL
+        behaviorRef: Invoice_Create
+      - stepId: S02
+        stepType: EVENT_EMIT
+        eventRef: Invoice.Created
+      - stepId: S03
+        stepType: EVENT_WAIT
+        waitForEvent: Contract.InvoiceSummaryUpdated
+    exceptionFlows:
+      - flowId: EX01
+        condition: technicalException == true
+        compensationRef: COMP-Invoice_Create
+
+  - id: UC-PAYMENT-PROCESS
+    name: 合同收款录入
+    actors: [ACTOR-FINANCE]
+    preconditions:
+      - 目标开票记录处于已开票未收款状态
+    postconditions:
+      - 开票记录已更新为已收款
+      - 合同收款累计已异步更新
+    qualityAnnotation: QA-PAYMENT-RECEIVE
+    primaryFlow:
+      - stepId: S01
+        stepType: BEHAVIOR_CALL
+        behaviorRef: Payment_Receive
+      - stepId: S02
+        stepType: EVENT_EMIT
+        eventRef: Payment.Received
+      - stepId: S03
+        stepType: EVENT_WAIT
+        waitForEvent: Contract.ReceiptSummaryUpdated
+    exceptionFlows:
+      - flowId: EX01
+        condition: technicalException == true
+        compensationRef: COMP-Payment_Receive
+
+  - id: UC-CONTRACT-QUERY
+    name: 合同信息查询
+    actors: [ACTOR-SALES, ACTOR-FINANCE]
+    preconditions:
+      - 查询用户已登录且具备合同查询权限
+    postconditions:
+      - 返回合同列表，可继续查看合同详情
+    qualityAnnotation: QA-CONTRACT-QUERY
+    primaryFlow:
+      - stepId: S01
+        stepType: BEHAVIOR_CALL
+        behaviorRef: Contract_Query
+    alternativeFlows:
+      - flowId: AF01
+        condition: user.selectsDetail == true
+        steps:
+          - stepId: AF01-S01
+            stepType: BEHAVIOR_CALL
+            behaviorRef: Contract_GetDetail

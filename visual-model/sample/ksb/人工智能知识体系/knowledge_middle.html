@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>人工智能知识体系中间层矩阵</title>
+<style>
+body{font-family:"Microsoft YaHei",Arial,sans-serif;background:#f7f8fa;margin:0;padding:20px;color:#1a1a2e}h2{text-align:center}.ctrl{display:flex;justify-content:center;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.ctrl select{padding:5px 9px;border:1px solid #c8d0e4;border-radius:4px;background:#fff}.note{max-width:1100px;margin:0 auto 14px;color:#555;font-size:13px;line-height:1.6}table{border-collapse:collapse;margin:0 auto;background:#fff;box-shadow:0 2px 8px #0001}th,td{border:1px solid #d7dbe8;padding:10px 14px;vertical-align:top;min-width:165px;max-width:270px}th{background:#3f51b5;color:#fff}.row-h{background:#5c6bc0;color:#fff;font-weight:bold}.cell{font-size:13px;line-height:1.58}.d0{background:#fff}.d1{background:#e8eaf6}.d2{background:#c5cae9}.d3{background:#9fa8da}.group{margin:5px 0 2px;font-weight:700;color:#3949ab}.legend{text-align:center;margin-top:14px;color:#555;font-size:13px}.legend span{display:inline-block;width:14px;height:14px;margin:0 4px;vertical-align:middle}
+</style></head><body>
+<h2>人工智能知识体系 · 动态多维知识矩阵</h2>
+<div class="note">可任选两个维度生成矩阵：知识模块、工程场景、难度层级。硬件与具身智能作为边界模块保留，但不作为主要展开区域。</div>
+<div class="ctrl"><label>行维度：<select id="rowDim" onchange="syncDims()"></select></label><label>列维度：<select id="colDim" onchange="syncDims()"></select></label><label id="filterBox">筛选：<select id="filterVal" onchange="render()"></select></label></div>
+<table id="mt"></table><div class="legend">知识密度：<span class="d1"></span>低 <span class="d2"></span>中 <span class="d3"></span>高 ｜ “—”表示盲区或非重点展开</div>
+<script>
+const dims={module:['基础建模','机器学习','深度学习','大模型','AI工程','评估安全','应用软件','硬件具身'],scenario:['研究学习','模型训练','系统开发','产品应用','治理合规'],level:['入门','进阶','高级']};
+const dimLabel={module:'知识模块',scenario:'工程场景',level:'难度层级'};
+const entries=[
+{name:'AI任务定义',module:'基础建模',scenario:'研究学习',level:'入门'},{name:'搜索与知识表示',module:'基础建模',scenario:'研究学习',level:'进阶'},{name:'损失函数与优化目标',module:'基础建模',scenario:'模型训练',level:'进阶'},{name:'评价指标选择',module:'基础建模',scenario:'治理合规',level:'进阶'},
+{name:'监督学习流程',module:'机器学习',scenario:'模型训练',level:'入门'},{name:'特征工程',module:'机器学习',scenario:'模型训练',level:'入门'},{name:'集成学习',module:'机器学习',scenario:'模型训练',level:'进阶'},{name:'强化学习策略优化',module:'机器学习',scenario:'研究学习',level:'高级'},
+{name:'反向传播',module:'深度学习',scenario:'模型训练',level:'进阶'},{name:'CNN/RNN/Transformer',module:'深度学习',scenario:'研究学习',level:'进阶'},{name:'扩散模型',module:'深度学习',scenario:'模型训练',level:'高级'},{name:'表示学习',module:'深度学习',scenario:'系统开发',level:'进阶'},
+{name:'Token与Embedding',module:'大模型',scenario:'研究学习',level:'入门'},{name:'预训练与指令微调',module:'大模型',scenario:'模型训练',level:'进阶'},{name:'RAG知识库问答',module:'大模型',scenario:'系统开发',level:'进阶'},{name:'Agent与工具调用',module:'大模型',scenario:'产品应用',level:'高级'},{name:'对齐训练',module:'大模型',scenario:'治理合规',level:'高级'},
+{name:'数据管道',module:'AI工程',scenario:'系统开发',level:'入门'},{name:'训练流水线',module:'AI工程',scenario:'模型训练',level:'进阶'},{name:'推理服务',module:'AI工程',scenario:'系统开发',level:'进阶'},{name:'模型监控与漂移检测',module:'AI工程',scenario:'产品应用',level:'进阶'},{name:'LLMOps',module:'AI工程',scenario:'系统开发',level:'高级'},
+{name:'数据治理',module:'评估安全',scenario:'治理合规',level:'入门'},{name:'基准测试',module:'评估安全',scenario:'研究学习',level:'进阶'},{name:'红队测试',module:'评估安全',scenario:'治理合规',level:'高级'},{name:'幻觉与隐私风险',module:'评估安全',scenario:'产品应用',level:'进阶'},{name:'AI安全与公平性',module:'评估安全',scenario:'治理合规',level:'高级'},
+{name:'智能搜索',module:'应用软件',scenario:'产品应用',level:'入门'},{name:'代码助手',module:'应用软件',scenario:'系统开发',level:'进阶'},{name:'客服机器人',module:'应用软件',scenario:'产品应用',level:'入门'},{name:'数据分析助手',module:'应用软件',scenario:'产品应用',level:'进阶'},{name:'行业AI应用',module:'应用软件',scenario:'治理合规',level:'高级'},
+{name:'GPU/TPU/NPU概念',module:'硬件具身',scenario:'研究学习',level:'入门'},{name:'量化与推理加速',module:'硬件具身',scenario:'系统开发',level:'进阶'},{name:'边缘AI',module:'硬件具身',scenario:'产品应用',level:'进阶'},{name:'机器人与仿真',module:'硬件具身',scenario:'研究学习',level:'高级'}
+];
+const keys=Object.keys(dims),rowSel=document.getElementById('rowDim'),colSel=document.getElementById('colDim'),filterSel=document.getElementById('filterVal');
+function fillSelect(sel,selected){sel.innerHTML=keys.map(k=>`<option value="${k}" ${k===selected?'selected':''}>${dimLabel[k]}</option>`).join('')}
+function otherDim(){const r=rowSel.value,c=colSel.value;return keys.find(k=>k!==r&&k!==c)}
+function syncDims(){if(rowSel.value===colSel.value)colSel.value=keys.find(k=>k!==rowSel.value)||rowSel.value;const f=otherDim();document.getElementById('filterBox').style.display=f?'inline-block':'none';filterSel.innerHTML=f?'<option value="__all__">全部</option>'+dims[f].map(v=>`<option value="${v}">${v}</option>`).join(''):'';render()}
+function cls(n){return n===0?'d0':(n<=1?'d1':(n<=3?'d2':'d3'))}
+function itemsFor(rDim,rVal,cDim,cVal,fDim,fVal){return entries.filter(e=>e[rDim]===rVal&&e[cDim]===cVal&&(!fDim||fVal==='__all__'||e[fDim]===fVal))}
+function render(){const rDim=rowSel.value,cDim=colSel.value,fDim=otherDim(),fVal=filterSel.value||'__all__',rows=dims[rDim],cols=dims[cDim];let html=`<tr><th>${dimLabel[rDim]} \\ ${dimLabel[cDim]}</th>`+cols.map(c=>`<th>${c}</th>`).join('')+'</tr>';for(const r of rows){html+=`<tr><td class="row-h">${r}</td>`;for(const c of cols){const items=itemsFor(rDim,r,cDim,c,fDim,fVal);let body='—';if(items.length&&fDim&&fVal==='__all__'){body=dims[fDim].map(v=>{const group=items.filter(x=>x[fDim]===v);return group.length?`<div class="group">${v}</div>`+group.map(x=>'• '+x.name).join('<br>'):''}).filter(Boolean).join('')}else if(items.length){body=items.map(x=>'• '+x.name).join('<br>')}html+=`<td class="cell ${cls(items.length)}">${body}</td>`}html+='</tr>'}document.getElementById('mt').innerHTML=html}
+fillSelect(rowSel,'module');fillSelect(colSel,'scenario');syncDims();
+</script></body></html>

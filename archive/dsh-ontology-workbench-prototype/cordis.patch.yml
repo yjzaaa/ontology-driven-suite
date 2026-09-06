@@ -1,0 +1,4 @@
+# dsh profile 挂载：把本插件插入 profile 层栈（同 dshmarket 模式）
+- insert:
+    - id: ontology-workbench
+      name: 'dsh-ontology-workbench'

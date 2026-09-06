@@ -1,0 +1,419 @@
+model_type: BEHAVIOR
+version: '1.0'
+domain: 电商经营分析
+behaviors:
+  - id: BHV-ANA-001
+    name: 生成经营概览
+    description: 输出指定时间窗口内的核心指标摘要，含同环比
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: SQL_COMPUTE
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: comparisonPeriod
+        type: Enum
+        enumValues:
+          - MoM
+          - YoY
+          - None
+        required: false
+    outputType: MetricsSummary
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-002
+      - MTR-TXN-003
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-USR-001
+      - MTR-USR-002
+      - MTR-USR-003
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-002
+      - RULE-MTR-003
+      - RULE-MTR-004
+      - RULE-MTR-005
+      - RULE-DQ-001
+    description_detail: 用户触发时执行，按时间范围聚合核心交易和用户指标，计算环比和同比
+  - id: BHV-ANA-002
+    name: GMV趋势分析
+    description: 分析指定时间范围内GMV的月度/周度趋势，识别增长或下降拐点
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: SQL_COMPUTE
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: granularity
+        type: Enum
+        enumValues:
+          - DAY
+          - WEEK
+          - MONTH
+        required: true
+      - name: comparisonPeriod
+        type: Enum
+        enumValues:
+          - MoM
+          - YoY
+          - None
+        required: false
+    outputType: TrendChart
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-002
+      - MTR-TXN-003
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-DQ-001
+    description_detail: 按指定粒度聚合GMV、有效订单数和客单价，输出趋势折线图
+  - id: BHV-ANA-003
+    name: 维度拆解分析
+    description: 按类目、店铺、渠道、地区等维度拆解核心指标，识别贡献度与异常点
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: SQL_COMPUTE
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: dimension
+        type: Enum
+        enumValues:
+          - category
+          - shop
+          - channel
+          - region
+          - product
+        required: true
+      - name: metric
+        type: Enum
+        enumValues:
+          - GMV
+          - orderCount
+          - refundRate
+          - cancelRate
+        required: true
+      - name: topN
+        type: Integer
+        required: false
+        defaultValue: 10
+    outputType: DimensionBreakdown
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-002
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-PRD-001
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-002
+      - RULE-MTR-004
+      - RULE-MTR-005
+      - RULE-DQ-001
+    description_detail: 按指定维度分组聚合指标，输出TopN排行和占比分析
+  - id: BHV-ANA-004
+    name: 用户分层分析
+    description: 基于RFM模型或用户等级对用户进行分层，分析各层级的贡献与流失风险
+    ownerEntity: ENT-USR-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: STAT_ALGO
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: modelType
+        type: Enum
+        enumValues:
+          - RFM
+          - userLevel
+          - recency
+        required: true
+      - name: segmentCount
+        type: Integer
+        required: false
+        defaultValue: 5
+    outputType: UserSegmentation
+    relatedMetrics:
+      - MTR-USR-001
+      - MTR-USR-002
+      - MTR-USR-003
+      - MTR-USR-004
+      - MTR-USR-005
+      - MTR-TXN-001
+    appliedRules:
+      - RULE-MTR-006
+      - RULE-MTR-007
+      - RULE-MTR-008
+      - RULE-MTR-009
+      - RULE-MTR-010
+      - RULE-DQ-001
+    description_detail: 基于用户行为数据和交易数据，使用RFM算法或等级规则进行分层，输出各层级的用户数、GMV贡献和流失风险评分
+  - id: BHV-ANA-005
+    name: 漏斗转化分析
+    description: 分析用户从浏览到下单的完整转化漏斗，识别流失环节
+    ownerEntity: ENT-USR-002
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: SQL_COMPUTE
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: funnelType
+        type: Enum
+        enumValues:
+          - view_to_order
+          - search_to_order
+          - addcart_to_order
+        required: true
+      - name: dimension
+        type: Enum
+        enumValues:
+          - channel
+          - category
+          - deviceType
+        required: false
+    outputType: FunnelChart
+    relatedMetrics:
+      - MTR-TFC-001
+      - MTR-TFC-002
+      - MTR-TFC-003
+      - MTR-TFC-004
+      - MTR-TFC-005
+      - MTR-TFC-006
+    appliedRules:
+      - RULE-MTR-011
+      - RULE-MTR-012
+      - RULE-MTR-013
+      - RULE-DQ-001
+    description_detail: 按指定漏斗类型计算各步骤的用户数及转化率，输出漏斗图
+  - id: BHV-ANA-006
+    name: ABC分类分析
+    description: 对商品或店铺进行ABC分类，识别高价值与低效对象
+    ownerEntity: ENT-PRD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: STAT_ALGO
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: targetType
+        type: Enum
+        enumValues:
+          - product
+          - shop
+          - category
+        required: true
+      - name: metric
+        type: Enum
+        enumValues:
+          - GMV
+          - salesVolume
+          - profit
+        required: true
+      - name: aThreshold
+        type: Decimal
+        required: false
+        defaultValue: 0.7
+      - name: bThreshold
+        type: Decimal
+        required: false
+        defaultValue: 0.9
+    outputType: ABCClassification
+    relatedMetrics:
+      - MTR-PRD-001
+      - MTR-PRD-002
+      - MTR-PRD-003
+      - MTR-TXN-001
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-018
+      - RULE-DQ-001
+    description_detail: 基于帕累托法则，按指定指标对目标对象进行ABC分类，输出分类结果和建议
+  - id: BHV-ANA-007
+    name: 异常检测分析
+    description: 识别核心指标的异常波动，定位异常集中的维度
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: STAT_ALGO
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: metrics
+        type: List<String>
+        required: true
+      - name: detectionMethod
+        type: Enum
+        enumValues:
+          - threeSigma
+          - iqr
+          - zScore
+        required: false
+        defaultValue: threeSigma
+      - name: sensitivity
+        type: Decimal
+        required: false
+        defaultValue: 3.0
+    outputType: AnomalyReport
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-TFC-001
+      - MTR-TFC-002
+      - MTR-USR-002
+      - MTR-USR-005
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-004
+      - RULE-MTR-005
+      - RULE-MTR-011
+      - RULE-MTR-012
+      - RULE-DQ-001
+    description_detail: 对指定指标进行时间序列异常检测，输出异常点列表、严重程度和维度归因
+  - id: BHV-ANA-008
+    name: 归因分析
+    description: 对异常指标进行根因分析，定位贡献最大的维度组合
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: STAT_ALGO
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: anomalyMetric
+        type: String
+        required: true
+      - name: dimensions
+        type: List<String>
+        required: true
+      - name: method
+        type: Enum
+        enumValues:
+          - contributionAnalysis
+          - decisionTree
+          - shapley
+        required: false
+        defaultValue: contributionAnalysis
+    outputType: AttributionResult
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-TFC-001
+      - MTR-USR-005
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-004
+      - RULE-MTR-005
+      - RULE-MTR-011
+      - RULE-DQ-001
+    description_detail: 对异常指标进行多维归因分析，输出各维度组合的贡献度和根因排序
+  - id: BHV-ANA-009
+    name: 趋势预测分析
+    description: 基于历史数据对核心指标进行短期预测，辅助决策
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: STAT_ALGO
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: metric
+        type: String
+        required: true
+      - name: forecastHorizon
+        type: Integer
+        required: true
+        description: 预测周期数（天/周/月）
+      - name: modelType
+        type: Enum
+        enumValues:
+          - arima
+          - exponentialSmoothing
+          - linearRegression
+        required: false
+        defaultValue: arima
+    outputType: ForecastChart
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-002
+      - MTR-USR-002
+      - MTR-USR-003
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-002
+      - RULE-MTR-007
+      - RULE-MTR-008
+      - RULE-DQ-001
+    description_detail: 使用时间序列模型对指定指标进行预测，输出预测值和置信区间
+  - id: BHV-ANA-010
+    name: 生成分析报告
+    description: 整合多个分析行为的结果，生成结构化的分析报告
+    ownerEntity: ENT-ORD-001
+    behaviorType: ANALYSIS
+    triggerType: USER_ACTION
+    computationType: SQL_COMPUTE
+    inputParams:
+      - name: timeRange
+        type: DateRange
+        required: true
+      - name: reportType
+        type: Enum
+        enumValues:
+          - dailyBrief
+          - weeklyReview
+          - monthlySummary
+          - anomalyAlert
+        required: true
+      - name: includeCharts
+        type: Boolean
+        required: false
+        defaultValue: true
+    outputType: AnalysisReport
+    relatedMetrics:
+      - MTR-TXN-001
+      - MTR-TXN-002
+      - MTR-TXN-003
+      - MTR-TXN-004
+      - MTR-TXN-005
+      - MTR-USR-001
+      - MTR-USR-002
+      - MTR-USR-003
+      - MTR-USR-004
+      - MTR-USR-005
+      - MTR-TFC-001
+      - MTR-TFC-002
+      - MTR-PRD-001
+    appliedRules:
+      - RULE-MTR-001
+      - RULE-MTR-002
+      - RULE-MTR-003
+      - RULE-MTR-004
+      - RULE-MTR-005
+      - RULE-MTR-006
+      - RULE-MTR-007
+      - RULE-MTR-008
+      - RULE-MTR-009
+      - RULE-MTR-010
+      - RULE-MTR-011
+      - RULE-MTR-012
+      - RULE-MTR-013
+      - RULE-DQ-001
+      - RULE-DQ-002
+      - RULE-DQ-003
+      - RULE-DQ-004
+    description_detail: 根据报告类型，整合经营概览、趋势分析、维度拆解、异常检测等行为的结果，生成包含文字摘要和可视化图表的完整报告

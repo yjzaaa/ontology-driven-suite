@@ -1,0 +1,45 @@
+# ME 事件模型 - 合同管理
+model_type: EVENT
+version: "1.1"
+domain: "合同管理"
+
+events:
+  - eventId: Contract.Created
+    eventName: 合同已创建
+    producerBehaviorRef: Contract_Create
+    payload: [contractNo, totalAmount, customerId]
+    subscriberBehaviorRefs: []
+    ordering: AT_LEAST_ONCE
+    version: "1.0"
+
+  - eventId: Invoice.Created
+    eventName: 合同已开票
+    producerBehaviorRef: Invoice_Create
+    payload: [invoiceNo, contractId, amount, invoiceDate]
+    subscriberBehaviorRefs: [Contract_UpdateInvoiceSummary]
+    ordering: EXACTLY_ONCE
+    version: "1.0"
+
+  - eventId: Payment.Received
+    eventName: 款项已收到
+    producerBehaviorRef: Payment_Receive
+    payload: [invoiceNo, contractId, amount, receivedDate]
+    subscriberBehaviorRefs: [Contract_UpdateReceiptSummary]
+    ordering: EXACTLY_ONCE
+    version: "1.0"
+
+  - eventId: Contract.InvoiceSummaryUpdated
+    eventName: 合同开票汇总已更新
+    producerBehaviorRef: Contract_UpdateInvoiceSummary
+    payload: [contractId, invoicedAmountTotal, invoiceStatus]
+    subscriberBehaviorRefs: []
+    ordering: AT_LEAST_ONCE
+    version: "1.0"
+
+  - eventId: Contract.ReceiptSummaryUpdated
+    eventName: 合同收款汇总已更新
+    producerBehaviorRef: Contract_UpdateReceiptSummary
+    payload: [contractId, receivedAmountTotal, receiptStatus]
+    subscriberBehaviorRefs: []
+    ordering: AT_LEAST_ONCE
+    version: "1.0"

@@ -1,0 +1,41 @@
+# AI 模型按阶段的配置
+# 模型 ID 来自环境变量 DEEPSEEK_MODEL / DEEPSEEK_REASONING_MODEL，这里只指定使用哪一个
+models:
+  default: env:DEEPSEEK_MODEL              # 解析时从环境变量取值
+  reasoning: env:DEEPSEEK_REASONING_MODEL
+
+phase_configs:
+  phase1_requirement:
+    model_ref: default
+    temperature: 0.1
+    max_tokens: 2048
+
+  phase2_ontology:
+    model_ref: default
+    temperature: 0.2
+    max_tokens: 8192
+
+  phase3_sql_gen:                          # 阶段三 AI 生成 SQL
+    model_ref: default
+    temperature: 0.0                       # 生成 SQL 要尽可能稳定
+    max_tokens: 1024
+
+  phase3_reasoning:                        # 阶段三 AI 业务推理
+    model_ref: reasoning
+    temperature: 0.1
+    max_tokens: 4096
+
+  phase4_chat:
+    model_ref: default
+    temperature: 0.3
+    max_tokens: 4096
+
+  intent_recognition:                      # 阶段四意图识别
+    model_ref: default
+    temperature: 0.0
+    max_tokens: 256
+
+retry:
+  max_retries: 3
+  initial_delay_seconds: 2
+  backoff_multiplier: 2

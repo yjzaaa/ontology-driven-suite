@@ -1,0 +1,54 @@
+.box {
+  background: #0F172A;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  font-family: 'Cascadia Code', Consolas, Monaco, monospace;
+  font-size: 12px;
+}
+
+.filename {
+  padding: 6px 12px;
+  background: #1E293B;
+  color: #94A3B8;
+  font-size: 11px;
+  font-weight: 600;
+  border-bottom: 1px solid #334155;
+  letter-spacing: 0.5px;
+}
+
+.code {
+  margin: 0;
+  padding: 8px 0;
+  color: #E2E8F0;
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.line {
+  display: flex;
+  padding: 0 4px;
+}
+
+.line:hover { background: rgba(255, 255, 255, 0.05); }
+
+.lineNo {
+  display: inline-block;
+  width: 38px;
+  text-align: right;
+  padding-right: 10px;
+  color: #475569;
+  user-select: none;
+}
+
+.content {
+  flex: 1;
+  white-space: pre;
+  color: #E2E8F0;
+}
+
+.tKey { color: #93C5FD; }
+.tString { color: #BEF264; }
+.tComment { color: #64748B; font-style: italic; }
+.tNum { color: #FBBF24; }
+.tBool { color: #F472B6; }
+.tDash { color: #94A3B8; }

@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Engineering 循环工程 v2.0 - 优化布局</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+        #container { width: 100%; height: 100vh; position: relative; }
+        svg {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .layer-bg {
+            fill: rgba(0,0,0,0.02);
+            stroke: #e0e0e0;
+            stroke-width: 1;
+            stroke-dasharray: 5,5;
+        }
+        .component-rect {
+            stroke-width: 2.5;
+            cursor: pointer;
+            transition: all 0.3s;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+        }
+        .component-rect:hover {
+            filter: drop-shadow(3px 3px 8px rgba(0,0,0,0.4));
+            transform: scale(1.02);
+        }
+        .component-text {
+            font-size: 13px;
+            font-weight: 600;
+            fill: #333;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .component-subtext {
+            font-size: 10px;
+            fill: #666;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .connection-path {
+            fill: none;
+            stroke-width: 2;
+            transition: all 0.3s;
+        }
+        .connection-path.data-flow {
+            stroke: #1976D2;
+            stroke-width: 2.5;
+        }
+        .connection-path.control-flow {
+            stroke: #388E3C;
+            stroke-width: 2;
+            stroke-dasharray: 8,4;
+        }
+        .connection-path.feedback-flow {
+            stroke: #F57C00;
+            stroke-width: 1.5;
+            stroke-dasharray: 5,3;
+        }
+        .connection-path.support-flow {
+            stroke: #9C27B0;
+            stroke-width: 1.5;
+            stroke-dasharray: 3,3;
+        }
+        .connection-label {
+            font-size: 10px;
+            fill: #555;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .layer-label {
+            font-size: 12px;
+            font-weight: 600;
+            fill: #999;
+            text-anchor: start;
+        }
+        .title-text {
+            font-size: 24px;
+            font-weight: 700;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .subtitle-text {
+            font-size: 14px;
+            fill: #666;
+            text-anchor: middle;
+        }
+        .legend-box {
+            fill: white;
+            stroke: #ddd;
+            stroke-width: 1;
+            rx: 8;
+            opacity: 0.95;
+        }
+        .legend-text {
+            font-size: 11px;
+            fill: #333;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 280px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        .tooltip h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #4fc3f7;
+        }
+        .tooltip p {
+            margin: 4px 0;
+            line-height: 1.5;
+        }
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+        .controls h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .control-btn {
+            display: block;
+            width: 100%;
+            margin: 6px 0;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .control-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .control-btn.active {
+            background: #4caf50;
+        }
+        .data-packet {
+            fill: #1976D2;
+            stroke: white;
+            stroke-width: 2;
+            r: 6;
+        }
+        .highlight {
+            stroke-width: 4 !important;
+            stroke: #FF5722 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <svg id="main-svg"></svg>
+        <div class="tooltip" id="tooltip"></div>
+        <div class="controls">
+            <h3>🔄 动画控制</h3>
+            <button class="control-btn" id="btn-start">▶ 启动循环</button>
+            <button class="control-btn" id="btn-pause">⏸ 暂停</button>
+            <button class="control-btn" id="btn-reset">↺ 重置</button>
+            <button class="control-btn" id="btn-step">⏭ 单步执行</button>
+            <div style="margin-top: 12px; font-size: 11px; color: #666;">
+                <label><input type="checkbox" id="chk-labels" checked> 显示标签</label><br>
+                <label><input type="checkbox" id="chk-anim" checked> 启用动画</label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // SBR建模数据 v2.0 - 优化布局版本
+        // 核心改进：验证器移至右侧，减少连线交叉
+        // ============================================
+
+        const MODEL_DATA = {
+            title: "Loop Engineering 循环工程 v2.0",
+            subtitle: "基于SBR三维建模法的优化可视化（减少交叉）",
+
+            // 层次定义（4层架构）
+            layers: [
+                { name: "外部环境层", y: 60, height: 120, color: "#F5F5F5" },
+                { name: "核心处理层", y: 200, height: 440, color: "#E3F2FD" },
+                { name: "支撑工具层", y: 680, height: 100, color: "#FFF9C4" },
+                { name: "输出反馈层", y: 800, height: 100, color: "#FFE0B2" }
+            ],
+
+            // 组件定义 (SBR-Structure) - 优化布局
+            components: [
+                {
+                    id: "user",
+                    name: "用户/开发者",
+                    subtext: "目标设定者",
+                    type: "external",
+                    layer: 0,
+                    x: 800,  // 顶部中央
+                    y: 110,
+                    width: 160,
+                    height: 60,
+                    shape: "cloud",
+                    color: "#F5F5F5",
+                    border: "#757575",
+                    inputs: [],
+                    outputs: ["goal"],
+                    behavior: "设定目标、定义规则、监控进度",
+                    attributes: ["目标", "规则", "约束"]
+                },
+                {
+                    id: "automation",
+                    name: "自动化模块",
+                    subtext: "循环心跳引擎",
+                    type: "control",
+                    layer: 1,
+                    x: 200,  // 左上方
+                    y: 280,
+                    width: 160,
+                    height: 70,
+                    shape: "hexagon",
+                    color: "#F3E5F5",
+                    border: "#7B1FA2",
+                    inputs: ["goal", "trigger"],
+                    outputs: ["tick"],
+                    behavior: "定时触发、扫描任务、维持循环",
+                    attributes: ["频率", "状态", "计数器"]
+                },
+                {
+                    id: "discovery",
+                    name: "任务发现器",
+                    subtext: "循环的眼睛",
+                    type: "process",
+                    layer: 1,
+                    x: 450,  // 中上方
+                    y: 280,
+                    width: 160,
+                    height: 70,
+                    shape: "rectangle",
+                    color: "#E3F2FD",
+                    border: "#1976D2",
+                    inputs: ["tick", "context"],
+                    outputs: ["tasks"],
+                    behavior: "扫描代码、读取Issue、分析测试",
+                    attributes: ["扫描范围", "发现数", "优先级"]
+                },
+                {
+                    id: "memory",
+                    name: "记忆层",
+                    subtext: "MEMORY.md",
+                    type: "storage",
+                    layer: 1,
+                    x: 700,  // 中上方偏右
+                    y: 280,
+                    width: 160,
+                    height: 70,
+                    shape: "ellipse",
+                    color: "#E1F5FE",
+                    border: "#0277BD",
+                    inputs: ["write"],
+                    outputs: ["context"],
+                    behavior: "持久化状态、记录决策、提供上下文",
+                    attributes: ["版本", "大小", "索引"]
+                },
+                {
+                    id: "dispatch",
+                    name: "任务分配器",
+                    subtext: "循环的手",
+                    type: "process",
+                    layer: 1,
+                    x: 450,  // 中下方（与发现器垂直对齐）
+                    y: 420,
+                    width: 160,
+                    height: 70,
+                    shape: "rectangle",
+                    color: "#E8F5E9",
+                    border: "#388E3C",
+                    inputs: ["tasks", "agents"],
+                    outputs: ["assignments"],
+                    behavior: "选择Agent、分配上下文、调度执行",
+                    attributes: ["并发数", "负载", "策略"]
+                },
+                {
+                    id: "agents",
+                    name: "Agent实例池",
+                    subtext: "并行执行器",
+                    type: "process",
+                    layer: 1,
+                    x: 700,  // 中下方偏右
+                    y: 420,
+                    width: 160,
+                    height: 70,
+                    shape: "rectangle",
+                    color: "#E8F5E9",
+                    border: "#388E3C",
+                    inputs: ["assignments"],
+                    outputs: ["results"],
+                    behavior: "执行任务、生成代码、返回结果",
+                    attributes: ["实例数", "状态", "利用率"]
+                },
+                {
+                    id: "validation",
+                    name: "验证器",
+                    subtext: "循环的尺子",
+                    type: "process",
+                    layer: 1,
+                    x: 1050,  // 右上方（关键改动：移至右侧）
+                    y: 280,
+                    width: 160,
+                    height: 70,
+                    shape: "diamond",
+                    color: "#FFF9C4",
+                    border: "#F9A825",
+                    inputs: ["results", "test-input"],
+                    outputs: ["pass", "fail"],
+                    behavior: "跑测试、对比预期、生成报告",
+                    attributes: ["通过率", "覆盖率", "错误数"]
+                },
+                {
+                    id: "decision",
+                    name: "决策引擎",
+                    subtext: "循环的大脑",
+                    type: "control",
+                    layer: 1,
+                    x: 1050,  // 右下方（与验证器垂直对齐）
+                    y: 420,
+                    width: 160,
+                    height: 70,
+                    shape: "hexagon",
+                    color: "#F3E5F5",
+                    border: "#7B1FA2",
+                    inputs: ["pass", "fail", "memory"],
+                    outputs: ["action"],
+                    behavior: "判断结果、决定下一步、更新策略",
+                    attributes: ["策略", "阈值", "状态"]
+                },
+                {
+                    id: "tdd",
+                    name: "TDD测试框架",
+                    subtext: "Spec Kit",
+                    type: "support",
+                    layer: 2,
+                    x: 700,  // 支撑层中央
+                    y: 730,
+                    width: 160,
+                    height: 60,
+                    shape: "rounded-rect",
+                    color: "#FFF9C4",
+                    border: "#F9A825",
+                    inputs: ["code"],
+                    outputs: ["test-results"],
+                    behavior: "执行测试、验证规格、生成报告",
+                    attributes: ["用例数", "通过率"]
+                },
+                {
+                    id: "output",
+                    name: "输出/反馈",
+                    subtext: "结果交付",
+                    type: "output",
+                    layer: 3,
+                    x: 1050,  // 输出层右侧
+                    y: 850,
+                    width: 160,
+                    height: 60,
+                    shape: "rounded-rect",
+                    color: "#FFE0B2",
+                    border: "#E65100",
+                    inputs: ["action"],
+                    outputs: [],
+                    behavior: "交付结果、报告进度、触发通知",
+                    attributes: ["状态", "质量"]
+                }
+            ],
+
+            // 关系定义 (SBR-Relation) - 优化路径
+            connections: [
+                {
+                    from: "user",
+                    to: "automation",
+                    type: "control",
+                    label: "目标设定",
+                    path: "bezier"
+                },
+                {
+                    from: "automation",
+                    to: "discovery",
+                    type: "control",
+                    label: "触发扫描",
+                    path: "straight"
+                },
+                {
+                    from: "discovery",
+                    to: "dispatch",
+                    type: "data",
+                    label: "任务列表",
+                    path: "straight-down"
+                },
+                {
+                    from: "dispatch",
+                    to: "agents",
+                    type: "data",
+                    label: "任务分配",
+                    path: "straight"
+                },
+                {
+                    from: "agents",
+                    to: "validation",
+                    type: "data",
+                    label: "执行结果",
+                    path: "straight"  // 水平向右，无交叉
+                },
+                {
+                    from: "validation",
+                    to: "decision",
+                    type: "data",
+                    label: "验证结果",
+                    path: "straight-down"
+                },
+                {
+                    from: "decision",
+                    to: "output",
+                    type: "data",
+                    label: "完成通知",
+                    path: "straight-down"
+                },
+                {
+                    from: "decision",
+                    to: "dispatch",
+                    type: "control",
+                    label: "继续/重试",
+                    path: "bezier"  // 从右下回到中下
+                },
+                {
+                    from: "memory",
+                    to: "discovery",
+                    type: "feedback",
+                    label: "上下文增强",
+                    path: "bezier"  // 从右上到中上
+                },
+                {
+                    from: "decision",
+                    to: "memory",
+                    type: "data",
+                    label: "记录决策",
+                    path: "bezier"  // 从右下到中上
+                },
+                {
+                    from: "tdd",
+                    to: "validation",
+                    type: "support",
+                    label: "测试支持",
+                    path: "straight-up"
+                }
+            ]
+        };
+
+        // ============================================
+        // D3.js 可视化渲染（优化版）
+        // ============================================
+
+        class LoopEngineeringVisualization {
+            constructor(data) {
+                this.data = data;
+                this.width = 1600;
+                this.height = 950;  // 增加高度以适应新布局
+                this.svg = null;
+                this.mainGroup = null;
+                this.animationId = null;
+                this.isAnimating = false;
+                this.currentStep = 0;
+                this.packetPositions = [];
+
+                this.init();
+            }
+
+            init() {
+                this.svg = d3.select("#main-svg")
+                    .attr("width", this.width)
+                    .attr("height", this.height);
+
+                // 定义箭头标记
+                const defs = this.svg.append("defs");
+
+                // 数据流箭头
+                defs.append("marker")
+                    .attr("id", "arrow-data")
+                    .attr("markerWidth", 10)
+                    .attr("markerHeight", 7)
+                    .attr("refX", 10)
+                    .attr("refY", 3.5)
+                    .attr("orient", "auto")
+                    .append("polygon")
+                    .attr("points", "0 0, 10 3.5, 0 7")
+                    .attr("fill", "#1976D2");
+
+                // 控制流箭头
+                defs.append("marker")
+                    .attr("id", "arrow-control")
+                    .attr("markerWidth", 10)
+                    .attr("markerHeight", 7)
+                    .attr("refX", 10)
+                    .attr("refY", 3.5)
+                    .attr("orient", "auto")
+                    .append("polygon")
+                    .attr("points", "0 0, 10 3.5, 0 7")
+                    .attr("fill", "#388E3C");
+
+                // 反馈流箭头
+                defs.append("marker")
+                    .attr("id", "arrow-feedback")
+                    .attr("markerWidth", 10)
+                    .attr("markerHeight", 7)
+                    .attr("refX", 10)
+                    .attr("refY", 3.5)
+                    .attr("orient", "auto")
+                    .append("polygon")
+                    .attr("points", "0 0, 10 3.5, 0 7")
+                    .attr("fill", "#F57C00");
+
+                // 支撑流箭头
+                defs.append("marker")
+                    .attr("id", "arrow-support")
+                    .attr("markerWidth", 10)
+                    .attr("markerHeight", 7)
+                    .attr("refX", 10)
+                    .attr("refY", 3.5)
+                    .attr("orient", "auto")
+                    .append("polygon")
+                    .attr("points", "0 0, 10 3.5, 0 7")
+                    .attr("fill", "#9C27B0");
+
+                // 主图层
+                this.mainGroup = this.svg.append("g")
+                    .attr("transform", `translate(0, 0)`);
+
+                this.draw();
+                this.setupControls();
+                this.setupInteractions();
+            }
+
+            draw() {
+                this.drawBackground();
+                this.drawLayers();
+                this.drawConnections();
+                this.drawComponents();
+                this.drawTitle();
+                this.drawLegend();
+                this.drawFlowAnnotation();  // 新增：流程方向标注
+            }
+
+            drawBackground() {
+                this.mainGroup.append("rect")
+                    .attr("width", this.width)
+                    .attr("height", this.height)
+                    .attr("fill", "white");
+            }
+
+            drawLayers() {
+                const layerGroup = this.mainGroup.append("g").attr("class", "layers");
+
+                this.data.layers.forEach(layer => {
+                    layerGroup.append("rect")
+                        .attr("x", 50)
+                        .attr("y", layer.y)
+                        .attr("width", this.width - 100)
+                        .attr("height", layer.height)
+                        .attr("class", "layer-bg")
+                        .attr("fill", layer.color)
+                        .attr("opacity", 0.3);
+
+                    layerGroup.append("text")
+                        .attr("x", 70)
+                        .attr("y", layer.y + 20)
+                        .attr("class", "layer-label")
+                        .text(layer.name);
+                });
+            }
+
+            drawConnections() {
+                const connectionGroup = this.mainGroup.append("g")
+                    .attr("class", "connections");
+
+                this.data.connections.forEach((conn, idx) => {
+                    const fromComp = this.data.components.find(c => c.id === conn.from);
+                    const toComp = this.data.components.find(c => c.id === conn.to);
+
+                    if (!fromComp || !toComp) return;
+
+                    const pathData = this.calculatePath(fromComp, toComp, conn);
+
+                    let arrowId = "arrow-data";
+                    let strokeClass = "data-flow";
+
+                    if (conn.type === "control") {
+                        arrowId = "arrow-control";
+                        strokeClass = "control-flow";
+                    } else if (conn.type === "feedback") {
+                        arrowId = "arrow-feedback";
+                        strokeClass = "feedback-flow";
+                    } else if (conn.type === "support") {
+                        arrowId = "arrow-support";
+                        strokeClass = "support-flow";
+                    }
+
+                    const path = connectionGroup.append("path")
+                        .attr("d", pathData)
+                        .attr("class", `connection-path ${strokeClass}`)
+                        .attr("marker-end", `url(#${arrowId})`)
+                        .attr("data-from", conn.from)
+                        .attr("data-to", conn.to)
+                        .attr("opacity", 0.7);
+
+                    // 添加标签
+                    if (conn.label) {
+                        const labelPos = this.calculateLabelPosition(fromComp, toComp, conn);
+                        connectionGroup.append("text")
+                            .attr("x", labelPos.x)
+                            .attr("y", labelPos.y)
+                            .attr("class", "connection-label")
+                            .text(conn.label)
+                            .attr("opacity", 0.8);
+                    }
+                });
+            }
+
+            calculatePath(from, to, conn) {
+                const fromCx = from.x;
+                const fromCy = from.y;
+                const toCx = to.x;
+                const toCy = to.y;
+
+                // 根据路径类型计算
+                switch(conn.path) {
+                    case "straight":
+                        // 水平直线
+                        return `M ${fromCx},${fromCy} L ${toCx},${toCy}`;
+
+                    case "straight-down":
+                        // 垂直向下
+                        return `M ${fromCx},${fromCy} L ${toCx},${toCy}`;
+
+                    case "straight-up":
+                        // 垂直向上
+                        return `M ${fromCx},${fromCy} L ${toCx},${toCy}`;
+
+                    case "bezier":
+                    default:
+                        // 贝塞尔曲线（避免交叉）
+                        return this.calculateBezierPath(from, to);
+                }
+            }
+
+            calculateBezierPath(from, to) {
+                const fromX = from.x;
+                const fromY = from.y;
+                const toX = to.x;
+                const toY = to.y;
+
+                // 智能贝塞尔曲线：根据组件位置调整控制点
+                const dx = Math.abs(toX - fromX);
+                const dy = Math.abs(toY - fromY);
+
+                let cp1x, cp1y, cp2x, cp2y;
+
+                if (dx > dy) {
+                    // 水平距离大：使用水平方向的控制点
+                    cp1x = fromX + dx * 0.3;
+                    cp1y = fromY;
+                    cp2x = toX - dx * 0.3;
+                    cp2y = toY;
+                } else {
+                    // 垂直距离大：使用垂直方向的控制点
+                    cp1x = fromX;
+                    cp1y = fromY + dy * 0.3;
+                    cp2x = toX;
+                    cp2y = toY - dy * 0.3;
+                }
+
+                return `M ${fromX},${fromY} C ${cp1x},${cp1y} ${cp2x},${cp2y} ${toX},${toY}`;
+            }
+
+            calculateLabelPosition(from, to, conn) {
+                // 计算标签位置（避免重叠）
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+
+                // 根据路径类型微调标签位置
+                if (conn.path === "straight-down" || conn.path === "straight-up") {
+                    return { x: midX + 15, y: midY };  // 右侧显示
+                } else if (conn.path === "straight") {
+                    return { x: midX, y: midY - 12 };  // 上方显示
+                } else {
+                    return { x: midX, y: midY - 10 };
+                }
+            }
+
+            drawComponents() {
+                const componentGroup = this.mainGroup.append("g")
+                    .attr("class", "components");
+
+                this.data.components.forEach(comp => {
+                    const g = componentGroup.append("g")
+                        .attr("class", `component ${comp.id}`)
+                        .attr("transform", `translate(${comp.x - comp.width/2}, ${comp.y - comp.height/2})`)
+                        .attr("data-id", comp.id);
+
+                    // 绘制形状
+                    switch(comp.shape) {
+                        case "ellipse":
+                            g.append("ellipse")
+                                .attr("cx", comp.width/2)
+                                .attr("cy", comp.height/2)
+                                .attr("rx", comp.width/2)
+                                .attr("ry", comp.height/2)
+                                .attr("class", "component-rect")
+                                .attr("fill", comp.color)
+                                .attr("stroke", comp.border);
+                            break;
+
+                        case "diamond":
+                            const points = `${comp.width/2},0 ${comp.width},${comp.height/2} ${comp.width/2},${comp.height} 0,${comp.height/2}`;
+                            g.append("polygon")
+                                .attr("points", points)
+                                .attr("class", "component-rect")
+                                .attr("fill", comp.color)
+                                .attr("stroke", comp.border);
+                            break;
+
+                        case "hexagon":
+                            const hexPoints = `${comp.width*0.25},0 ${comp.width*0.75},0 ${comp.width},${comp.height/2} ${comp.width*0.75},${comp.height} ${comp.width*0.25},${comp.height} 0,${comp.height/2}`;
+                            g.append("polygon")
+                                .attr("points", hexPoints)
+                                .attr("class", "component-rect")
+                                .attr("fill", comp.color)
+                                .attr("stroke", comp.border);
+                            break;
+
+                        case "cloud":
+                            g.append("ellipse")
+                                .attr("cx", comp.width/2)
+                                .attr("cy", comp.height/2)
+                                .attr("rx", comp.width/2)
+                                .attr("ry", comp.height/2)
+                                .attr("class", "component-rect")
+                                .attr("fill", comp.color)
+                                .attr("stroke", comp.border)
+                                .attr("stroke-dasharray", "5,3");
+                            break;
+
+                        case "rounded-rect":
+                            g.append("rect")
+                                .attr("width", comp.width)
+                                .attr("height", comp.height)
+                                .attr("rx", 12)
+                                .attr("ry", 12)
+                                .attr("class", "component-rect")
+                                .attr("fill", comp.color)
+                                .attr("stroke", comp.border);
+                            break;
+
+                        default:
+                            g.append("rect")
+                                .attr("width", comp.width)
+                                .attr("height", comp.height)
+                                .attr("rx", 4)
+                                .attr("ry", 4)
+                                .attr("class", "component-rect")
+                                .attr("fill", comp.color)
+                                .attr("stroke", comp.border);
+                    }
+
+                    // 组件名称
+                    g.append("text")
+                        .attr("x", comp.width/2)
+                        .attr("y", comp.height/2 - 8)
+                        .attr("class", "component-text")
+                        .text(comp.name);
+
+                    // 副标题
+                    g.append("text")
+                        .attr("x", comp.width/2)
+                        .attr("y", comp.height/2 + 10)
+                        .attr("class", "component-subtext")
+                        .text(comp.subtext);
+                });
+            }
+
+            drawTitle() {
+                const titleGroup = this.mainGroup.append("g").attr("class", "title");
+
+                titleGroup.append("text")
+                    .attr("x", this.width / 2)
+                    .attr("y", 40)
+                    .attr("class", "title-text")
+                    .text(this.data.title);
+
+                titleGroup.append("text")
+                    .attr("x", this.width / 2)
+                    .attr("y", 65)
+                    .attr("class", "subtitle-text")
+                    .text(this.data.subtitle);
+            }
+
+            drawLegend() {
+                const legendX = this.width - 280;
+                const legendY = 120;
+
+                const legend = this.mainGroup.append("g")
+                    .attr("class", "legend")
+                    .attr("transform", `translate(${legendX}, ${legendY})`);
+
+                legend.append("rect")
+                    .attr("width", 240)
+                    .attr("height", 220)
+                    .attr("class", "legend-box");
+
+                legend.append("text")
+                    .attr("x", 120)
+                    .attr("y", 25)
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "14px")
+                    .attr("font-weight", "600")
+                    .text("图例说明");
+
+                const items = [
+                    { label: "数据流 →", color: "#1976D2", dash: "" },
+                    { label: "控制流 ⇢", color: "#388E3C", dash: "8,4" },
+                    { label: "反馈流 ··→", color: "#F57C00", dash: "5,3" },
+                    { label: "支撑流 ⇡", color: "#9C27B0", dash: "3,3" },
+                    { label: "矩形: 功能组件", color: "#333", shape: "rect" },
+                    { label: "六边形: 决策/控制", color: "#333", shape: "hex" },
+                    { label: "菱形: 验证/判断", color: "#333", shape: "diamond" },
+                    { label: "椭圆: 数据存储", color: "#333", shape: "ellipse" }
+                ];
+
+                items.forEach((item, i) => {
+                    const y = 45 + i * 22;
+
+                    if (item.shape === "rect") {
+                        legend.append("rect")
+                            .attr("x", 20)
+                            .attr("y", y - 8)
+                            .attr("width", 16)
+                            .attr("height", 12)
+                            .attr("fill", "#E3F2FD")
+                            .attr("stroke", "#1976D2");
+                    } else if (item.shape === "hex") {
+                        const hexPoints = `10,0 20,0 30,8 20,16 10,16 0,8`;
+                        legend.append("polygon")
+                            .attr("points", hexPoints)
+                            .attr("transform", `translate(${20}, ${y-8}) scale(0.5)`)
+                            .attr("fill", "#F3E5F5")
+                            .attr("stroke", "#7B1FA2");
+                    } else if (item.shape === "diamond") {
+                        const dPoints = `15,0 30,8 15,16 0,8`;
+                        legend.append("polygon")
+                            .attr("points", dPoints)
+                            .attr("transform", `translate(${20}, ${y-8}) scale(0.5)`)
+                            .attr("fill", "#FFF9C4")
+                            .attr("stroke", "#F9A825");
+                    } else if (item.shape === "ellipse") {
+                        legend.append("ellipse")
+                            .attr("cx", 28)
+                            .attr("cy", y - 2)
+                            .attr("rx", 10)
+                            .attr("ry", 8)
+                            .attr("fill", "#E1F5FE")
+                            .attr("stroke", "#0277BD");
+                    } else {
+                        legend.append("line")
+                            .attr("x1", 20)
+                            .attr("y1", y)
+                            .attr("x2", 50)
+                            .attr("y2", y)
+                            .attr("stroke", item.color)
+                            .attr("stroke-width", 2)
+                            .attr("stroke-dasharray", item.dash);
+                    }
+
+                    legend.append("text")
+                        .attr("x", item.shape ? 45 : 55)
+                        .attr("y", y + 4)
+                        .attr("class", "legend-text")
+                        .text(item.label);
+                });
+            }
+
+            drawFlowAnnotation() {
+                // 添加流程方向标注
+                const flowGroup = this.mainGroup.append("g").attr("class", "flow-annotation");
+
+                // 主流程箭头
+                flowGroup.append("text")
+                    .attr("x", 800)
+                    .attr("y", 190)
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "12px")
+                    .attr("fill", "#1976D2")
+                    .attr("font-weight", "600")
+                    .text("主流程方向 →");
+
+                // 反馈回路标注
+                flowGroup.append("text")
+                    .attr("x", 600)
+                    .attr("y", 520)
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "11px")
+                    .attr("fill", "#F57C00")
+                    .attr("font-style", "italic")
+                    .text("← 反馈回路");
+            }
+
+            setupControls() {
+                document.getElementById("btn-start").addEventListener("click", () => {
+                    this.startAnimation();
+                });
+
+                document.getElementById("btn-pause").addEventListener("click", () => {
+                    this.pauseAnimation();
+                });
+
+                document.getElementById("btn-reset").addEventListener("click", () => {
+                    this.resetAnimation();
+                });
+
+                document.getElementById("btn-step").addEventListener("click", () => {
+                    this.stepAnimation();
+                });
+
+                document.getElementById("chk-labels").addEventListener("change", (e) => {
+                    this.toggleLabels(e.target.checked);
+                });
+
+                document.getElementById("chk-anim").addEventListener("change", (e) => {
+                    this.toggleAnimation(e.target.checked);
+                });
+            }
+
+            setupInteractions() {
+                const tooltip = d3.select("#tooltip");
+
+                // 组件悬停提示
+                this.mainGroup.selectAll(".component")
+                    .on("mouseenter", (event) => {
+                        const compId = d3.select(event.currentTarget).attr("data-id");
+                        const comp = this.data.components.find(c => c.id === compId);
+
+                        if (comp) {
+                            const html = `
+                                <h3>${comp.name}</h3>
+                                <p><strong>类型:</strong> ${comp.subtext}</p>
+                                <p><strong>行为:</strong> ${comp.behavior}</p>
+                                <p><strong>属性:</strong> ${comp.attributes.join(", ")}</p>
+                            `;
+
+                            tooltip.html(html)
+                                .style("opacity", 1)
+                                .style("left", (event.pageX + 15) + "px")
+                                .style("top", (event.pageY - 15) + "px");
+                        }
+                    })
+                    .on("mousemove", (event) => {
+                        tooltip
+                            .style("left", (event.pageX + 15) + "px")
+                            .style("top", (event.pageY - 15) + "px");
+                    })
+                    .on("mouseleave", () => {
+                        tooltip.style("opacity", 0);
+                    });
+            }
+
+            startAnimation() {
+                if (this.isAnimating) return;
+
+                this.isAnimating = true;
+                document.getElementById("btn-start").classList.add("active");
+                this.animateLoop();
+            }
+
+            pauseAnimation() {
+                this.isAnimating = false;
+                document.getElementById("btn-start").classList.remove("active");
+            }
+
+            resetAnimation() {
+                this.pauseAnimation();
+                this.currentStep = 0;
+                this.mainGroup.selectAll(".data-packet").remove();
+                this.mainGroup.selectAll(".component-rect")
+                    .classed("highlight", false)
+                    .attr("stroke-width", 2.5);
+            }
+
+            stepAnimation() {
+                const connections = this.data.connections;
+                if (this.currentStep >= connections.length) {
+                    this.currentStep = 0;
+                }
+
+                const conn = connections[this.currentStep];
+                this.animateDataPacket(conn);
+
+                // 高亮相关组件
+                this.mainGroup.selectAll(".component-rect")
+                    .classed("highlight", false)
+                    .attr("stroke-width", 2.5);
+
+                this.mainGroup.select(`.component.${conn.from} .component-rect`)
+                    .classed("highlight", true);
+
+                this.mainGroup.select(`.component.${conn.to} .component-rect`)
+                    .classed("highlight", true);
+
+                this.currentStep++;
+            }
+
+            animateLoop() {
+                if (!this.isAnimating) return;
+
+                const connections = this.data.connections;
+                let step = 0;
+
+                const interval = setInterval(() => {
+                    if (!this.isAnimating || step >= connections.length) {
+                        clearInterval(interval);
+                        if (this.isAnimating) {
+                            setTimeout(() => this.animateLoop(), 1500);
+                        }
+                        return;
+                    }
+
+                    this.stepAnimation();
+                    step++;
+                }, 1000);
+            }
+
+            animateDataPacket(conn) {
+                const fromComp = this.data.components.find(c => c.id === conn.from);
+                const toComp = this.data.components.find(c => c.id === conn.to);
+
+                if (!fromComp || !toComp) return;
+
+                const startX = fromComp.x;
+                const startY = fromComp.y;
+                const endX = toComp.x;
+                const endY = toComp.y;
+
+                const packet = this.mainGroup.append("circle")
+                    .attr("cx", startX)
+                    .attr("cy", startY)
+                    .attr("class", "data-packet")
+                    .attr("opacity", 0.9);
+
+                const duration = 1000;
+                const startTime = Date.now();
+
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    let currentX, currentY;
+
+                    // 根据路径类型计算当前位置
+                    if (conn.path === "straight" || conn.path === "straight-down" || conn.path === "straight-up") {
+                        // 直线运动
+                        currentX = startX + (endX - startX) * progress;
+                        currentY = startY + (endY - startY) * progress;
+                    } else {
+                        // 贝塞尔曲线运动
+                        const cp1x = startX + (endX - startX) * 0.3;
+                        const cp1y = startY;
+                        const cp2x = startX + (endX - startX) * 0.7;
+                        const cp2y = endY;
+
+                        const t = progress;
+                        currentX = Math.pow(1-t, 3) * startX + 3 * Math.pow(1-t, 2) * t * cp1x +
+                                  3 * (1-t) * Math.pow(t, 2) * cp2x + Math.pow(t, 3) * endX;
+                        currentY = Math.pow(1-t, 3) * startY + 3 * Math.pow(1-t, 2) * t * cp1y +
+                                  3 * (1-t) * Math.pow(t, 2) * cp2y + Math.pow(t, 3) * endY;
+                    }
+
+                    packet
+                        .attr("cx", currentX)
+                        .attr("cy", currentY)
+                        .attr("opacity", 0.9 * (1 - progress * 0.3));
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        packet.remove();
+                    }
+                };
+
+                requestAnimationFrame(animate);
+            }
+
+            toggleLabels(show) {
+                this.mainGroup.selectAll(".connection-label")
+                    .attr("opacity", show ? 0.8 : 0);
+            }
+
+            toggleAnimation(enabled) {
+                if (!enabled) {
+                    this.pauseAnimation();
+                }
+            }
+        }
+
+        // 初始化可视化
+        const viz = new LoopEngineeringVisualization(MODEL_DATA);
+
+    </script>
+</body>
+</html>

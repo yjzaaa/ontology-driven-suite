@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>西方哲学学习路线图</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@5/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dagre-d3@0.6.4/dist/dagre-d3.min.js"></script>
+<style>
+html,body{margin:0;height:100%;font-family:Arial,"Microsoft YaHei",sans-serif;background:#f7f8fa;color:#1a1a2e}
+header{position:fixed;z-index:5;left:0;right:0;top:0;background:#fff;border-bottom:1px solid #e4e7ef;box-shadow:0 2px 10px #00000010;padding:12px 18px}
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+h1{font-size:18px;margin:0 12px 0 0}
+select,button{border:1px solid #cfd5e5;background:#fff;border-radius:6px;padding:6px 9px;color:#1a1a2e}
+button{cursor:pointer}
+button:hover{background:#eef2ff}
+.hint{font-size:12px;color:#5b6475;line-height:1.5;margin-top:8px}
+.legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:#445}
+.sw{display:inline-block;width:22px;height:4px;border-radius:3px;vertical-align:middle;margin-right:5px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:5px}
+#wrap{height:100%;padding-top:114px;box-sizing:border-box;overflow:hidden}
+svg{width:100%;height:100%;background:#f7f8fa;cursor:grab}
+svg:active{cursor:grabbing}
+.node rect{stroke:#39445e;stroke-width:1.2px;rx:7px;ry:7px;filter:drop-shadow(0 2px 3px #00000018)}
+.node text{font-size:13px;fill:#102033;font-weight:650}
+.node.dim rect{opacity:.18}
+.edgePath path{stroke:#78849c;stroke-width:1.7px;fill:none}
+.edgeLabel text{font-size:11px;fill:#4f5c73}
+.edgePath.dim path{opacity:.08}
+.edgeLabel.dim{opacity:.08}
+.edgePath.active path{stroke:#e91e63!important;stroke-width:3.6px!important;opacity:1}
+.edgeLabel.active text{fill:#c2185b;font-weight:700}
+.node.active rect{stroke:#e91e63;stroke-width:3px}
+.node.pre rect{stroke:#1565c0;stroke-width:3px}
+.node.next rect{stroke:#2e7d32;stroke-width:3px}
+.cluster rect{fill:#ffffff;stroke:#d9deec;stroke-width:1px;rx:8px;ry:8px}
+#panel{position:fixed;right:18px;top:138px;width:330px;max-height:calc(100vh - 164px);overflow:auto;background:#fff;border:1px solid #dfe4f1;border-radius:8px;box-shadow:0 8px 28px #0000001c;padding:14px;display:none;z-index:6}
+#panel h2{font-size:16px;margin:0 0 8px;color:#1a237e}
+#panel .meta{font-size:12px;color:#667085;margin-bottom:8px}
+#panel .section{font-size:13px;line-height:1.65;margin-top:10px}
+#panel .section b{color:#263238}
+#panel a{display:inline-block;margin-top:8px;color:#1a5fb4;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>西方哲学 · 左到右分层学习路线图</h1>
+    <label>路线
+      <select id="route" onchange="render()">
+        <option value="all">全景路线</option>
+        <option value="intro">通识入门</option>
+        <option value="metaphysics">形而上学</option>
+        <option value="epistemology">认识论</option>
+        <option value="ethics">伦理政治</option>
+        <option value="analysis">语言与分析哲学</option>
+        <option value="continental">欧陆哲学</option>
+      </select>
+    </label>
+    <label>关系
+      <select id="relation" onchange="render()">
+        <option value="learning">学习主线</option>
+        <option value="all">全部关系</option>
+        <option value="depends">只看前导依赖</option>
+        <option value="contains">只看组装包含</option>
+        <option value="evolved">只看思想演进</option>
+        <option value="contrast">只看对比阅读</option>
+      </select>
+    </label>
+    <button onclick="resetView()">重置视图</button>
+    <button onclick="clearFocus()">清除高亮</button>
+  </div>
+  <div class="hint">阅读方向固定为从左到右：前导知识 → 可组装出的后续知识。点击任一节点，会高亮蓝色前置知识、绿色后续知识和粉色直接路径。</div>
+  <div class="legend">
+    <span><i class="sw" style="background:#4f9bff"></i>前导依赖 depends</span>
+    <span><i class="sw" style="background:#8896c7;height:6px"></i>组装包含 contains</span>
+    <span><i class="sw" style="background:#ab47bc"></i>思想演进 evolved</span>
+    <span><i class="sw" style="background:#ffa726;border-top:2px dashed #ffa726;background:transparent"></i>对比阅读 contrast</span>
+    <span><i class="dot" style="background:#3f51b5"></i>节点颜色表示哲学史分组</span>
+  </div>
+</header>
+<div id="wrap"><svg id="svg"><g id="zoom"><g id="graph"></g></g></svg></div>
+<aside id="panel"><h2 id="pt"></h2><div class="meta" id="pm"></div><div id="pd"></div></aside>
+<script>
+const palette=['#3f51b5','#009688','#ff9800','#e91e63','#4caf50','#00bcd4','#9c27b0','#ff5722'];
+const relationColor={depends:'#4f9bff',contains:'#8896c7',evolved:'#ab47bc',contrast:'#ffa726',analogy:'#43a047'};
+const categories=['古希腊哲学','希腊化与罗马','中世纪哲学','近代哲学','19世纪哲学','分析哲学','欧陆哲学','当代交叉议题'];
+const layerNames=['L0 基础问题','L1 古典框架','L2 生活伦理与神学综合','L3 近代主体与经验','L4 康德综合与19世纪批判','L5 语言转向与现象学','L6 当代专题组装'];
+const nodeRows=[
+['泰勒斯本原',0,0,'以水等自然本原解释万物，开启从神话到理性说明的转向。'],
+['赫拉克利特变化',0,0,'强调万物流变与逻各斯秩序，构成变化哲学的经典源头。'],
+['巴门尼德存在',0,0,'主张存在不可生成毁灭，迫使哲学区分感觉与理性。'],
+['智者派相对主义',0,0,'把真理、法律和德性置于人类实践与论辩中考察。'],
+['苏格拉底诘问法',0,0,'通过追问定义暴露矛盾，推动伦理反省和概念澄清。'],
+['三段论',0,0,'以大前提、小前提和结论构成演绎推理模型。'],
+['德性即知识',0,1,'认为真正知道善就会趋向善，连接知识与伦理生活。'],
+['柏拉图理念论',0,1,'把可感世界与理念世界区分开，以解释知识、价值和存在。'],
+['洞穴寓言',0,1,'用影像、转身和日光说明教育、真理与政治责任。'],
+['亚里士多德实体论',0,1,'以实体、形式和质料分析个体事物的存在方式。'],
+['四因说',0,1,'从质料、形式、动力和目的四方面解释事物生成。'],
+['中道德性',0,1,'把德性理解为理性选择下的适度状态。'],
+['斯多亚逻各斯',1,2,'认为宇宙由理性原则贯通，人应顺应自然生活。'],
+['命运与自由',1,2,'讨论外在必然与内在态度之间的实践自由。'],
+['伊壁鸠鲁快乐论',1,2,'以宁静和免于痛苦解释审慎的快乐生活。'],
+['死亡无惧论证',1,2,'主张死亡来临时主体已不在，故不应成为痛苦对象。'],
+['皮浪怀疑主义',1,2,'通过悬置判断避免独断，从而获得心灵安宁。'],
+['新柏拉图太一',1,2,'以超越存在的太一解释万物流溢与灵魂回归。'],
+['奥古斯丁内在性',2,2,'把真理探寻转向内在灵魂、记忆和上帝照明。'],
+['恶的问题',2,2,'追问全善全能上帝与现实恶之间的张力。'],
+['安瑟尔谟本体论证明',2,2,'试图从上帝概念推出上帝存在。'],
+['阿奎那五路证明',2,2,'从运动、因果、必然性、等级和目的性论证上帝存在。'],
+['共相实在论',2,2,'认为共相具有独立或先于个体的实在性。'],
+['唯名论',2,2,'认为共相主要是名称或心灵符号，个体才是基本实在。'],
+['奥卡姆剃刀',2,2,'在解释中避免不必要实体，影响近代方法论。'],
+['笛卡尔怀疑',3,3,'通过普遍怀疑寻找不可动摇的知识基础。'],
+['我思故我在',3,3,'以思维主体的自明性奠定近代主体哲学。'],
+['身心二元论',3,3,'把心灵与物体区分为不同实体，引出身心关系问题。'],
+['斯宾诺莎实体一元论',3,3,'把上帝或自然理解为唯一实体，万物为其样态。'],
+['莱布尼茨单子论',3,3,'以无窗单子和预定和谐解释个体与世界秩序。'],
+['洛克白板说',3,3,'主张心灵材料来自经验，反对强天赋观念。'],
+['贝克莱主观唯心论',3,3,'以存在即被感知挑战物质实体独立性。'],
+['休谟因果怀疑',3,3,'把因果必然性还原为经验恒常联结与心理习惯。'],
+['康德先验综合判断',3,4,'解释数学、自然科学和形而上学判断的可能性。'],
+['范畴表',3,4,'列出知性组织经验的基本概念形式。'],
+['定言命令',3,4,'以普遍化和人格目的原则规定道德义务。'],
+['黑格尔辩证法',4,4,'通过矛盾、否定和扬弃理解概念与历史发展。'],
+['主奴辩证法',4,4,'用承认斗争分析自我意识与社会关系。'],
+['费尔巴哈投射论',4,4,'把宗教理解为人的本质力量的对象化投射。'],
+['马克思异化劳动',4,4,'分析资本主义劳动中人与产品、活动、类本质和他人的分离。'],
+['历史唯物主义',4,4,'以生产方式和社会关系解释历史变迁。'],
+['意识形态批判',4,4,'揭示观念如何遮蔽或维护现实权力关系。'],
+['功利主义原则',4,4,'以最大多数人的最大幸福衡量行为和制度。'],
+['密尔伤害原则',4,4,'主张限制自由的正当理由是防止伤害他人。'],
+['尼采权力意志',4,4,'以生命力量和价值创造批判传统道德。'],
+['上帝之死',4,4,'指传统最高价值失效后现代人面临的虚无主义处境。'],
+['弗雷格意义指称',5,5,'区分表达式的意义和指称，奠定现代语言哲学。'],
+['罗素摹状词理论',5,5,'用逻辑分析处理看似指称但可能无对象的表达。'],
+['维特根斯坦图像论',5,5,'认为命题以逻辑形式描画事实。'],
+['语言游戏',5,5,'把意义理解为在生活形式中的使用。'],
+['证实原则',5,5,'以经验可证实性划定有意义命题。'],
+['奎因整体论',5,5,'反对分析综合二分，强调信念网络整体受经验检验。'],
+['功能主义心灵观',5,5,'用因果功能角色解释心理状态。'],
+['意识难题',5,5,'指出主观体验难以由物理和功能描述完全解释。'],
+['摩尔开放问题',5,5,'挑战把善还原为自然属性的伦理自然主义。'],
+['胡塞尔意向性',6,5,'说明意识总是关于某物，构成现象学分析核心。'],
+['现象学还原',6,5,'暂置自然态度以考察经验如何显现。'],
+['海德格尔此在',6,5,'以在世存在、操心和时间性分析人的存在方式。'],
+['萨特自由责任',6,5,'强调人被迫自由并须承担选择后果。'],
+['加缪荒诞',6,5,'描述意义追求与世界沉默之间的冲突。'],
+['伽达默尔解释学循环',6,5,'认为理解在部分与整体、传统与当下之间往复展开。'],
+['德里达延异',6,5,'以差异和延宕批判意义的在场形而上学。'],
+['福柯权力知识',6,5,'分析知识生产与权力机制的互构关系。'],
+['罗尔斯无知之幕',7,6,'通过原初状态和无知之幕推导公平正义原则。'],
+['哈贝马斯交往理性',7,6,'以无强制对话和公共论证重建理性与民主合法性。'],
+['库恩范式转换',7,6,'用常规科学、危机和革命解释科学发展。'],
+['海德格尔技术座架',7,6,'把现代技术理解为规定万物呈现为资源的揭示方式。'],
+['女性主义性别建构',7,6,'分析性别身份如何由制度、语言和实践塑造。'],
+['环境伦理代际正义',7,6,'讨论当代人对未来世代和非人自然的责任。']
+];
+const nodes=nodeRows.map(d=>({id:d[0],category:d[1],layer:d[2],value:d[3]}));
+const nodeMap=new Map(nodes.map(n=>[n.id,n]));
+const sourceEdges=[
+['赫拉克利特变化','泰勒斯本原','evolved',.45],['巴门尼德存在','赫拉克利特变化','contrast',.70],['苏格拉底诘问法','智者派相对主义','contrast',.60],
+['德性即知识','苏格拉底诘问法','contains',.78],['柏拉图理念论','巴门尼德存在','depends',.62],['洞穴寓言','柏拉图理念论','contains',.82],
+['亚里士多德实体论','柏拉图理念论','contrast',.78],['四因说','亚里士多德实体论','contains',.80],['三段论','亚里士多德实体论','contains',.55],
+['中道德性','德性即知识','evolved',.58],['中道德性','亚里士多德实体论','depends',.52],['斯多亚逻各斯','赫拉克利特变化','evolved',.52],
+['命运与自由','斯多亚逻各斯','contains',.70],['伊壁鸠鲁快乐论','斯多亚逻各斯','contrast',.60],['死亡无惧论证','伊壁鸠鲁快乐论','contains',.75],
+['皮浪怀疑主义','智者派相对主义','evolved',.50],['皮浪怀疑主义','苏格拉底诘问法','analogy',.45],['新柏拉图太一','柏拉图理念论','evolved',.82],
+['奥古斯丁内在性','新柏拉图太一','evolved',.65],['恶的问题','奥古斯丁内在性','contains',.62],['安瑟尔谟本体论证明','奥古斯丁内在性','evolved',.45],
+['阿奎那五路证明','亚里士多德实体论','depends',.72],['阿奎那五路证明','四因说','depends',.66],['共相实在论','柏拉图理念论','evolved',.58],
+['唯名论','共相实在论','contrast',.78],['奥卡姆剃刀','唯名论','contains',.74],['笛卡尔怀疑','皮浪怀疑主义','evolved',.56],
+['我思故我在','笛卡尔怀疑','contains',.90],['身心二元论','我思故我在','contains',.72],['斯宾诺莎实体一元论','身心二元论','contrast',.78],
+['莱布尼茨单子论','斯宾诺莎实体一元论','contrast',.55],['洛克白板说','笛卡尔怀疑','contrast',.62],['贝克莱主观唯心论','洛克白板说','evolved',.54],
+['休谟因果怀疑','洛克白板说','evolved',.70],['休谟因果怀疑','贝克莱主观唯心论','analogy',.45],['康德先验综合判断','休谟因果怀疑','depends',.88],
+['康德先验综合判断','笛卡尔怀疑','depends',.58],['范畴表','康德先验综合判断','contains',.76],['定言命令','康德先验综合判断','analogy',.52],
+['黑格尔辩证法','康德先验综合判断','evolved',.68],['主奴辩证法','黑格尔辩证法','contains',.72],['费尔巴哈投射论','黑格尔辩证法','contrast',.52],
+['马克思异化劳动','费尔巴哈投射论','evolved',.62],['历史唯物主义','黑格尔辩证法','evolved',.72],['历史唯物主义','马克思异化劳动','contains',.58],
+['意识形态批判','历史唯物主义','contains',.76],['功利主义原则','定言命令','contrast',.74],['密尔伤害原则','功利主义原则','evolved',.65],
+['尼采权力意志','上帝之死','contains',.68],['上帝之死','费尔巴哈投射论','evolved',.45],['尼采权力意志','康德先验综合判断','contrast',.50],
+['弗雷格意义指称','三段论','evolved',.55],['罗素摹状词理论','弗雷格意义指称','depends',.70],['维特根斯坦图像论','罗素摹状词理论','evolved',.58],
+['语言游戏','维特根斯坦图像论','contrast',.82],['证实原则','维特根斯坦图像论','evolved',.50],['奎因整体论','证实原则','contrast',.78],
+['功能主义心灵观','身心二元论','contrast',.66],['意识难题','功能主义心灵观','contrast',.72],['摩尔开放问题','功利主义原则','contrast',.54],
+['胡塞尔意向性','笛卡尔怀疑','evolved',.58],['现象学还原','胡塞尔意向性','contains',.82],['海德格尔此在','胡塞尔意向性','evolved',.76],
+['萨特自由责任','海德格尔此在','evolved',.62],['加缪荒诞','萨特自由责任','analogy',.50],['伽达默尔解释学循环','海德格尔此在','evolved',.58],
+['德里达延异','伽达默尔解释学循环','contrast',.52],['福柯权力知识','德里达延异','analogy',.48],['福柯权力知识','尼采权力意志','evolved',.60],
+['罗尔斯无知之幕','密尔伤害原则','evolved',.58],['哈贝马斯交往理性','罗尔斯无知之幕','contrast',.46],['哈贝马斯交往理性','伽达默尔解释学循环','evolved',.48],
+['库恩范式转换','奎因整体论','analogy',.52],['海德格尔技术座架','海德格尔此在','contains',.62],['女性主义性别建构','福柯权力知识','evolved',.56],
+['环境伦理代际正义','罗尔斯无知之幕','evolved',.50],['环境伦理代际正义','功利主义原则','contrast',.45],['意识难题','胡塞尔意向性','analogy',.42],
+['语言游戏','伽达默尔解释学循环','analogy',.46],['奥卡姆剃刀','罗素摹状词理论','analogy',.42],['范畴表','亚里士多德实体论','analogy',.45]
+];
+const routeSets={
+intro:['泰勒斯本原','赫拉克利特变化','巴门尼德存在','苏格拉底诘问法','柏拉图理念论','亚里士多德实体论','斯多亚逻各斯','笛卡尔怀疑','洛克白板说','休谟因果怀疑','康德先验综合判断','黑格尔辩证法','尼采权力意志','语言游戏','胡塞尔意向性','罗尔斯无知之幕'],
+metaphysics:['泰勒斯本原','赫拉克利特变化','巴门尼德存在','柏拉图理念论','亚里士多德实体论','四因说','新柏拉图太一','共相实在论','唯名论','阿奎那五路证明','斯宾诺莎实体一元论','莱布尼茨单子论','康德先验综合判断','黑格尔辩证法','海德格尔此在','海德格尔技术座架'],
+epistemology:['智者派相对主义','苏格拉底诘问法','皮浪怀疑主义','奥卡姆剃刀','笛卡尔怀疑','洛克白板说','贝克莱主观唯心论','休谟因果怀疑','康德先验综合判断','范畴表','证实原则','奎因整体论','库恩范式转换'],
+ethics:['苏格拉底诘问法','德性即知识','中道德性','斯多亚逻各斯','命运与自由','伊壁鸠鲁快乐论','死亡无惧论证','定言命令','功利主义原则','密尔伤害原则','马克思异化劳动','历史唯物主义','罗尔斯无知之幕','哈贝马斯交往理性','环境伦理代际正义'],
+analysis:['三段论','奥卡姆剃刀','弗雷格意义指称','罗素摹状词理论','维特根斯坦图像论','语言游戏','证实原则','奎因整体论','功能主义心灵观','意识难题','摩尔开放问题','库恩范式转换'],
+continental:['笛卡尔怀疑','康德先验综合判断','黑格尔辩证法','费尔巴哈投射论','尼采权力意志','胡塞尔意向性','现象学还原','海德格尔此在','萨特自由责任','加缪荒诞','伽达默尔解释学循环','德里达延异','福柯权力知识','女性主义性别建构']
+};
+function learningEdges(){
+  const out=[];
+  sourceEdges.forEach(([advanced,pre,type,weight])=>{
+    if(!nodeMap.has(advanced)||!nodeMap.has(pre))return;
+    const a=nodeMap.get(advanced),p=nodeMap.get(pre);
+    const forward=p.layer<=a.layer;
+    const from=forward?pre:advanced,to=forward?advanced:pre;
+    if(from!==to)out.push({from,to,type,weight});
+  });
+  return out;
+}
+const allEdges=learningEdges();
+let svg=d3.select('#svg'),inner=d3.select('#graph'),zoomLayer=d3.select('#zoom'),currentEdges=[],currentNodes=[];
+const zoom=d3.zoom().scaleExtent([0.25,2.2]).on('zoom',()=>zoomLayer.attr('transform',d3.event.transform));
+svg.call(zoom);
+function edgeAllowed(e,rel){if(rel==='all')return true;if(rel==='learning')return ['depends','contains','evolved','contrast'].includes(e.type);return e.type===rel}
+function visibleSet(route){if(route==='all')return new Set(nodes.map(n=>n.id));const base=new Set(routeSets[route]||[]);let changed=true;while(changed){changed=false;allEdges.forEach(e=>{if(base.has(e.to)&&!base.has(e.from)){base.add(e.from);changed=true}})}return base}
+function render(){
+  clearFocus(false);
+  const route=document.getElementById('route').value,rel=document.getElementById('relation').value,visible=visibleSet(route);
+  currentNodes=nodes.filter(n=>visible.has(n.id));
+  currentEdges=allEdges.filter(e=>visible.has(e.from)&&visible.has(e.to)&&edgeAllowed(e,rel));
+  const g=new dagreD3.graphlib.Graph({compound:true}).setGraph({rankdir:'LR',nodesep:34,ranksep:82,marginx:30,marginy:26}).setDefaultEdgeLabel(()=>({}));
+  layerNames.forEach((name,i)=>g.setNode('cluster_'+i,{label:name,clusterLabelPos:'top',style:'fill:#ffffff;stroke:#d9deec'}));
+  currentNodes.forEach(n=>{
+    g.setNode(n.id,{label:n.id,rx:7,ry:7,paddingLeft:12,paddingRight:12,paddingTop:8,paddingBottom:8,style:`fill:${palette[n.category]};stroke:#39445e;color:#fff`,labelStyle:'fill:#fff;font-weight:650'});
+    g.setParent(n.id,'cluster_'+n.layer);
+  });
+  currentEdges.forEach(e=>{
+    const color=relationColor[e.type]||'#667085';
+    const dash=e.type==='contrast'?'stroke-dasharray:6 4;':'';
+    const width=e.type==='contains'?3.2:(e.type==='depends'?2.5:1.9);
+    const label=e.type==='depends'?'前导':(e.type==='contains'?'组装':(e.type==='evolved'?'演进':(e.type==='contrast'?'对比':'类比')));
+    g.setEdge(e.from,e.to,{label,curve:d3.curveBasis,arrowhead:'vee',style:`stroke:${color};stroke-width:${width}px;${dash}fill:none`,arrowheadStyle:`fill:${color};stroke:${color}`,labelStyle:`fill:${color};font-weight:650`});
+  });
+  inner.selectAll('*').remove();
+  new dagreD3.render()(inner,g);
+  inner.selectAll('g.node').on('click',id=>focusNode(id)).on('mouseover',id=>showPanel(id));
+  inner.selectAll('g.edgePath').each(function(v){d3.select(this).attr('data-from',v.v).attr('data-to',v.w)});
+  inner.selectAll('g.edgeLabel').each(function(v){d3.select(this).attr('data-from',v.v).attr('data-to',v.w)});
+  resetView();
+}
+function related(id,direction){
+  const seen=new Set(),stack=[id];
+  while(stack.length){const cur=stack.pop();currentEdges.forEach(e=>{const next=direction==='pre'&&e.to===cur?e.from:(direction==='next'&&e.from===cur?e.to:null);if(next&&!seen.has(next)){seen.add(next);stack.push(next)}})}
+  return seen;
+}
+function focusNode(id){
+  const pre=related(id,'pre'),next=related(id,'next');
+  inner.selectAll('g.node').classed('dim',true).classed('active',false).classed('pre',false).classed('next',false);
+  inner.selectAll('g.node').filter(d=>d===id).classed('dim',false).classed('active',true);
+  inner.selectAll('g.node').filter(d=>pre.has(d)).classed('dim',false).classed('pre',true);
+  inner.selectAll('g.node').filter(d=>next.has(d)).classed('dim',false).classed('next',true);
+  inner.selectAll('g.edgePath,g.edgeLabel').classed('dim',true).classed('active',false);
+  inner.selectAll('g.edgePath,g.edgeLabel').filter(function(){const f=this.getAttribute('data-from'),t=this.getAttribute('data-to');return (f===id||t===id||pre.has(f)&&pre.has(t)||next.has(f)&&next.has(t)||pre.has(f)&&t===id||f===id&&next.has(t));}).classed('dim',false).classed('active',true);
+  showPanel(id);
+}
+function showPanel(id){
+  const n=nodeMap.get(id);if(!n)return;
+  const directPre=currentEdges.filter(e=>e.to===id).map(e=>e.from);
+  const directNext=currentEdges.filter(e=>e.from===id).map(e=>e.to);
+  document.getElementById('pt').textContent=id;
+  document.getElementById('pm').textContent=`${categories[n.category]} ｜ ${layerNames[n.layer]}`;
+  document.getElementById('pd').innerHTML=`<div class="section">${n.value}</div><div class="section"><b>直接前导：</b>${directPre.length?directPre.join('、'):'无'}</div><div class="section"><b>可组装/通向：</b>${directNext.length?directNext.join('、'):'无'}</div>`;
+  document.getElementById('panel').style.display='block';
+}
+function clearFocus(hide=true){
+  inner.selectAll('g.node').classed('dim',false).classed('active',false).classed('pre',false).classed('next',false);
+  inner.selectAll('g.edgePath,g.edgeLabel').classed('dim',false).classed('active',false);
+  if(hide)document.getElementById('panel').style.display='none';
+}
+function resetView(){
+  const graphNode=inner.node();
+  if(!graphNode)return;
+  const bbox=graphNode.getBBox(),w=svg.node().clientWidth,h=svg.node().clientHeight;
+  const scale=Math.min(1.05,Math.max(.28,Math.min((w-80)/bbox.width,(h-80)/bbox.height)));
+  const x=(w-bbox.width*scale)/2-bbox.x*scale,y=36-bbox.y*scale;
+  svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity.translate(x,y).scale(scale));
+}
+window.addEventListener('resize',resetView);
+render();
+</script>
+</body>
+</html>

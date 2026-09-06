@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__APP_NAME__</title>
+<style>
+  /* 设计规范：frontend-design skill。浅色专业风，靛蓝主色，轻阴影，8px 网格 */
+  body { margin: 0; font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif; background: #F5F6FA; color: #334155; }
+  .app-sider { background: #0F172A !important; }
+  .app-sider .ant-menu { background: transparent; }
+  .app-logo { color: #F1F5F9; font-weight: 600; padding: 18px 20px; font-size: 16px; letter-spacing: -0.01em; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .app-content { padding: 24px; }
+  .block-card { background: #FFFFFF; border: 1px solid #EEF2F7; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 12px rgba(15,23,42,.04); }
+  .block-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: #0F172A; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  // 由 engine.cjs 注入（运行时替换）
+  window.__SCHEMA__ = __SCHEMA_JSON__;
+</script>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

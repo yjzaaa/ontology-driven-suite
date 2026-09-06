@@ -1,0 +1,20 @@
+# Python virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# Runtime and editor files
+*.log
+*.tmp
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

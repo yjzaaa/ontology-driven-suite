@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手机厂商 LTC 端到端流程 · SBR 可视化建模 · D3.js</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;}
+  body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;background:#FAFBFC;color:#37474F;}
+  .wrap{width:100%;max-width:1820px;margin:0 auto;padding:14px;}
+  .header{background:linear-gradient(90deg,#006064,#00838F);color:#fff;padding:16px 24px;border-radius:8px 8px 0 0;}
+  .header h1{font-size:21px;font-weight:700;margin-bottom:3px;}
+  .header p{font-size:12px;color:#B2EBF2;}
+  .stage-bar{display:flex;background:#fff;border-left:1px solid #E0E0E0;border-right:1px solid #E0E0E0;padding:5px 0;}
+  .stage-item{flex:1;text-align:center;font-size:11px;font-weight:600;color:#90A4AE;border-right:1px dashed #ECEFF1;padding:3px 2px;}
+  .stage-item:last-child{border-right:none;}
+  .canvas-box{width:100%;background:#fff;border:1px solid #E0E0E0;border-top:none;border-radius:0 0 8px 8px;}
+  #viz{display:block;width:100%;height:auto;}
+  .d3-tooltip{position:absolute;pointer-events:none;background:rgba(0,96,100,0.95);color:#fff;padding:9px 13px;border-radius:6px;font-size:11px;line-height:1.55;max-width:300px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;z-index:100;}
+  .d3-tooltip .tt-title{font-size:12px;font-weight:700;margin-bottom:3px;color:#80CBC4;}
+  .d3-tooltip .tt-role{font-size:10px;color:#B2DFDB;margin-bottom:4px;}
+  .d3-tooltip .tt-body{font-size:10px;color:#FFFFFF;}
+  .d3-tooltip .tt-pre{font-size:10px;color:#FFCC80;margin-top:3px;}
+  .d3-tooltip .tt-suc{font-size:10px;color:#90CAF9;margin-top:1px;}
+  .detail-panel{position:fixed;top:18px;right:18px;width:340px;max-width:90vw;background:#fff;border:1px solid #CFD8DC;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.12);padding:16px 18px;z-index:200;display:none;font-size:11px;line-height:1.65;max-height:85vh;overflow-y:auto;}
+  .detail-panel.show{display:block;animation:slideIn .25s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+  .detail-panel .dp-close{float:right;cursor:pointer;color:#90A4AE;font-size:17px;line-height:1;}
+  .detail-panel .dp-close:hover{color:#00838F;}
+  .detail-panel .dp-shape{display:inline-block;width:13px;height:13px;border-radius:2px;vertical-align:middle;margin-right:5px;}
+  .detail-panel h3{font-size:14px;color:#006064;margin-bottom:6px;}
+  .detail-panel .dp-label{font-weight:700;color:#546E7A;}
+  .detail-panel .dp-section{margin-top:8px;padding-top:8px;border-top:1px solid #ECEFF1;}
+  .detail-panel .dp-pre{color:#E65100;}
+  .detail-panel .dp-suc{color:#1565C0;}
+  .legend-box{margin-top:12px;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:14px 18px;display:flex;gap:24px;flex-wrap:wrap;}
+  .legend-section h4{font-size:12px;color:#006064;margin-bottom:6px;}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:11px;color:#37474F;margin-bottom:4px;}
+  .legend-line{display:flex;align-items:center;gap:7px;font-size:11px;color:#37474F;margin-bottom:4px;}
+  .ctrl-bar{margin-top:10px;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:11px;}
+  .ctrl-bar label{display:flex;align-items:center;gap:5px;cursor:pointer;color:#37474F;}
+  .ctrl-bar input[type=checkbox]{cursor:pointer;}
+  .ctrl-bar .ctrl-title{font-weight:700;color:#006064;margin-right:4px;}
+  .footer-tip{margin-top:8px;font-size:11px;color:#78909C;text-align:center;}
+  .footer-tip b{color:#546E7A;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>手机厂商 LTC 端到端流程 · SBR 可视化建模</h1>
+    <p>商机→订单→交付→回款 · LTC + ISC + IPD 三大体系协同 · L3-L4 颗粒度拆解 · D3.js 交互呈现</p>
+  </div>
+  <div class="stage-bar" id="stageBar"></div>
+  <div class="canvas-box">
+    <svg id="viz" viewBox="0 0 1760 1960" preserveAspectRatio="xMidYMin meet"></svg>
+  </div>
+  <div class="ctrl-bar">
+    <span class="ctrl-title">视图控制：</span>
+    <label><input type="checkbox" id="toggleMain" checked> LTC主流程（红）</label>
+    <label><input type="checkbox" id="togglePlan" checked> ISC计划驱动（紫）</label>
+    <label><input type="checkbox" id="toggleData" checked> 数据流（蓝）</label>
+    <label><input type="checkbox" id="toggleFeedback" checked> 反馈流（橙）</label>
+    <label><input type="checkbox" id="toggleIPD" checked> IPD协同（绿）</label>
+    <label><input type="checkbox" id="toggleExpand" checked> 子组件展开（灰）</label>
+    <label><input type="checkbox" id="toggleFlow" checked> 主路径流动动画</label>
+    <span style="margin-left:auto;color:#78909C;">双击空白重置高亮</span>
+  </div>
+  <div class="legend-box">
+    <div class="legend-section">
+      <h4>组件模块（Structure · 按流程层次）</h4>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#E1F5FE" stroke="#0277BD" stroke-width="1.3"/></svg>LTC 商机报价层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.3"/></svg>LTC 订单处理层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="1.3"/></svg>ISC 计划层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#FFF3E0" stroke="#E65100" stroke-width="1.3"/></svg>ISC 采购层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.3"/></svg>ISC 制造层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#FFE0B2" stroke="#EF6C00" stroke-width="1.3"/></svg>LTC 交付回款层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#FFFDE7" stroke="#F9A825" stroke-width="1.3"/></svg>LTC 售后服务层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="2" fill="#EDE7F6" stroke="#512DA8" stroke-width="1.3"/></svg>IPD 产品研发层</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="3" fill="#E1BEE7" stroke="#8E24AA" stroke-width="1"/></svg>子组件（L4细化）</div>
+    </div>
+    <div class="legend-section">
+      <h4>形状语义</h4>
+      <div class="legend-item"><svg width="18" height="12"><rect width="18" height="12" rx="2" fill="#fff" stroke="#666" stroke-width="1.2"/></svg>矩形：基础功能</div>
+      <div class="legend-item"><svg width="20" height="12"><polygon points="5,0 15,0 20,6 15,12 5,12 0,6" fill="#fff" stroke="#666" stroke-width="1.2"/></svg>六边形：决策控制</div>
+      <div class="legend-item"><svg width="18" height="12"><polygon points="9,0 18,6 9,12 0,6" fill="#fff" stroke="#666" stroke-width="1.2"/></svg>菱形：判断分支</div>
+      <div class="legend-item"><svg width="16" height="12"><rect width="16" height="12" rx="5" fill="#fff" stroke="#666" stroke-width="1.2"/></svg>圆角矩形：输出/状态</div>
+      <div class="legend-item"><svg width="14" height="12"><circle cx="7" cy="6" r="6" fill="#fff" stroke="#666" stroke-width="1.2"/></svg>圆形：数据池</div>
+      <div class="legend-item"><svg width="20" height="12"><path d="M3,11 C1,11 1,7 4,6 C3,2 9,1 11,4 C13,0 18,2 17,6 C19,6 19,11 15,11 Z" fill="#fff" stroke="#666" stroke-width="1"/></svg>云形：外部环境</div>
+    </div>
+    <div class="legend-section">
+      <h4>连接关系（Relation）</h4>
+      <div class="legend-line"><svg width="40" height="8"><line x1="2" y1="4" x2="34" y2="4" stroke="#D32F2F" stroke-width="3"/><polygon points="32,1 40,4 32,7" fill="#D32F2F"/></svg>LTC主流程（商机→回款）</div>
+      <div class="legend-line"><svg width="40" height="8"><line x1="2" y1="4" x2="34" y2="4" stroke="#6A1B9A" stroke-width="2.5"/><polygon points="32,1 40,4 32,7" fill="#6A1B9A"/></svg>ISC计划驱动</div>
+      <div class="legend-line"><svg width="40" height="8"><line x1="2" y1="4" x2="34" y2="4" stroke="#1565C0" stroke-width="1.8"/><polygon points="32,1 40,4 32,7" fill="#1565C0"/></svg>数据流/信息流</div>
+      <div class="legend-line"><svg width="40" height="8"><line x1="2" y1="4" x2="34" y2="4" stroke="#F57C00" stroke-width="1.5" stroke-dasharray="4,3"/><polygon points="32,1 40,4 32,7" fill="#F57C00"/></svg>反馈流（闭环优化）</div>
+      <div class="legend-line"><svg width="40" height="8"><line x1="2" y1="4" x2="34" y2="4" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="6,3"/><polygon points="32,1 40,4 32,7" fill="#2E7D32"/></svg>IPD协同流</div>
+      <div class="legend-line"><svg width="40" height="8"><line x1="2" y1="4" x2="34" y2="4" stroke="#9E9E9E" stroke-width="1" stroke-dasharray="2,3"/></svg>子组件展开</div>
+    </div>
+    <div class="legend-section" style="flex:1;min-width:380px;">
+      <h4>核心逻辑 · LTC+ISC+IPD 三体系协同</h4>
+      <div style="font-size:11px;line-height:1.75;color:#37474F;">
+        <div><b style="color:#D32F2F;">LTC端到端主干：</b>客户需求→商机→报价→合同→订单→SC计划→采购→制造→交付→回款→售后</div>
+        <div><b style="color:#6A1B9A;">ISC嵌入：</b>订单履约阶段嵌入S&amp;OP/MPS/MRP计划体系，驱动采购与制造执行</div>
+        <div><b style="color:#2E7D32;">IPD贯穿：</b>产品规划→概念→开发→发布，新品上市触发LTC报价更新与ISC量产</div>
+        <div><b style="color:#F57C00;">闭环反馈：</b>售后质量→IPD改进；交付偏差→计划重排；销量→需求预测优化</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-tip">
+    交互：<b>悬停</b>查看摘要 · <b>点击</b>查看L3-L4详情 · <b>双击空白</b>重置 · <b>复选框</b>切换关系类型 · 主路径带流动动画
+  </div>
+</div>
+<div class="d3-tooltip" id="tooltip"></div>
+<div class="detail-panel" id="detailPanel">
+  <span class="dp-close" onclick="document.getElementById('detailPanel').classList.remove('show')">&times;</span>
+  <div id="detailContent"></div>
+</div>
+<script>
+// ====== 阶段标签 ======
+const stages = ["① 商机获取","② 方案报价","③ 订单处理","④ SC计划","⑤ 采购制造","⑥ 交付物流","⑦ 回款服务"];
+const stageBar = d3.select("#stageBar");
+stages.forEach(s=>{ stageBar.append("div").attr("class","stage-item").style("flex","1").text(s); });
+
+const VBW = 1760, VBH = 1960;
+
+// 模块配色
+const MOD = {
+  EXT:{fill:"#F5F5F5",stroke:"#757575",text:"#424242",name:"外部协同"},
+  LTC_LEAD:{fill:"#E1F5FE",stroke:"#0277BD",text:"#01579B",name:"LTC商机报价"},
+  LTC_ORDER:{fill:"#E3F2FD",stroke:"#1565C0",text:"#0D47A1",name:"LTC订单处理"},
+  ISC_PLAN:{fill:"#F3E5F5",stroke:"#6A1B9A",text:"#4A148C",name:"ISC计划"},
+  ISC_SRC:{fill:"#FFF3E0",stroke:"#E65100",text:"#BF360C",name:"ISC采购"},
+  ISC_MFG:{fill:"#E8F5E9",stroke:"#2E7D32",text:"#1B5E20",name:"ISC制造"},
+  INV:{fill:"#FFF9C4",stroke:"#F9A825",text:"#F57F17",name:"库存数据池"},
+  LTC_DEL:{fill:"#FFE0B2",stroke:"#EF6C00",text:"#BF360C",name:"LTC交付"},
+  LTC_CASH:{fill:"#FCE4EC",stroke:"#C2185B",text:"#880E4F",name:"LTC回款"},
+  LTC_SVC:{fill:"#FFFDE7",stroke:"#F9A825",text:"#F57F17",name:"LTC售后"},
+  IPD:{fill:"#EDE7F6",stroke:"#512DA8",text:"#311B92",name:"IPD研发"},
+  SUB:{fill:"#E1BEE7",stroke:"#8E24AA",text:"#4A148C",name:"子组件"},
+  IT:{fill:"#ECEFF1",stroke:"#546E7A",text:"#37474F",name:"IT底座"}
+};
+
+// ====== 主组件节点（L3 颗粒度，约46个）======
+const nodes = [
+  // === 外部协同层 y≈140 ===
+  {id:"e1_customer", mod:"EXT", shape:"cloud", cx:150, cy:140, w:180, h:80, title:"客户", sub:"需求发起·价值终点",
+   role:"外部协同 · 需求源头与价值终点", desc:"客户发起需求，最终接收交付并完成回款，是LTC价值链的起点和终点。", behavior:"发起需求→接收交付→付款→反馈", pre:[], suc:["L1市场洞察","D4配送"], cross:[]},
+  {id:"e2_supplier", mod:"EXT", shape:"cloud", cx:950, cy:140, w:180, h:80, title:"供应商", sub:"物料·备件供应",
+   role:"外部协同 · 物料供应方", desc:"提供芯片、屏幕、摄像头、电池等原材料与备件，是ISC采购的上游。", behavior:"接收PO→生产交付→物料供应", pre:[], suc:["S2采购PO"], cross:[]},
+  {id:"e3_channel", mod:"EXT", shape:"cloud", cx:1150, cy:140, w:160, h:80, title:"渠道分销", sub:"终端销售通路",
+   role:"外部协同 · 销售通路", desc:"线上/线下渠道，承接产品铺货与终端销售。", behavior:"接收铺货→终端销售→反馈销量", pre:[], suc:["D3分拨"], cross:[]},
+  {id:"e4_market", mod:"EXT", shape:"cloud", cx:1380, cy:140, w:170, h:80, title:"竞品市场", sub:"行业竞争环境",
+   role:"外部协同 · 竞争环境", desc:"竞品动态、行业趋势，为IPD产品规划和LTC商机管理提供市场输入。", behavior:"提供竞品/趋势信息", pre:[], suc:["L1市场洞察","IP1规划"], cross:[]},
+
+  // === LTC商机报价层 y≈330 ===
+  {id:"l1_insight", mod:"LTC_LEAD", shape:"rect", cx:150, cy:330, w:170, h:70, title:"市场洞察", sub:"行业·竞品·客户画像",
+   role:"LTC商机层 · 市场分析", desc:"行业趋势分析、竞品动态监控、客户画像构建、区域市场扫描，输出市场洞察报告。", behavior:"数据采集→趋势建模→洞察生成", pre:["竞品市场"], suc:["L2线索"], cross:["IP1产品规划"]},
+  {id:"l2_lead", mod:"LTC_LEAD", shape:"rect", cx:340, cy:330, w:160, h:70, title:"线索管理", sub:"MQL评分·分配",
+   role:"LTC商机层 · 线索运营", desc:"线索收集（展会/官网/电销）、清洗去重、BANT评分、分配区域销售。", behavior:"录入→去重→评分→分配", pre:["L1市场洞察"], suc:["L3商机"], cross:[]},
+  {id:"l3_opp", mod:"LTC_LEAD", shape:"hexagon", cx:530, cy:330, w:170, h:75, title:"商机管理", sub:"SQL转化·漏斗",
+   role:"LTC商机层 · 商机决策", desc:"SQL转化、客户拜访、技术交流、商机立项（金额≥阈值评审）、漏斗跟踪。", behavior:"MQL→SQL→立项→漏斗管理", pre:["L2线索"], suc:["L4需求确认"], cross:[]},
+  {id:"l4_demand", mod:"LTC_LEAD", shape:"rect", cx:720, cy:330, w:160, h:70, title:"需求确认", sub:"型号·配置·交期",
+   role:"LTC商机层 · 需求规格化", desc:"产品型号/配置确认、数量与交付时间、商务条件初步沟通、定制需求评估。", behavior:"SKU匹配→交期预判→需求书", pre:["L3商机"], suc:["L5方案设计"], cross:["IP6产品配置"]},
+  {id:"l5_solution", mod:"LTC_LEAD", shape:"rect", cx:910, cy:330, w:170, h:70, title:"方案设计", sub:"配置·BOM·成本",
+   role:"LTC商机层 · 方案与成本", desc:"产品配置组装、BOM成本核算、交付方案排期、售后SLA方案。", behavior:"SKU组装→成本核算→交付方案", pre:["L4需求确认"], suc:["L6报价审批"], cross:["IP6产品配置","P3 MPS产能"]},
+  {id:"l6_quote", mod:"LTC_LEAD", shape:"hexagon", cx:1100, cy:330, w:170, h:75, title:"报价审批", sub:"定价·折扣·审批",
+   role:"LTC商机层 · 报价决策", desc:"价格测算（成本+利润+竞争定价）、折扣权限校验、多级审批、报价单生成。", behavior:"定价→权限校验→审批→报价单", pre:["L5方案设计"], suc:["L7合同谈判"], cross:[]},
+  {id:"l7_negotiate", mod:"LTC_LEAD", shape:"hexagon", cx:1290, cy:330, w:160, h:75, title:"合同谈判", sub:"商务·法务·技术",
+   role:"LTC商机层 · 谈判决策", desc:"商务条款磋商、法务审核、技术条款确认、让步策略、最终条款。", behavior:"磋商→让步管理→条款修订", pre:["L6报价审批"], suc:["L8合同签订"], cross:[]},
+  {id:"l8_contract", mod:"LTC_LEAD", shape:"roundrect", cx:1480, cy:330, w:170, h:70, title:"合同签订", sub:"签章·归档·生效",
+   role:"LTC商机层 · 合同输出", desc:"合同文本生成、双方签章、归档、台账建立、合同生效通知。", behavior:"签章→归档→台账→生效", pre:["L7合同谈判"], suc:["O1订单录入"], cross:[]},
+
+  // === LTC订单+ISC计划层 y≈560 ===
+  {id:"o1_order", mod:"LTC_ORDER", shape:"rect", cx:340, cy:560, w:160, h:70, title:"订单录入", sub:"PO解析·SKU校验",
+   role:"LTC订单层 · 订单创建", desc:"合同/PO解析、订单信息录入、型号SKU校验、价格校验、地址校验、创建销售订单。", behavior:"解析→校验→创建SO", pre:["L8合同签订"], suc:["O2信用审核"], cross:[]},
+  {id:"o2_credit", mod:"LTC_ORDER", shape:"diamond", cx:530, cy:560, w:150, h:100, title:"信用审核", sub:"额度·账龄·逾期",
+   role:"LTC订单层 · 信用判断", desc:"客户信用额度查询、应收余额检查、信用冻结/解冻、担保/预付款条件判断。", behavior:"额度检查→账龄检查→审核结果", pre:["O1订单录入"], suc:["O3交期承诺"], cross:[]},
+  {id:"o3_atp", mod:"LTC_ORDER", shape:"hexagon", cx:720, cy:560, w:170, h:75, title:"交期承诺", sub:"ATP·CTP·齐套",
+   role:"LTC订单层 · 交期决策", desc:"ATP可承诺量检查、CTP可承诺产能检查、物料齐套检查、交期回复确认。", behavior:"ATP→CTP→齐套→承诺交期", pre:["O2信用审核"], suc:["P2 S&OP"], cross:["I1成品库存","P3 MPS"]},
+
+  {id:"p1_demand", mod:"ISC_PLAN", shape:"rect", cx:340, cy:720, w:160, h:70, title:"需求计划", sub:"预测·历史·模型",
+   role:"ISC计划层 · 需求预测", desc:"销售预测汇总（按SKU/渠道/区域）、历史数据清洗、统计预测模型、准确率跟踪。", behavior:"预测模型→人工调整→版本发布", pre:["O1订单汇总"], suc:["P2 S&OP"], cross:[]},
+  {id:"p2_sop", mod:"ISC_PLAN", shape:"hexagon", cx:530, cy:720, w:170, h:75, title:"S&OP", sub:"供需平衡·共识计划",
+   role:"ISC计划层 · 供需平衡中枢", desc:"需求评审、供应评审、预供需平衡（产能/物料/资金约束）、共识计划输出。", behavior:"需求评审→供应评审→平衡决策", pre:["P1需求计划"], suc:["P3 MPS"], cross:[]},
+  {id:"p3_mps", mod:"ISC_PLAN", shape:"hexagon", cx:720, cy:720, w:170, h:75, title:"MPS 主生产计划", sub:"产能·排产·RCCP",
+   role:"ISC计划层 · 主生产排程", desc:"产线产能建模、产品族到SKU分解、粗能力验证RCCP、计划订单生成。", behavior:"SKU分解→产线分配→RCCP→计划订单", pre:["P2 S&OP"], suc:["P4 MRP"], cross:["L5方案设计CTP"]},
+  {id:"p4_mrp", mod:"ISC_PLAN", shape:"hexagon", cx:910, cy:720, w:170, h:75, title:"MRP 物料需求", sub:"BOM·净需求·请购",
+   role:"ISC计划层 · 物料需求计算", desc:"BOM展开（多级）、物料需求计算（毛需求-在库-在途=净需求）、提前期倒推、计划订单/请购单。", behavior:"BOM展开→净需求→提前期倒推", pre:["P3 MPS"], suc:["S1采购PR"], cross:[]},
+  {id:"p5_inventory", mod:"ISC_PLAN", shape:"roundrect", cx:1100, cy:720, w:160, h:70, title:"库存计划", sub:"安全·ABC·呆滞",
+   role:"ISC计划层 · 库存策略", desc:"安全库存设定、周转库存计算、ABC分类、呆滞库存预警。", behavior:"安全库存→周转→ABC→预警", pre:["P2 S&OP"], suc:["I2原料库存"], cross:[]},
+
+  // === ISC采购制造层 y≈920 ===
+  {id:"s1_pr", mod:"ISC_SRC", shape:"rect", cx:910, cy:900, w:150, h:65, title:"采购需求PR", sub:"请购·策略",
+   role:"ISC采购层 · 请购申请", desc:"请购单审批、采购策略确定（战略采购/询比价/招标）。", behavior:"请购→审批→策略确定", pre:["P4 MRP"], suc:["S2采购PO"], cross:[]},
+  {id:"s2_po", mod:"ISC_SRC", shape:"rect", cx:1100, cy:900, w:160, h:65, title:"采购订单PO", sub:"下单·确认",
+   role:"ISC采购层 · 采购下单", desc:"供应商选择、PO生成下达、价格/数量/交期确认、PO确认回传。", behavior:"供应商选择→PO生成→下达", pre:["S1采购PR"], suc:["S3跟催"], cross:["E2供应商"]},
+  {id:"s3_track", mod:"ISC_SRC", shape:"rect", cx:1290, cy:900, w:150, h:65, title:"物料跟催", sub:"交期·在途·异常",
+   role:"ISC采购层 · 到货跟踪", desc:"供应商交期回复跟踪、发货通知确认、在途跟踪、异常升级。", behavior:"交期跟踪→在途监控→异常升级", pre:["S2采购PO"], suc:["S4来料"], cross:[]},
+  {id:"s4_inbound", mod:"ISC_SRC", shape:"rect", cx:1480, cy:900, w:160, h:65, title:"来料管理", sub:"收货·IQC·入库",
+   role:"ISC采购层 · 收货质检", desc:"到货预约、收货入库、来料检验IQC（抽检/免检/全检）、合格入库/不合格退货。", behavior:"预约→收货→IQC→入库", pre:["S3跟催"], suc:["M1排程"], cross:[]},
+
+  {id:"m1_schedule", mod:"ISC_MFG", shape:"hexagon", cx:340, cy:1060, w:170, h:75, title:"生产排程", sub:"工单·产线·班次",
+   role:"ISC制造层 · 排程决策", desc:"工厂/产线分配、线体班次计划、工单生成下达、产前准备（物料+工装+SOP）。", behavior:"产线分配→班次→工单下达", pre:["P3 MPS","S4来料齐套"], suc:["M2 SMT"], cross:[]},
+  {id:"m2_smt", mod:"ISC_MFG", shape:"rect", cx:530, cy:1060, w:150, h:65, title:"SMT贴片", sub:"印刷·贴装·回流",
+   role:"ISC制造层 · 贴片生产", desc:"锡膏印刷→贴片机贴装→回流焊→AOI光学检测。", behavior:"印刷→贴装→回流→AOI", pre:["M1排程"], suc:["M3组装"], cross:[]},
+  {id:"m3_assembly", mod:"ISC_MFG", shape:"rect", cx:720, cy:1060, w:160, h:65, title:"组装测试", sub:"组装·功能·老化",
+   role:"ISC制造层 · 组装与测试", desc:"结构件组装→电池/屏幕/摄像头组装→功能测试→老化测试→外观检查。", behavior:"组装→功能测试→老化→外观", pre:["M2 SMT"], suc:["M4包装"], cross:[]},
+  {id:"m4_package", mod:"ISC_MFG", shape:"rect", cx:910, cy:1060, w:160, h:65, title:"包装入库", sub:"烧录·IMEI·包装",
+   role:"ISC制造层 · 包装入库", desc:"软件烧录/IMEI写入→彩盒包装→外箱打包→入库过账。", behavior:"烧录→包装→入库过账", pre:["M3组装"], suc:["I1成品库存"], cross:[]},
+  {id:"m5_qc", mod:"ISC_MFG", shape:"diamond", cx:1100, cy:1060, w:150, h:100, title:"质量控制", sub:"IPQC·FQC·OQC",
+   role:"ISC制造层 · 质量判断", desc:"IPQC过程巡检、FQC成品抽检（AQL）、OQC出货检验、合格/不合格判定。", behavior:"巡检→抽检→判定", pre:["M2/M3/M4"], suc:["I1成品库存"], cross:["R6服务闭环"]},
+
+  // === 数据池 ===
+  {id:"i1_fg", mod:"INV", shape:"circle", cx:1290, cy:1060, w:130, h:130, title:"成品库存", sub:"FG Inventory",
+   role:"数据池 · 成品存储", desc:"完工成品入库存储，是ATP可承诺量的数据来源，支撑交付出库。", behavior:"入库→存储→ATP→出库", pre:["M4包装","M5质量"], suc:["D1出库"], cross:["O3交期承诺"]},
+  {id:"i2_rm", mod:"INV", shape:"circle", cx:1480, cy:1060, w:130, h:130, title:"原料库存", sub:"RM Inventory",
+   role:"数据池 · 原料存储", desc:"原材料入库存储，是MRP净需求计算的输入，支撑生产齐套。", behavior:"入库→存储→齐套→发料", pre:["S4来料"], suc:["M1排程"], cross:["P4 MRP"]},
+
+  // === LTC交付层 y≈1280 ===
+  {id:"d1_outbound", mod:"LTC_DEL", shape:"rect", cx:340, cy:1280, w:160, h:65, title:"成品出库", sub:"拣配·扫描·OQC",
+   role:"LTC交付层 · 发货操作", desc:"发货通知单、波次拣配、出库扫描（IMEI/SN）、OQC出货检、出库单打印。", behavior:"通知→拣配→扫描→OQC", pre:["I1成品库存"], suc:["D2干线"], cross:[]},
+  {id:"d2_linehaul", mod:"LTC_DEL", shape:"rect", cx:530, cy:1280, w:150, h:65, title:"干线运输", sub:"整车·零担·TMS",
+   role:"LTC交付层 · 主干物流", desc:"运输计划、车辆调度、装车发运、在途跟踪（GPS/TMS）。", behavior:"调度→装车→发运→跟踪", pre:["D1出库"], suc:["D3分拨"], cross:[]},
+  {id:"d3_dist", mod:"LTC_DEL", shape:"rect", cx:720, cy:1280, w:150, h:65, title:"区域分拨", sub:"RDC·中转",
+   role:"LTC交付层 · 区域中转", desc:"区域仓RDC收货、拆板分货、区域分拨配货、末端中转。", behavior:"收货→分货→中转", pre:["D2干线"], suc:["D4配送"], cross:["E3渠道"]},
+  {id:"d4_delivery", mod:"LTC_DEL", shape:"rect", cx:910, cy:1280, w:160, h:65, title:"终端配送", sub:"最后一公里·签收",
+   role:"LTC交付层 · 终端配送", desc:"最后一公里配送到门店/客户、当面签收/拍照签收、签收单POD回传。", behavior:"配送→签收→POD回传", pre:["D3分拨"], suc:["D6对账","e1客户"], cross:[]},
+
+  // === LTC回款层 y≈1440 ===
+  {id:"d6_billing", mod:"LTC_CASH", shape:"rect", cx:530, cy:1440, w:160, h:65, title:"对账开票", sub:"对账·税务·发票",
+   role:"LTC回款层 · 对账开票", desc:"发货对账、签收对账、价格/折扣/运费对账、争议处理、发票开具。", behavior:"对账→争议处理→开票", pre:["D4配送签收"], suc:["D7应收"], cross:[]},
+  {id:"d7_ar", mod:"LTC_CASH", shape:"roundrect", cx:720, cy:1440, w:160, h:65, title:"应收催收", sub:"账龄·催收·逾期",
+   role:"LTC回款层 · 应收管理", desc:"应收确认、账龄管理、到期提醒、逾期催收、坏账计提。", behavior:"应收记账→账龄→催收", pre:["D6对账开票"], suc:["D8收款"], cross:[]},
+  {id:"d8_receipt", mod:"LTC_CASH", shape:"roundrect", cx:910, cy:1440, w:160, h:65, title:"收款核销", sub:"到账·认领·核销",
+   role:"LTC回款层 · 回款闭环", desc:"银行到账确认、收款认领、自动匹配核销、手工核销。", behavior:"到账→认领→核销", pre:["D7应收催收"], suc:["L1市场洞察(闭环)"], cross:[]},
+
+  // === LTC售后层 y≈1600 ===
+  {id:"r1_intake", mod:"LTC_SVC", shape:"rect", cx:340, cy:1600, w:160, h:65, title:"服务受理", sub:"多渠道·保修校验",
+   role:"LTC售后层 · 服务接入", desc:"多渠道接入（400/在线/门店/APP）、服务请求创建、IMEI保修校验、服务分类。", behavior:"接入→创建→保修校验→分类", pre:["e1客户"], suc:["R2诊断"], cross:[]},
+  {id:"r2_diagnosis", mod:"LTC_SVC", shape:"diamond", cx:530, cy:1600, w:150, h:100, title:"故障诊断", sub:"远程·定级·方案",
+   role:"LTC售后层 · 故障判断", desc:"远程诊断、到店/寄修诊断、故障定级（软件/硬件/人为/非保）、维修方案。", behavior:"诊断→定级→方案", pre:["R1受理"], suc:["R3维修","R4退换"], cross:[]},
+  {id:"r3_repair", mod:"LTC_SVC", shape:"rect", cx:720, cy:1600, w:150, h:65, title:"维修执行", sub:"备件·派工·测试",
+   role:"LTC售后层 · 维修操作", desc:"备件申请、维修工单派工、维修操作（换屏/换板/换电池/软件）、维修后测试。", behavior:"备件→派工→维修→测试", pre:["R2诊断","R5备件"], suc:["R6闭环"], cross:[]},
+  {id:"r4_rma", mod:"LTC_SVC", shape:"rect", cx:910, cy:1600, w:150, h:65, title:"退换货RMA", sub:"DOA·退货·换货",
+   role:"LTC售后层 · 退换货处理", desc:"RMA审批、退货物流安排、退款/换货执行、DOA快速换机。", behavior:"审批→物流→退款/换货", pre:["R2诊断"], suc:["R6闭环"], cross:[]},
+  {id:"r5_spare", mod:"LTC_SVC", shape:"circle", cx:1100, cy:1600, w:120, h:120, title:"备件管理", sub:"三级库存",
+   role:"数据池 · 售后备件", desc:"备件需求预测、全国/区域/门店三级库存管理、备件调拨、呆滞处理。", behavior:"预测→库存→调拨", pre:[], suc:["R3维修"], cross:["P4 MRP备件"]},
+  {id:"r6_closure", mod:"LTC_SVC", shape:"roundrect", cx:1290, cy:1600, w:160, h:65, title:"服务闭环", sub:"满意度·质量反馈",
+   role:"LTC售后层 · 闭环输出", desc:"客户满意度回访（NPS/CSAT）、质量问题归档、质量数据反馈至IPD/制造/采购。", behavior:"回访→评分→归档→反馈", pre:["R3维修","R4退换"], suc:["IP2概念(改进)","M2/M3工艺"], cross:["IPD研发"]},
+
+  // === IPD 研发层（底部横向）y≈1780 ===
+  {id:"ip1_plan", mod:"IPD", shape:"hexagon", cx:200, cy:1780, w:180, h:75, title:"产品规划", sub:"路标·Charter·组合",
+   role:"IPD研发层 · 规划决策", desc:"市场洞察汇总、产品路标规划（3年/1年）、产品组合策略、Charter立项。", behavior:"洞察→路标→组合→Charter", pre:["L1市场洞察","E4竞品"], suc:["IP2概念"], cross:[]},
+  {id:"ip2_concept", mod:"IPD", shape:"rect", cx:430, cy:1780, w:170, h:70, title:"概念设计", sub:"ID·选型·可行性",
+   role:"IPD研发层 · 概念阶段", desc:"ID外观/CMF概念设计、关键技术选型（芯片/Camera/电池）、早期BOM估算、可行性评审。", behavior:"ID→选型→BOM→评审", pre:["IP1规划"], suc:["IP3开发"], cross:["L5方案设计"]},
+  {id:"ip3_dev", mod:"IPD", shape:"rect", cx:660, cy:1780, w:170, h:70, title:"开发测试", sub:"EVT·DVT·PVT·认证",
+   role:"IPD研发层 · 开发阶段", desc:"EVT工程验证、DVT设计验证（可靠性/环境）、PVT生产验证、软件迭代、入网认证。", behavior:"EVT→DVT→PVT→认证", pre:["IP2概念"], suc:["IP4发布"], cross:["M1试产"]},
+  {id:"ip4_launch", mod:"IPD", shape:"roundrect", cx:890, cy:1780, w:170, h:70, title:"量产发布", sub:"爬坡·上市·铺货",
+   role:"IPD研发层 · 发布输出", desc:"量产爬坡、上市发布会、渠道铺货、首销准备、量产BOM锁定。", behavior:"爬坡→上市→铺货", pre:["IP3开发"], suc:["L5方案设计","P3 MPS"], cross:[]},
+  {id:"ip5_lcm", mod:"IPD", shape:"roundrect", cx:1120, cy:1780, w:170, h:70, title:"生命周期", sub:"改善·降本·EOL",
+   role:"IPD研发层 · 生命周期", desc:"上市后持续改进（OTA/硬件改善）、销量监控、降成本VAVE、EOL退市管理。", behavior:"监控→改善→降本→EOL", pre:["IP4发布","R6反馈"], suc:["L5方案(EOL)","P3 MPS(EOL)"], cross:[]},
+  {id:"ip6_pdata", mod:"IPD", shape:"circle", cx:1380, cy:1780, w:130, h:130, title:"产品数据", sub:"BOM·配置·规格",
+   role:"数据池 · 产品配置库", desc:"BOM版本管理、可售配置库、产品规格书，是LTC方案设计和ISC MRP的基础数据。", behavior:"BOM管理→配置库→规格", pre:["IP4发布"], suc:["L5方案设计","P4 MRP"], cross:[]}
+];
+
+// ====== 子组件节点（L4 颗粒度，关键主组件展开）======
+const subNodes = [
+  // 商机报价层子组件 y≈440
+  {id:"s_l3_1", parent:"l3_opp", cx:430, cy:440, w:120, h:38, title:"SQL转化"},
+  {id:"s_l3_2", parent:"l3_opp", cx:550, cy:440, w:120, h:38, title:"客户拜访"},
+  {id:"s_l3_3", parent:"l3_opp", cx:670, cy:440, w:120, h:38, title:"立项评审"},
+  {id:"s_l5_1", parent:"l5_solution", cx:830, cy:440, w:120, h:38, title:"产品配置"},
+  {id:"s_l5_2", parent:"l5_solution", cx:950, cy:440, w:120, h:38, title:"BOM成本核算"},
+  {id:"s_l5_3", parent:"l5_solution", cx:1070, cy:440, w:120, h:38, title:"交付方案"},
+  {id:"s_l6_1", parent:"l6_quote", cx:1190, cy:440, w:120, h:38, title:"价格测算"},
+  {id:"s_l6_2", parent:"l6_quote", cx:1310, cy:440, w:120, h:38, title:"折扣审批"},
+  {id:"s_l6_3", parent:"l6_quote", cx:1430, cy:440, w:120, h:38, title:"报价单生成"},
+
+  // 计划层子组件 y≈830
+  {id:"s_p2_1", parent:"p2_sop", cx:430, cy:830, w:120, h:38, title:"需求评审"},
+  {id:"s_p2_2", parent:"p2_sop", cx:550, cy:830, w:120, h:38, title:"供应评审"},
+  {id:"s_p2_3", parent:"p2_sop", cx:670, cy:830, w:120, h:38, title:"缺口分析"},
+  {id:"s_p3_1", parent:"p3_mps", cx:620, cy:830, w:120, h:38, title:"产能建模"},
+  {id:"s_p3_2", parent:"p3_mps", cx:740, cy:830, w:120, h:38, title:"SKU分解"},
+  {id:"s_p3_3", parent:"p3_mps", cx:860, cy:830, w:120, h:38, title:"RCCP验证"},
+  {id:"s_p4_1", parent:"p4_mrp", cx:810, cy:830, w:120, h:38, title:"BOM展开"},
+  {id:"s_p4_2", parent:"p4_mrp", cx:930, cy:830, w:120, h:38, title:"净需求计算"},
+  {id:"s_p4_3", parent:"p4_mrp", cx:1050, cy:830, w:120, h:38, title:"计划订单"},
+
+  // 采购制造子组件 y≈1180
+  {id:"s_s2_1", parent:"s2_po", cx:1010, cy:1180, w:120, h:38, title:"供应商选择"},
+  {id:"s_s2_2", parent:"s2_po", cx:1130, cy:1180, w:120, h:38, title:"PO生成"},
+  {id:"s_s2_3", parent:"s2_po", cx:1250, cy:1180, w:120, h:38, title:"PO确认"},
+  {id:"s_m2_1", parent:"m2_smt", cx:430, cy:1180, w:110, h:38, title:"锡膏印刷"},
+  {id:"s_m2_2", parent:"m2_smt", cx:540, cy:1180, w:110, h:38, title:"贴片机贴装"},
+  {id:"s_m2_3", parent:"m2_smt", cx:650, cy:1180, w:110, h:38, title:"回流焊"},
+  {id:"s_m3_1", parent:"m3_assembly", cx:610, cy:1180, w:110, h:38, title:"结构件组装"},
+  {id:"s_m3_2", parent:"m3_assembly", cx:720, cy:1180, w:110, h:38, title:"功能测试"},
+  {id:"s_m3_3", parent:"m3_assembly", cx:830, cy:1180, w:110, h:38, title:"老化测试"},
+
+  // IPD开发子组件 y≈1880
+  {id:"s_ip3_1", parent:"ip3_dev", cx:560, cy:1880, w:110, h:38, title:"EVT工程验证"},
+  {id:"s_ip3_2", parent:"ip3_dev", cx:680, cy:1880, w:110, h:38, title:"DVT设计验证"},
+  {id:"s_ip3_3", parent:"ip3_dev", cx:800, cy:1880, w:110, h:38, title:"PVT量产验证"},
+  {id:"s_ip3_4", parent:"ip3_dev", cx:920, cy:1880, w:110, h:38, title:"入网认证"}
+];
+
+// ====== IT系统底座 ======
+const itSystems = [
+  {id:"it_crm", cx:200, cy:1920, w:140, h:48, title:"CRM", sub:"客户·商机·合同"},
+  {id:"it_erp", cx:430, cy:1920, w:140, h:48, title:"ERP", sub:"订单·财务·库存"},
+  {id:"it_aps", cx:660, cy:1920, w:140, h:48, title:"APS", sub:"计划排程优化"},
+  {id:"it_srm", cx:890, cy:1920, w:140, h:48, title:"SRM", sub:"供应商管理"},
+  {id:"it_mes", cx:1120, cy:1920, w:140, h:48, title:"MES", sub:"制造执行"},
+  {id:"it_wms", cx:1350, cy:1920, w:140, h:48, title:"WMS/TMS", sub:"仓储物流"}
+];
+
+// ====== 连接线 ======
+const links = [
+  // LTC主流程（红色粗线）
+  {from:"e4_market", to:"l1_insight", type:"main", label:"市场输入"},
+  {from:"l1_insight", to:"l2_lead", type:"main", label:"洞察"},
+  {from:"l2_lead", to:"l3_opp", type:"main", label:"MQL"},
+  {from:"l3_opp", to:"l4_demand", type:"main", label:"SQL"},
+  {from:"l4_demand", to:"l5_solution", type:"main", label:"需求"},
+  {from:"l5_solution", to:"l6_quote", type:"main", label:"方案"},
+  {from:"l6_quote", to:"l7_negotiate", type:"main", label:"报价"},
+  {from:"l7_negotiate", to:"l8_contract", type:"main", label:"谈判"},
+  {from:"l8_contract", to:"o1_order", type:"main", label:"合同", ctrl:{c1x:1480,c1y:400,c2x:340,c2y:490}},
+  {from:"o1_order", to:"o2_credit", type:"main", label:"订单"},
+  {from:"o2_credit", to:"o3_atp", type:"main", label:"信用通过"},
+  {from:"o3_atp", to:"d1_outbound", type:"main", label:"交期确认", ctrl:{c1x:760,c1y:620,c2x:380,c2y:1230}},
+  {from:"d1_outbound", to:"d2_linehaul", type:"main", label:"出库"},
+  {from:"d2_linehaul", to:"d3_dist", type:"main", label:"干线"},
+  {from:"d3_dist", to:"d4_delivery", type:"main", label:"分拨"},
+  {from:"d4_delivery", to:"d6_billing", type:"main", label:"签收", ctrl:{c1x:940,c1y:1320,c2x:540,c2y:1400}},
+  {from:"d6_billing", to:"d7_ar", type:"main", label:"开票"},
+  {from:"d7_ar", to:"d8_receipt", type:"main", label:"催收"},
+
+  // ISC计划驱动（紫色粗线）
+  {from:"o1_order", to:"p1_demand", type:"plan", label:"订单汇总", ctrl:{c1x:340,c1y:600,c2x:340,c2y:680}},
+  {from:"p1_demand", to:"p2_sop", type:"plan", label:"需求计划"},
+  {from:"p2_sop", to:"p3_mps", type:"plan", label:"共识计划"},
+  {from:"p3_mps", to:"p4_mrp", type:"plan", label:"MPS"},
+  {from:"p4_mrp", to:"s1_pr", type:"plan", label:"MRP", ctrl:{c1x:940,c1y:760,c2x:910,c2y:860}},
+  {from:"p3_mps", to:"m1_schedule", type:"plan", label:"工单", ctrl:{c1x:680,c1y:760,c2x:360,c2y:1020}},
+  {from:"p2_sop", to:"p5_inventory", type:"plan", label:"库存策略"},
+
+  // ISC采购制造实物流（红色，归入main体现端到端）
+  {from:"s1_pr", to:"s2_po", type:"main", label:"请购"},
+  {from:"s2_po", to:"s3_track", type:"main", label:"PO"},
+  {from:"s3_track", to:"s4_inbound", type:"main", label:"到货"},
+  {from:"e2_supplier", to:"s2_po", type:"main", label:"供货", ctrl:{c1x:950,c1y:200,c2x:1100,c2y:860}},
+  {from:"s4_inbound", to:"m1_schedule", type:"main", label:"物料齐套", ctrl:{c1x:1480,c1y:950,c2x:380,c2y:1020}},
+  {from:"m1_schedule", to:"m2_smt", type:"main", label:"工单下达"},
+  {from:"m2_smt", to:"m3_assembly", type:"main", label:"PCBA"},
+  {from:"m3_assembly", to:"m4_package", type:"main", label:"成品"},
+  {from:"m4_package", to:"i1_fg", type:"main", label:"入库", ctrl:{c1x:980,c1y:1100,c2x:1240,c2y:1060}},
+  {from:"i1_fg", to:"d1_outbound", type:"main", label:"成品出库", ctrl:{c1x:1240,c1y:1100,c2x:380,c2y:1240}},
+
+  // 数据流（蓝色）
+  {from:"l5_solution", to:"ip6_pdata", type:"data", label:"配置查询", ctrl:{c1x:1000,c1y:300,c2x:1380,c2y:1740}},
+  {from:"o3_atp", to:"i1_fg", type:"data", label:"ATP查询", ctrl:{c1x:780,c1y:600,c2x:1260,c2y:1000}},
+  {from:"o3_atp", to:"p3_mps", type:"data", label:"CTP查询", ctrl:{c1x:720,c1y:600,c2x:720,c2y:680}},
+  {from:"p4_mrp", to:"i2_rm", type:"data", label:"库存查询", ctrl:{c1x:980,c1y:760,c2x:1460,c2y:1000}},
+  {from:"d4_delivery", to:"o1_order", type:"data", label:"交付状态", ctrl:{c1x:940,c1y:1320,c2x:360,c2y:600}},
+  {from:"d8_receipt", to:"o1_order", type:"data", label:"回款状态", ctrl:{c1x:940,c1y:1470,c2x:360,c2y:600}},
+  {from:"ip4_launch", to:"l5_solution", type:"data", label:"新品配置", ctrl:{c1x:890,c1y:1740,c2x:910,c2y:370}},
+  {from:"ip4_launch", to:"p3_mps", type:"data", label:"量产指令", ctrl:{c1x:860,c1y:1740,c2x:740,c2y:760}},
+
+  // 反馈流（橙色点线）
+  {from:"d8_receipt", to:"l1_insight", type:"feedback", label:"回款闭环", ctrl:{c1x:960,c1y:1480,c2x:160,c2y:240}},
+  {from:"d4_delivery", to:"p1_demand", type:"feedback", label:"交付偏差→预测", ctrl:{c1x:900,c1y:1330,c2x:360,c2y:690}},
+  {from:"r6_closure", to:"ip2_concept", type:"feedback", label:"质量反馈→改进", ctrl:{c1x:1290,c1y:1640,c2x:430,c2y:1740}},
+  {from:"r6_closure", to:"m2_smt", type:"feedback", label:"工艺缺陷", ctrl:{c1x:1240,c1y:1640,c2x:540,c2y:1100}},
+  {from:"r6_closure", to:"s4_inbound", type:"feedback", label:"物料缺陷", ctrl:{c1x:1300,c1y:1640,c2x:1480,c2y:940}},
+  {from:"ip5_lcm", to:"l5_solution", type:"feedback", label:"EOL通知", ctrl:{c1x:1120,c1y:1740,c2x:910,c2y:370}},
+  {from:"ip5_lcm", to:"p3_mps", type:"feedback", label:"EOL停产", ctrl:{c1x:1080,c1y:1740,c2x:740,c2y:760}},
+
+  // IPD协同流（绿色虚线）
+  {from:"e4_market", to:"ip1_plan", type:"ipd", label:"竞品趋势", ctrl:{c1x:1380,c1y:180,c2x:200,c2y:1740}},
+  {from:"l1_insight", to:"ip1_plan", type:"ipd", label:"市场输入", ctrl:{c1x:150,c1y:370,c2x:200,c2y:1740}},
+  {from:"ip1_plan", to:"ip2_concept", type:"ipd", label:"Charter"},
+  {from:"ip2_concept", to:"ip3_dev", type:"ipd", label:"概念通过"},
+  {from:"ip3_dev", to:"ip4_launch", type:"ipd", label:"PVT通过"},
+  {from:"ip4_launch", to:"ip5_lcm", type:"ipd", label:"上市"},
+  {from:"r6_closure", to:"ip1_plan", type:"ipd", label:"需求反馈", ctrl:{c1x:1240,c1y:1640,c2x:200,c2y:1740}},
+
+  // 质量控制贯穿（归入data）
+  {from:"m5_qc", to:"m2_smt", type:"data", label:"IPQC", ctrl:{c1x:1050,c1y:1040,c2x:540,c2y:1020}},
+  {from:"m5_qc", to:"m3_assembly", type:"data", label:"IPQC", ctrl:{c1x:1050,c1y:1040,c2x:730,c2y:1020}},
+  {from:"m5_qc", to:"m4_package", type:"data", label:"FQC", ctrl:{c1x:1050,c1y:1040,c2x:920,c2y:1020}}
+];
+
+// 子组件展开关系
+const expandLinks = [];
+subNodes.forEach(s=>{ expandLinks.push({from:s.parent, to:s.id, type:"expand"}); });
+
+// IT系统支撑
+const itSupportLinks = [
+  {from:"it_crm", to:"l3_opp", type:"itsupport"},
+  {from:"it_crm", to:"l8_contract", type:"itsupport"},
+  {from:"it_erp", to:"o1_order", type:"itsupport"},
+  {from:"it_erp", to:"d6_billing", type:"itsupport"},
+  {from:"it_erp", to:"d8_receipt", type:"itsupport"},
+  {from:"it_aps", to:"p2_sop", type:"itsupport"},
+  {from:"it_aps", to:"p3_mps", type:"itsupport"},
+  {from:"it_srm", to:"s2_po", type:"itsupport"},
+  {from:"it_mes", to:"m1_schedule", type:"itsupport"},
+  {from:"it_mes", to:"m2_smt", type:"itsupport"},
+  {from:"it_wms", to:"i1_fg", type:"itsupport"},
+  {from:"it_wms", to:"d1_outbound", type:"itsupport"}
+];
+
+const allLinks = [...links, ...expandLinks, ...itSupportLinks];
+
+const linkColor = {main:"#D32F2F", plan:"#6A1B9A", data:"#1565C0", feedback:"#F57C00", ipd:"#2E7D32", expand:"#9E9E9E", itsupport:"#78909C"};
+const linkWidth = {main:3, plan:2.5, data:1.8, feedback:1.5, ipd:1.5, expand:1, itsupport:1.2};
+const linkDash = {main:null, plan:null, data:null, feedback:"4,3", ipd:"6,3", expand:"2,3", itsupport:"5,2"};
+const linkArrowKey = {main:"red", plan:"purple", data:"blue", feedback:"orange", ipd:"green", expand:"grey", itsupport:"greyblue"};
+
+// ====== SVG 初始化 ======
+const svg = d3.select("#viz");
+const g = svg.append("g");
+
+// 箭头定义
+const defs = svg.append("defs");
+[["blue","#1565C0"],["green","#2E7D32"],["orange","#F57C00"],["purple","#6A1B9A"],["red","#D32F2F"],["grey","#9E9E9E"],["greyblue","#78909C"]].forEach(([key,color])=>{
+  defs.append("marker").attr("id","arrow-"+key).attr("markerWidth",10).attr("markerHeight",8)
+    .attr("refX",9).attr("refY",4).attr("orient","auto")
+    .append("polygon").attr("points","0 0, 10 4, 0 8").attr("fill",color);
+});
+
+// ====== 背景层带 ======
+const layerData = [
+  {y:80, h:140, label:"外部协同层（客户·供应商·渠道·竞品）", color:"#FFF3E0"},
+  {y:240, h:130, label:"LTC 商机报价层（市场洞察→线索→商机→需求→方案→报价→谈判→合同）", color:"#E1F5FE"},
+  {y:380, h:90, label:"商机报价 L4 子组件细化层", color:"#FCE4EC"},
+  {y:480, h:120, label:"LTC 订单处理层（订单录入→信用审核→交期承诺）", color:"#E3F2FD"},
+  {y:620, h:130, label:"ISC 计划层（需求计划→S&OP→MPS→MRP→库存计划）", color:"#F3E5F5"},
+  {y:770, h:90, label:"计划层 L4 子组件细化层", color:"#FCE4EC"},
+  {y:870, h:110, label:"ISC 采购层（PR→PO→跟催→来料）", color:"#FFF3E0"},
+  {y:990, h:130, label:"ISC 制造层（排程→SMT→组装→包装→质量）+ 库存数据池", color:"#E8F5E9"},
+  {y:1130, h:90, label:"采购制造 L4 子组件细化层", color:"#F1F8E9"},
+  {y:1230, h:100, label:"LTC 交付层（出库→干线→分拨→配送）", color:"#FFE0B2"},
+  {y:1380, h:100, label:"LTC 回款层（对账开票→应收催收→收款核销）", color:"#FCE4EC"},
+  {y:1520, h:130, label:"LTC 售后服务层（受理→诊断→维修/退换→备件→闭环）", color:"#FFFDE7"},
+  {y:1680, h:140, label:"IPD 产品研发层（规划→概念→开发→发布→生命周期·产品数据）", color:"#EDE7F6"},
+  {y:1840, h:90, label:"IPD 开发 L4 子组件细化层", color:"#F3E5F5"},
+  {y:1880, h:80, label:"ISC-IT 信息化系统底座", color:"#ECEFF1"}
+];
+const layerG = g.append("g").attr("class","layers");
+layerData.forEach(d=>{
+  layerG.append("rect").attr("x",0).attr("y",d.y).attr("width",VBW).attr("height",d.h).attr("fill",d.color).attr("opacity",0.4);
+  layerG.append("text").attr("x",14).attr("y",d.y+16).attr("font-size",10).attr("fill","#90A4AE").attr("font-weight",600).text(d.label);
+});
+
+// ====== 工具函数 ======
+function getEdgePoint(node, towardNode){
+  const cx=node.cx, cy=node.cy;
+  const dx=towardNode.cx-cx, dy=towardNode.cy-cy;
+  const rx=node.w/2, ry=node.h/2;
+  const ang=Math.atan2(dy,dx);
+  return {x:cx+rx*Math.cos(ang)*0.9, y:cy+ry*Math.sin(ang)*0.9};
+}
+const allNodes = [...nodes, ...subNodes, ...itSystems];
+function findNode(id){ return allNodes.find(n=>n.id===id); }
+
+// ====== 绘制连线 ======
+const linkG = g.append("g").attr("class","links");
+const linkPaths = [];
+
+allLinks.forEach((lk,i)=>{
+  const sNode=findNode(lk.from), tNode=findNode(lk.to);
+  if(!sNode||!tNode) return;
+  const sp=getEdgePoint(sNode,tNode), tp=getEdgePoint(tNode,sNode);
+  let pathD;
+  if(lk.ctrl){
+    pathD=`M ${sp.x},${sp.y} C ${lk.ctrl.c1x},${lk.ctrl.c1y} ${lk.ctrl.c2x},${lk.ctrl.c2y} ${tp.x},${tp.y}`;
+  } else {
+    const mx=(sp.x+tp.x)/2;
+    pathD=`M ${sp.x},${sp.y} C ${mx},${sp.y} ${mx},${tp.y} ${tp.x},${tp.y}`;
+  }
+  const color=linkColor[lk.type], colorKey=linkArrowKey[lk.type];
+  const path=linkG.append("path")
+    .attr("d",pathD).attr("fill","none")
+    .attr("stroke",color).attr("stroke-width",linkWidth[lk.type])
+    .attr("stroke-dasharray",linkDash[lk.type]||"none")
+    .attr("marker-end",lk.type==="expand"?null:`url(#arrow-${colorKey})`)
+    .attr("class","link-path link-"+lk.type)
+    .attr("data-from",lk.from).attr("data-to",lk.to).attr("data-type",lk.type)
+    .style("cursor","pointer").style("transition","opacity .2s, stroke-width .2s");
+  // 标签（仅主流程、计划驱动、IPD协同显示）
+  if(lk.label && (lk.type==="main"||lk.type==="plan"||lk.type==="ipd")){
+    let midX, midY;
+    if(lk.ctrl){
+      midX=(sp.x+3*lk.ctrl.c1x+3*lk.ctrl.c2x+tp.x)/8;
+      midY=(sp.y+3*lk.ctrl.c1y+3*lk.ctrl.c2y+tp.y)/8;
+    } else {
+      midX=(sp.x+tp.x)/2; midY=(sp.y+tp.y)/2;
+    }
+    const labelW=lk.label.length*10+10;
+    linkG.append("rect")
+      .attr("x",midX-labelW/2).attr("y",midY-7).attr("width",labelW).attr("height",14).attr("rx",7)
+      .attr("fill","#fff").attr("stroke",color).attr("stroke-width",1).attr("opacity",0.92)
+      .attr("class","link-label-bg link-label-"+lk.type).attr("data-link-idx",i);
+    linkG.append("text")
+      .attr("x",midX).attr("y",midY+3).attr("text-anchor","middle")
+      .attr("font-size",9).attr("fill",color).attr("font-weight",600)
+      .attr("class","link-label link-label-"+lk.type).attr("data-link-idx",i).text(lk.label);
+  }
+  linkPaths.push({el:path,data:lk});
+});
+
+// 主路径流动动画
+let flowParticles=[];
+function startFlow(){
+  linkPaths.filter(p=>p.data.type==="main").forEach(p=>{
+    const fl=linkG.append("circle").attr("r",3.5).attr("fill","#FFEB3B").attr("opacity",0.9)
+      .style("filter","drop-shadow(0 0 4px #FFC107)");
+    function move(){
+      fl.transition().duration(2600).ease(d3.easeLinear)
+        .attrTween("transform",()=>{
+          const pa=p.el.node();
+          return (t)=>{
+            const pt=pa.getPointAtLength(pa.getTotalLength()*t);
+            return `translate(${pt.x},${pt.y})`;
+          };
+        }).on("end",move);
+    }
+    move();
+    flowParticles.push(fl);
+  });
+}
+function stopFlow(){ flowParticles.forEach(f=>f.remove()); flowParticles=[]; }
+startFlow();
+
+// ====== 绘制节点 ======
+const nodeG=g.append("g").attr("class","nodes");
+const tooltip=d3.select("#tooltip");
+const detailPanel=d3.select("#detailPanel");
+const detailContent=d3.select("#detailContent");
+const shapeLabel={rect:"矩形·基础功能",hexagon:"六边形·决策控制",diamond:"菱形·判断分支",roundrect:"圆角矩形·输出/状态",circle:"圆形·数据池",cloud:"云形·外部环境",sub:"小矩形·子组件(L4)",itsys:"小矩形·IT系统"};
+
+function drawNode(node, isSub, isIT){
+  const m = isSub?MOD.SUB:(isIT?MOD.IT:MOD[node.mod]);
+  const ng=nodeG.append("g").attr("class","node-group").attr("data-id",node.id)
+    .attr("transform",`translate(${node.cx},${node.cy})`).style("cursor","pointer");
+  const hw=node.w/2, hh=node.h/2;
+  let shape;
+  if(isSub||isIT){
+    shape=ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",4)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",1.3)
+      .style("filter","drop-shadow(1px 1px 1.5px rgba(0,0,0,.1))");
+  } else if(node.shape==="cloud"){
+    const w=node.w,h=node.h;
+    shape=ng.append("path")
+      .attr("d",`M ${-w/2+12},${h/2} C ${-w/2-6},${h/2} ${-w/2-6},${-h/4-2} ${-w/4+4},${-h/4-2} C ${-w/4},${-h/2-10} ${w/4},${-h/2-10} ${w/4-4},${-h/4-2} C ${w/2+8},${-h/4-2} ${w/2+8},${h/2} ${w/2-12},${h/2} Z`)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="rect"){
+    shape=ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",5)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="roundrect"){
+    shape=ng.append("rect").attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",14)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="hexagon"){
+    const w=node.w,h=node.h;
+    shape=ng.append("polygon")
+      .attr("points",`${-w/2+h/3},0 ${-w/2+h/3},${-h/2} ${w/2-h/3},${-h/2} ${w/2-h/3},0 ${w/2-h/3},${h/2} ${-w/2+h/3},${h/2}`)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="diamond"){
+    shape=ng.append("polygon").attr("points",`0,${-hh} ${hw},0 0,${hh} ${-hw},0`)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="circle"){
+    shape=ng.append("circle").attr("r",node.w/2)
+      .attr("fill",m.fill).attr("stroke",m.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  }
+  // 文字
+  const titleText=node.title;
+  const maxChars=isSub?Math.floor(node.w/10):Math.floor(node.w/13);
+  const fontSize=isSub?10:12;
+  const subFontSize=isSub?8:9;
+  if(titleText.length>maxChars && !isIT){
+    const mid=Math.ceil(titleText.length/2);
+    ng.append("text").attr("text-anchor","middle").attr("y",-4)
+      .attr("font-size",fontSize).attr("font-weight",700).attr("fill",m.text).text(titleText.slice(0,mid));
+    ng.append("text").attr("text-anchor","middle").attr("y",10)
+      .attr("font-size",fontSize).attr("font-weight",700).attr("fill",m.text).text(titleText.slice(mid));
+    if(node.sub){
+      ng.append("text").attr("text-anchor","middle").attr("y",24)
+        .attr("font-size",subFontSize).attr("fill",m.text).attr("opacity",0.8).text(node.sub);
+    }
+  } else {
+    ng.append("text").attr("text-anchor","middle").attr("y",isIT?-2:-4)
+      .attr("font-size",fontSize).attr("font-weight",700).attr("fill",m.text).text(titleText);
+    if(node.sub){
+      ng.append("text").attr("text-anchor","middle").attr("y",isIT?12:12)
+        .attr("font-size",subFontSize).attr("fill",m.text).attr("opacity",0.8).text(node.sub);
+    }
+  }
+  // 模块标识（仅主组件）
+  if(!isSub && !isIT && node.mod){
+    ng.append("text").attr("x",-hw+5).attr("y",-hh+11).attr("font-size",7).attr("font-weight",700)
+      .attr("fill",m.text).attr("opacity",0.5).text(node.mod.replace("LTC_","").replace("ISC_",""));
+  }
+  // 补充子组件详情
+  if(isSub){
+    node.role=`子组件(L4) · 隶属于 ${findNode(node.parent)?.title||""}`;
+    node.behavior=`执行 ${node.title} 的具体操作步骤`;
+    node.desc=`${node.title} 是 ${findNode(node.parent)?.title||""} 的细化执行环节。`;
+    node.pre=[node.parent]; node.suc=[]; node.cross=[];
+    node.shape="sub";
+  }
+  if(isIT){
+    node.role="ISC-IT 系统底座 · 业务承载系统";
+    node.behavior=`支撑 ${node.title} 相关业务流程的在线化与数据流转`;
+    node.desc=`${node.title}（${node.sub}）是ISC-IT底座的核心业务系统，支撑对应LTC/ISC流程的数字化。`;
+    node.pre=[]; node.suc=[]; node.cross=[];
+    node.shape="itsys";
+  }
+  // 交互
+  ng.on("mouseenter",function(event){
+    const preTxt=(node.pre&&node.pre.length)?`<div class="tt-pre">前导：${node.pre.join("、")}</div>`:"";
+    const sucTxt=(node.suc&&node.suc.length)?`<div class="tt-suc">后继：${node.suc.join("、")}</div>`:"";
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title}</div><div class="tt-role">${node.role||""}</div><div class="tt-body">${node.desc||""}</div>${preTxt}${sucTxt}`)
+      .style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+    highlightNode(node.id,true);
+  })
+  .on("mousemove",function(event){
+    tooltip.style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+  })
+  .on("mouseleave",function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show")||detailPanel.attr("data-active")!==node.id){ resetHighlight(); }
+  })
+  .on("click",function(){ showDetail(node); });
+  ng.attr("opacity",0).transition().duration(450).delay(nodes.indexOf(node)*30).attr("opacity",1);
+}
+
+// 绘制所有节点
+nodes.forEach(n=>drawNode(n,false,false));
+subNodes.forEach(n=>drawNode(n,true,false));
+itSystems.forEach(n=>drawNode(n,false,true));
+
+// ====== 高亮逻辑 ======
+function highlightNode(nodeId,dimOthers){
+  const connected=new Set([nodeId]);
+  allLinks.forEach(lk=>{
+    if(lk.from===nodeId) connected.add(lk.to);
+    if(lk.to===nodeId) connected.add(lk.from);
+  });
+  nodeG.selectAll(".node-group").each(function(){
+    const id=d3.select(this).attr("data-id");
+    const op=dimOthers?(connected.has(id)?1:0.18):1;
+    d3.select(this).transition().duration(200).style("opacity",op);
+  });
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const f=el.attr("data-from"),t=el.attr("data-to");
+    const active=(f===nodeId||t===nodeId)||!dimOthers;
+    const baseW=linkWidth[el.attr("data-type")];
+    el.transition().duration(200)
+      .style("opacity",active?1:0.08)
+      .attr("stroke-width",active?baseW+0.6:baseW);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=allLinks[+idx];
+    if(!lk) return;
+    const active=(lk.from===nodeId||lk.to===nodeId)||!dimOthers;
+    d3.select(this).transition().duration(200).style("opacity",active?1:0.08);
+  });
+}
+function resetHighlight(){
+  nodeG.selectAll(".node-group").transition().duration(200).style("opacity",1);
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const t=el.attr("data-type");
+    if(isLinkTypeHidden(t)){ el.transition().duration(200).style("opacity",0); return; }
+    const base=linkWidth[t];
+    el.transition().duration(200).style("opacity",1).attr("stroke-width",base);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=allLinks[+idx];
+    if(!lk) return;
+    if(isLinkTypeHidden(lk.type)){ d3.select(this).transition().duration(200).style("opacity",0); return; }
+    d3.select(this).transition().duration(200).style("opacity",1);
+  });
+}
+
+// ====== 详情面板 ======
+function showDetail(node){
+  const m = node.shape==="sub"?MOD.SUB:(node.shape==="itsys"?MOD.IT:MOD[node.mod]);
+  const radius=node.shape==='circle'?'50%':(node.shape==='roundrect'||node.shape==='sub'||node.shape==='itsys')?'5px':'2px';
+  const modName = node.shape==="sub"?"子组件(L4细化)":(node.shape==="itsys"?"IT系统底座":(m?m.name:"-"));
+  const html=`
+    <h3><span class="dp-shape" style="background:${m?m.fill:"#ECEFF1"};border:1.5px solid ${m?m.stroke:"#666"};border-radius:${radius};"></span>${node.title}</h3>
+    <div class="dp-label">模块归属</div>
+    <div style="color:#455A64;">${modName}</div>
+    <div class="dp-label" style="margin-top:6px;">形状语义</div>
+    <div style="color:#455A64;">${shapeLabel[node.shape]||"-"}</div>
+    ${node.role?`<div class="dp-section"><div class="dp-label">角色定位</div><div style="color:#455A64;">${node.role}</div></div>`:""}
+    ${node.desc?`<div class="dp-section"><div class="dp-label">知识内容（Structure）</div><div style="color:#455A64;">${node.desc}</div></div>`:""}
+    ${node.behavior?`<div class="dp-section"><div class="dp-label">功能逻辑（Behavior）</div><div style="color:#455A64;">${node.behavior}</div></div>`:""}
+    ${node.pre&&node.pre.length?`<div class="dp-section"><div class="dp-label">前导知识/组件（Prerequisite）</div><div class="dp-pre">${node.pre.map(p=>`<span style="display:inline-block;background:#FFF3E0;border-radius:10px;padding:2px 9px;margin:2px 3px 2px 0;font-size:10px;border:1px solid #FFCC80;">${p}</span>`).join("")}</div></div>`:""}
+    ${node.suc&&node.suc.length?`<div class="dp-section"><div class="dp-label">后继知识/组件（Successor）</div><div class="dp-suc">${node.suc.map(p=>`<span style="display:inline-block;background:#E3F2FD;border-radius:10px;padding:2px 9px;margin:2px 3px 2px 0;font-size:10px;border:1px solid #90CAF9;">${p}</span>`).join("")}</div></div>`:""}
+    ${node.cross&&node.cross.length?`<div class="dp-section"><div class="dp-label">跨模块关联</div><div style="color:#7B1FA2;">${node.cross.map(p=>`<span style="display:inline-block;background:#F3E5F5;border-radius:10px;padding:2px 9px;margin:2px 3px 2px 0;font-size:10px;border:1px solid #CE93D8;">${p}</span>`).join("")}</div></div>`:""}
+  `;
+  detailContent.html(html);
+  detailPanel.classed("show",true).attr("data-active",node.id);
+  highlightNode(node.id,true);
+}
+
+// 双击空白重置
+svg.on("dblclick",function(event){
+  if(event.target.tagName==="svg"||event.target===svg.node()){
+    detailPanel.classed("show",false);
+    resetHighlight();
+  }
+});
+
+// ====== 控制条 ======
+const toggleMap = {toggleMain:"main", togglePlan:"plan", toggleData:"data", toggleFeedback:"feedback", toggleIPD:"ipd", toggleExpand:"expand"};
+function isLinkTypeHidden(t){
+  if(t==="main" && !document.getElementById("toggleMain").checked) return true;
+  if(t==="plan" && !document.getElementById("togglePlan").checked) return true;
+  if(t==="data" && !document.getElementById("toggleData").checked) return true;
+  if(t==="feedback" && !document.getElementById("toggleFeedback").checked) return true;
+  if(t==="ipd" && !document.getElementById("toggleIPD").checked) return true;
+  if(t==="expand" && !document.getElementById("toggleExpand").checked) return true;
+  return false;
+}
+function applyToggle(){
+  linkG.selectAll(".link-path").each(function(){
+    const el=d3.select(this);
+    const t=el.attr("data-type");
+    const hidden=isLinkTypeHidden(t);
+    el.transition().duration(200).style("opacity",hidden?0:1);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx=d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk=allLinks[+idx];
+    if(!lk) return;
+    const hidden=isLinkTypeHidden(lk.type);
+    d3.select(this).transition().duration(200).style("opacity",hidden?0:1);
+  });
+}
+Object.keys(toggleMap).forEach(tid=>{
+  document.getElementById(tid).addEventListener("change", applyToggle);
+});
+document.getElementById("toggleFlow").addEventListener("change", function(){
+  if(this.checked){ startFlow(); } else { stopFlow(); }
+});
+</script>
+</body>
+</html>

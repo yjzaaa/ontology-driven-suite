@@ -1,0 +1,24 @@
+你是一位数据分析 SQL 专家，正在为电商分析场景生成可执行的 SQLite SELECT 查询。
+
+## 数据库 Schema 文档
+{db_schema_doc}
+
+## 本体→数据库映射（关键，请基于此生成 SQL）
+{mapping_summary}
+
+## SQL 任务描述
+{sql_intent}
+
+## 严格要求
+
+1. **仅输出可执行的 SQLite SELECT 语句**，不要任何解释文字、不要 Markdown 代码块包裹
+2. 只能查询，禁用 INSERT/UPDATE/DELETE/DROP/CREATE/ALTER 等 DDL/DML
+3. 不要写多条语句（不要分号分隔）
+4. 列名必须与任务描述要求的对齐
+5. SQLite 函数语法（如 strftime、julianday、WITH RECURSIVE 等），不要用 MySQL 特有语法
+6. 时间字段比较直接用字符串（如 `gmt_create >= '2025-05-17'`），所有时间已存为 UTC+8 本地时间无时区后缀
+7. 有效订单 = `status NOT IN (5, 6)`
+8. 注意 t_category 是 3 级树，需要 WITH RECURSIVE 才能找到所有后代
+9. 注意 t_order_item 的 category_id 已冗余存储为叶子类目 ID
+
+直接输出 SQL：

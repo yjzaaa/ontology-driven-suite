@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>中国初中学科（语·数·英·理·化·生·史·地·政·体艺）知识体系门户</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+body{margin:0;background:#f7f8fa;color:#1a1a2e;font-family:"Microsoft YaHei",Arial,sans-serif;}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e3e7f0;z-index:5;padding:14px 24px;box-shadow:0 2px 10px #0000000d;}
+h1{font-size:22px;margin:0 0 10px;}nav{display:flex;gap:8px;flex-wrap:wrap;}
+a.btn{text-decoration:none;color:#263238;border:1px solid #cfd6e6;background:#fff;border-radius:6px;padding:6px 10px;font-size:13px;}
+a.btn.primary{background:#3f51b5;color:white;border-color:#3f51b5;}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 22px 34px;}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;}
+.card{background:#fff;border:1px solid #e0e5ef;border-radius:8px;padding:16px;box-shadow:0 2px 8px #0000000a;}
+.span4{grid-column:span 4;}.span6{grid-column:span 6;}.span8{grid-column:span 8;}.span12{grid-column:span 12;}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.kpi{border:1px solid #e3e7f0;border-radius:6px;padding:12px;background:#fbfcff;}.kpi b{font-size:24px;color:#3f51b5;display:block;}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}.entry h3{margin:0 0 8px;font-size:16px;}.entry p{margin:0 0 12px;color:#5b6475;line-height:1.5;font-size:13px;}
+.chart{height:300px;}table{width:100%;border-collapse:collapse;font-size:13px;}td,th{border-bottom:1px solid #edf0f6;padding:8px;text-align:left;}
+.muted{color:#667085;font-size:13px;line-height:1.7;}footer{margin-top:16px;color:#667085;font-size:13px;}
+@media(max-width:900px){.span4,.span6,.span8{grid-column:span 12;}.cards,.stat{grid-template-columns:1fr 1fr;}}
+</style></head><body>
+<header><h1>中国初中学科（语·数·英·理·化·生·史·地·政·体艺）知识体系门户</h1><nav>
+<a class="btn primary" href="知识体系_初中.md">Markdown文档</a>
+<a class="btn" href="knowledge_top.html">顶层思维导图</a>
+<a class="btn" href="knowledge_middle.html">中间矩阵</a>
+<a class="btn" href="knowledge_bottom.html">底层网络</a>
+<a class="btn" href="knowledge_learning_path.html">学习路线</a>
+<a class="btn" href="knowledge_bottom_dependency.html">依赖DAG</a>
+<a class="btn" href="knowledge_dependency_metro.html">地铁路线</a>
+</nav></header>
+<main class="wrap">
+<section class="grid">
+<div class="card span4"><h2>领域概览</h2><p class="muted"><b>定义：</b>覆盖初中语文、数学、英语、物理、化学、生物、历史、地理、道德与法治、体育艺术信息十大科目，并设「跨学科综合」主干显式刻画学科间关联依赖，服务中考学习与综合素养发展的完整知识网络。<br><b>受众：</b>初中学生系统学习、教师课程设计与跨学科教学、家长辅导、中考复习与查漏补缺<br><b>来源：</b>义务教育课程方案与课程标准（2022年版）及各学科主流教材常识综合抽象<br><b>depends占比：</b>73.6%，已生成依赖 DAG 与地铁线路图。</p></div>
+<div class="card span8"><h2>核心统计仪表盘</h2><div class="stat">
+<div class="kpi"><b>11</b><span>L1</span></div><div class="kpi"><b>41</b><span>L2</span></div><div class="kpi"><b>93</b><span>L3</span></div><div class="kpi"><b>212</b><span>L4</span></div><div class="kpi"><b>212</b><span>节点</span></div><div class="kpi"><b>284</b><span>边数</span></div><div class="kpi"><b>2.68</b><span>均度</span></div><div class="kpi"><b>0</b><span>孤岛</span></div>
+</div></div>
+<div class="card span12"><h2>图表入口</h2><div class="cards">
+<div class="entry card"><h3>01 顶层思维导图</h3><p>展示 L1-L3 知识树，左右双侧平衡。</p><a class="btn primary" href="knowledge_top.html">打开</a></div>
+<div class="entry card"><h3>02 中间知识矩阵</h3><p>三维矩阵定位全部 L3。</p><a class="btn primary" href="knowledge_middle.html">打开</a></div>
+<div class="entry card"><h3>03 底层知识网络</h3><p>展示全部 L4 和关系边。</p><a class="btn primary" href="knowledge_bottom.html">打开</a></div>
+<div class="entry card"><h3>04 学习路线图</h3><p>以 L3 构建左到右学习路径。</p><a class="btn primary" href="knowledge_learning_path.html">打开</a></div>
+<div class="entry card"><h3>05 依赖路径 DAG</h3><p>depends 占比超过 35%，已生成。</p><a class="btn" href="knowledge_bottom_dependency.html">打开</a></div>
+<div class="entry card"><h3>06 地铁线路式路径</h3><p>多条学习线路和换乘节点。</p><a class="btn" href="knowledge_dependency_metro.html">打开</a></div>
+</div></div>
+<div class="card span6"><h2>层级规模分布</h2><div id="levelChart" class="chart"></div></div>
+<div class="card span6"><h2>覆盖完整性图</h2><div id="coverageChart" class="chart"></div></div>
+<div class="card span6"><h2>主干知识量分布</h2><div id="branchChart" class="chart"></div></div>
+<div class="card span6"><h2>关系类型分布</h2><div id="relationChart" class="chart"></div></div>
+<div class="card span6"><h2>Top 10 枢纽知识点</h2><table><thead><tr><th>知识点</th><th>主干</th><th>连接数</th></tr></thead><tbody>
+<tr><td>二次根式</td><td>数学</td><td>6</td></tr><tr><td>水的组成与净化</td><td>化学</td><td>6</td></tr><tr><td>地形地势</td><td>地理</td><td>6</td></tr><tr><td>成语俗语运用</td><td>语文</td><td>5</td></tr><tr><td>一次函数应用</td><td>数学</td><td>5</td></tr><tr><td>集中趋势与离散</td><td>数学</td><td>5</td></tr><tr><td>力的描述与作图</td><td>物理</td><td>5</td></tr><tr><td>光的色散</td><td>物理</td><td>5</td></tr><tr><td>分子原子离子</td><td>化学</td><td>5</td></tr><tr><td>化学与能源</td><td>化学</td><td>5</td></tr>
+</tbody></table><p><a class="btn" href="knowledge_bottom.html">跳转到底层知识网络</a></p></div>
+<div class="card span6"><h2>学习路线摘要</h2><table><thead><tr><th>路线</th><th>L3覆盖</th><th>自动前导</th></tr></thead><tbody>
+<tr><td>全景路线</td><td>93</td><td>16</td></tr><tr><td>理科基础路线</td><td>36</td><td>6</td></tr><tr><td>文科综合路线</td><td>40</td><td>7</td></tr><tr><td>体艺信息路线</td><td>8</td><td>1</td></tr><tr><td>跨学科综合路线</td><td>9</td><td>1</td></tr>
+</tbody></table><p><a class="btn" href="knowledge_learning_path.html">跳转到学习路线图</a></p></div>
+</section>
+<footer class="card">Markdown：<a href="知识体系_初中.md">知识体系_初中.md</a> ｜ 数据：<a href="knowledge_graph.json">knowledge_graph.json</a> / <a href="knowledge_graph.csv">knowledge_graph.csv</a> ｜ 创建日期：2026-07-16 ｜ 下次复审：2027-07-16 ｜ 版本：v1.0</footer>
+</main>
+<script>
+const stats={"domain": "中国初中学科（语·数·英·理·化·生·史·地·政·体艺）", "definition": "覆盖初中语文、数学、英语、物理、化学、生物、历史、地理、道德与法治、体育艺术信息十大科目，并设「跨学科综合」主干显式刻画学科间关联依赖，服务中考学习与综合素养发展的完整知识网络。", "audience": "初中学生系统学习、教师课程设计与跨学科教学、家长辅导、中考复习与查漏补缺", "source": "义务教育课程方案与课程标准（2022年版）及各学科主流教材常识综合抽象", "reviewDate": "2027-07-16", "counts": {"l1": 11, "l2": 41, "l3": 93, "l4": 212, "nodes": 212, "edges": 284, "avgDegree": 2.68, "isolated": 0}, "coverage": {"matrixL3": 100, "graphL4": 100, "routeL3": 100}, "branchDist": [{"id": "B01", "name": "语文", "l2": 4, "l3": 9, "l4": 22}, {"id": "B02", "name": "数学", "l2": 4, "l3": 11, "l4": 27}, {"id": "B03", "name": "英语", "l2": 4, "l3": 8, "l4": 19}, {"id": "B04", "name": "物理", "l2": 3, "l3": 9, "l4": 22}, {"id": "B05", "name": "化学", "l2": 4, "l3": 8, "l4": 20}, {"id": "B06", "name": "生物", "l2": 3, "l3": 8, "l4": 19}, {"id": "B07", "name": "历史", "l2": 3, "l3": 8, "l4": 17}, {"id": "B08", "name": "地理", "l2": 3, "l3": 7, "l4": 15}, {"id": "B09", "name": "道德与法治", "l2": 3, "l3": 8, "l4": 17}, {"id": "B10", "name": "体育·艺术·信息", "l2": 5, "l3": 8, "l4": 16}, {"id": "B11", "name": "跨学科综合", "l2": 5, "l3": 9, "l4": 18}], "relationDist": {"contains": 51, "depends": 209, "causes": 0, "analogy": 18, "contrast": 5, "evolved": 1}, "topHubs": [{"id": "B02-S01-K01-A03", "name": "二次根式", "branch": "数学", "degree": 6}, {"id": "B05-S02-K04-A01", "name": "水的组成与净化", "branch": "化学", "degree": 6}, {"id": "B08-S03-K05-A01", "name": "地形地势", "branch": "地理", "degree": 6}, {"id": "B01-S01-K01-A03", "name": "成语俗语运用", "branch": "语文", "degree": 5}, {"id": "B02-S02-K05-A03", "name": "一次函数应用", "branch": "数学", "degree": 5}, {"id": "B02-S04-K10-A02", "name": "集中趋势与离散", "branch": "数学", "degree": 5}, {"id": "B04-S01-K03-A01", "name": "力的描述与作图", "branch": "物理", "degree": 5}, {"id": "B04-S02-K05-A03", "name": "光的色散", "branch": "物理", "degree": 5}, {"id": "B05-S01-K02-A01", "name": "分子原子离子", "branch": "化学", "degree": 5}, {"id": "B05-S04-K08-A01", "name": "化学与能源", "branch": "化学", "degree": 5}], "routes": [{"name": "全景路线", "l3": 93, "autoPrereq": 16}, {"name": "理科基础路线", "l3": 36, "autoPrereq": 6}, {"name": "文科综合路线", "l3": 40, "autoPrereq": 7}, {"name": "体艺信息路线", "l3": 8, "autoPrereq": 1}, {"name": "跨学科综合路线", "l3": 9, "autoPrereq": 1}], "dependsRatio": 73.6};
+function chart(id,opt){echarts.init(document.getElementById(id)).setOption(opt);}
+chart('levelChart',{color:['#3f51b5'],xAxis:{type:'category',data:['L1','L2','L3','L4']},yAxis:{type:'value'},tooltip:{},series:[{type:'bar',data:[stats.counts.l1,stats.counts.l2,stats.counts.l3,stats.counts.l4],label:{show:true,position:'top'}}]});
+chart('coverageChart',{color:['#009688'],xAxis:{type:'value',max:100},yAxis:{type:'category',data:['L3矩阵覆盖','L4图谱覆盖','L3路线覆盖']},tooltip:{formatter:p=>p.name+': '+p.value+'%'},series:[{type:'bar',data:[stats.coverage.matrixL3,stats.coverage.graphL4,stats.coverage.routeL3],label:{show:true,formatter:'{c}%'}}]});
+chart('branchChart',{color:['#ff9800'],xAxis:{type:'value'},yAxis:{type:'category',data:stats.branchDist.map(x=>x.id),axisLabel:{formatter:v=>v}},tooltip:{formatter:p=>{let x=stats.branchDist[p.dataIndex];return x.id+' '+x.name+'<br>L2:'+x.l2+' L3:'+x.l3+' L4:'+x.l4;}},series:[{type:'bar',data:stats.branchDist.map(x=>x.l4),label:{show:true}}]});
+chart('relationChart',{tooltip:{trigger:'item'},legend:{bottom:0},series:[{type:'pie',radius:['35%','65%'],data:Object.entries(stats.relationDist).map(([name,value])=>({name,value}))}]});
+window.addEventListener('resize',()=>document.querySelectorAll('.chart').forEach(el=>echarts.getInstanceByDom(el)?.resize()));
+</script></body></html>

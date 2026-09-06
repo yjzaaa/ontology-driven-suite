@@ -1,0 +1,774 @@
+model_type: METRIC
+version: '1.0'
+domain: 电商经营分析
+metrics:
+  - id: MTR-TXN-001
+    name: GMV
+    alias: gmv
+    description: 成交总额（有效订单实付金额之和，不含已取消和退款完成订单）
+    formula_description: SUM(t_order.payment_amount) WHERE status NOT IN (5,6)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-001
+      - RULE-DQ-001
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       SUM(payment_amount) AS gmv\nFROM t_order\nWHERE status NOT IN (5, 6)\n  AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+      - region
+    default_visualization: line
+    unit: 元
+    tags:
+      - core
+      - growth
+  - id: MTR-TXN-002
+    name: 有效订单数
+    alias: valid_order_count
+    description: 统计周期内，状态不为5（已取消）和6（退款完成）的订单数量
+    formula_description: COUNT(order_id) WHERE status NOT IN (5,6)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-002
+      - RULE-DQ-001
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       COUNT(DISTINCT order_id) AS valid_order_count\nFROM t_order\nWHERE status NOT IN (5, 6)\n  AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+      - region
+    default_visualization: line
+    unit: 单
+    tags:
+      - core
+      - growth
+  - id: MTR-TXN-003
+    name: 客单价
+    alias: avg_order_value
+    description: 统计周期内，GMV除以有效订单数
+    formula_description: GMV / 有效订单数
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-003
+    sql_template: "SELECT period,\n       CASE WHEN valid_order_count > 0 THEN gmv / valid_order_count ELSE 0 END AS avg_order_value\nFROM (\n  SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n         SUM(payment_amount) AS gmv,\n         COUNT(DISTINCT order_id) AS valid_order_count\n  FROM t_order\n  WHERE status NOT IN (5, 6)\n    AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\n  GROUP BY period\n) ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+      - region
+    default_visualization: line
+    unit: 元/单
+    tags:
+      - core
+      - efficiency
+  - id: MTR-TXN-004
+    name: 订单取消率
+    alias: order_cancel_rate
+    description: 统计周期内，状态为5（已取消）的订单数除以总订单数
+    formula_description: COUNT(order_id WHERE status=5) / COUNT(total_order_id)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-004
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       CAST(SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) AS REAL) / COUNT(DISTINCT order_id) AS order_cancel_rate\nFROM t_order\nWHERE gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+      - region
+    default_visualization: line
+    unit: '%'
+    tags:
+      - quality
+      - risk
+  - id: MTR-TXN-005
+    name: 退款率
+    alias: refund_rate
+    description: 统计周期内，退款金额之和除以GMV（退款金额按申请时间归属）
+    formula_description: SUM(t_refund.refund_amount) / GMV
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+      - ENT-ORD-004
+    rule_refs:
+      - RULE-MTR-005
+      - RULE-MTR-014
+    sql_template: "SELECT strftime('%Y-%m-%d', o.gmt_create) AS period,\n       COALESCE(SUM(r.refund_amount), 0) / NULLIF(SUM(o.payment_amount), 0) AS refund_rate\nFROM t_order o\nLEFT JOIN t_refund r ON o.order_id = r.order_id\n  AND r.apply_time BETWEEN '{date_start}' AND '{date_end}'\nWHERE o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+      - region
+      - refund_reason
+    default_visualization: line
+    unit: '%'
+    tags:
+      - quality
+      - risk
+  - id: MTR-TXN-006
+    name: 总订单数
+    alias: total_order_count
+    description: 统计周期内所有订单的数量（含已取消和退款完成）
+    formula_description: COUNT(order_id)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       COUNT(DISTINCT order_id) AS total_order_count\nFROM t_order\nWHERE gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+      - region
+    default_visualization: line
+    unit: 单
+    tags:
+      - core
+  - id: MTR-TXN-007
+    name: 退款金额
+    alias: refund_amount
+    description: 统计周期内，退款申请时间在周期内的退款金额之和
+    formula_description: SUM(t_refund.refund_amount) WHERE apply_time IN period
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-004
+    rule_refs:
+      - RULE-MTR-014
+    sql_template: "SELECT strftime('%Y-%m-%d', apply_time) AS period,\n       SUM(refund_amount) AS refund_amount\nFROM t_refund\nWHERE apply_time BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - refund_type
+      - reason
+    default_visualization: line
+    unit: 元
+    tags:
+      - risk
+      - finance
+  - id: MTR-TXN-008
+    name: 退款完成金额
+    alias: completed_refund_amount
+    description: 统计周期内，退款完成时间在周期内的退款金额之和
+    formula_description: SUM(t_refund.refund_amount) WHERE complete_time IN period AND status=COMPLETED
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-004
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', complete_time) AS period,\n       SUM(refund_amount) AS completed_refund_amount\nFROM t_refund\nWHERE status = 'COMPLETED'\n  AND complete_time BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - refund_type
+    default_visualization: line
+    unit: 元
+    tags:
+      - finance
+  - id: MTR-TXN-009
+    name: 优惠金额
+    alias: discount_amount
+    description: 统计周期内，有效订单的优惠金额之和
+    formula_description: SUM(t_order.discount_amount) WHERE status NOT IN (5,6)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       SUM(discount_amount) AS discount_amount\nFROM t_order\nWHERE status NOT IN (5, 6)\n  AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - shop
+      - category
+      - channel
+    default_visualization: line
+    unit: 元
+    tags:
+      - marketing
+  - id: MTR-TFC-001
+    name: 访问转化率
+    alias: view_to_order_rate
+    description: 统计周期内，从浏览（VIEW）到下单（有效订单）的用户转化比例
+    formula_description: COUNT(DISTINCT user_id with order) / COUNT(DISTINCT user_id with VIEW)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-011
+    sql_template: "SELECT strftime('%Y-%m-%d', ub.gmt_create) AS period,\n       CAST(COUNT(DISTINCT o.buyer_id) AS REAL) / NULLIF(COUNT(DISTINCT ub.user_id), 0) AS view_to_order_rate\nFROM t_user_behavior ub\nLEFT JOIN t_order o ON ub.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nWHERE ub.behavior_type = 'VIEW'\n  AND ub.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+      - device_type
+    default_visualization: line
+    unit: '%'
+    tags:
+      - conversion
+      - funnel
+  - id: MTR-TFC-002
+    name: 加购转化率
+    alias: add_cart_to_order_rate
+    description: 统计周期内，从加购（ADD_CART）到下单（有效订单）的用户转化比例
+    formula_description: COUNT(DISTINCT user_id with order) / COUNT(DISTINCT user_id with ADD_CART)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-012
+    sql_template: "SELECT strftime('%Y-%m-%d', ub.gmt_create) AS period,\n       CAST(COUNT(DISTINCT o.buyer_id) AS REAL) / NULLIF(COUNT(DISTINCT ub.user_id), 0) AS add_cart_to_order_rate\nFROM t_user_behavior ub\nLEFT JOIN t_order o ON ub.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nWHERE ub.behavior_type = 'ADD_CART'\n  AND ub.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+      - device_type
+    default_visualization: line
+    unit: '%'
+    tags:
+      - conversion
+      - funnel
+  - id: MTR-TFC-003
+    name: 商品详情页转化率
+    alias: product_detail_to_order_rate
+    description: 统计周期内，访问商品详情页（target_type=PRODUCT且behavior_type=VIEW）后下单的用户比例
+    formula_description: COUNT(DISTINCT user_id with order after product view) / COUNT(DISTINCT user_id with product view)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-013
+    sql_template: "SELECT strftime('%Y-%m-%d', ub.gmt_create) AS period,\n       CAST(COUNT(DISTINCT o.buyer_id) AS REAL) / NULLIF(COUNT(DISTINCT ub.user_id), 0) AS product_detail_to_order_rate\nFROM t_user_behavior ub\nLEFT JOIN t_order o ON ub.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nWHERE ub.behavior_type = 'VIEW'\n  AND ub.target_type = 'PRODUCT'\n  AND ub.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+      - device_type
+    default_visualization: line
+    unit: '%'
+    tags:
+      - conversion
+      - funnel
+  - id: MTR-TFC-004
+    name: 搜索转化率
+    alias: search_to_order_rate
+    description: 统计周期内，从搜索（SEARCH）到下单（有效订单）的用户转化比例
+    formula_description: COUNT(DISTINCT user_id with order) / COUNT(DISTINCT user_id with SEARCH)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', ub.gmt_create) AS period,\n       CAST(COUNT(DISTINCT o.buyer_id) AS REAL) / NULLIF(COUNT(DISTINCT ub.user_id), 0) AS search_to_order_rate\nFROM t_user_behavior ub\nLEFT JOIN t_order o ON ub.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nWHERE ub.behavior_type = 'SEARCH'\n  AND ub.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - device_type
+    default_visualization: line
+    unit: '%'
+    tags:
+      - conversion
+      - funnel
+  - id: MTR-TFC-005
+    name: 收藏转化率
+    alias: collect_to_order_rate
+    description: 统计周期内，从收藏（COLLECT）到下单（有效订单）的用户转化比例
+    formula_description: COUNT(DISTINCT user_id with order) / COUNT(DISTINCT user_id with COLLECT)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', ub.gmt_create) AS period,\n       CAST(COUNT(DISTINCT o.buyer_id) AS REAL) / NULLIF(COUNT(DISTINCT ub.user_id), 0) AS collect_to_order_rate\nFROM t_user_behavior ub\nLEFT JOIN t_order o ON ub.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nWHERE ub.behavior_type = 'COLLECT'\n  AND ub.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+    default_visualization: line
+    unit: '%'
+    tags:
+      - conversion
+      - funnel
+  - id: MTR-TFC-006
+    name: 分享转化率
+    alias: share_to_order_rate
+    description: 统计周期内，从分享（SHARE）到下单（有效订单）的用户转化比例
+    formula_description: COUNT(DISTINCT user_id with order) / COUNT(DISTINCT user_id with SHARE)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', ub.gmt_create) AS period,\n       CAST(COUNT(DISTINCT o.buyer_id) AS REAL) / NULLIF(COUNT(DISTINCT ub.user_id), 0) AS share_to_order_rate\nFROM t_user_behavior ub\nLEFT JOIN t_order o ON ub.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nWHERE ub.behavior_type = 'SHARE'\n  AND ub.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+    default_visualization: line
+    unit: '%'
+    tags:
+      - conversion
+      - funnel
+  - id: MTR-TFC-007
+    name: 总浏览数
+    alias: total_views
+    description: 统计周期内，用户浏览行为（VIEW）的总次数
+    formula_description: COUNT(behavior_id) WHERE behavior_type=VIEW
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       COUNT(behavior_id) AS total_views\nFROM t_user_behavior\nWHERE behavior_type = 'VIEW'\n  AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+      - device_type
+    default_visualization: line
+    unit: 次
+    tags:
+      - traffic
+  - id: MTR-TFC-008
+    name: 总加购数
+    alias: total_add_carts
+    description: 统计周期内，用户加购行为（ADD_CART）的总次数
+    formula_description: COUNT(behavior_id) WHERE behavior_type=ADD_CART
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-002
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       COUNT(behavior_id) AS total_add_carts\nFROM t_user_behavior\nWHERE behavior_type = 'ADD_CART'\n  AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - channel
+      - category
+      - device_type
+    default_visualization: line
+    unit: 次
+    tags:
+      - traffic
+  - id: MTR-USR-001
+    name: 新增用户数
+    alias: new_user_count
+    description: 统计周期内，注册日期在周期内的用户数量
+    formula_description: COUNT(user_id) WHERE register_date IN period
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-001
+    rule_refs:
+      - RULE-MTR-006
+    sql_template: "SELECT strftime('%Y-%m-%d', register_date) AS period,\n       COUNT(DISTINCT user_id) AS new_user_count\nFROM t_user\nWHERE register_date BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: line
+    unit: 人
+    tags:
+      - growth
+      - user
+  - id: MTR-USR-002
+    name: 活跃用户数
+    alias: active_user_count
+    description: 统计周期内，有过任一登录、浏览、搜索、加购或下单行为的用户数（去重）
+    formula_description: COUNT(DISTINCT user_id) WHERE has behavior or order in period
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-001
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-007
+    sql_template: "SELECT period,\n       COUNT(DISTINCT user_id) AS active_user_count\nFROM (\n  SELECT strftime('%Y-%m-%d', gmt_create) AS period, user_id\n  FROM t_user_behavior\n  WHERE gmt_create BETWEEN '{date_start}' AND '{date_end}'\n  UNION\n  SELECT strftime('%Y-%m-%d', gmt_create) AS period, buyer_id AS user_id\n  FROM t_order\n  WHERE gmt_create BETWEEN '{date_start}' AND '{date_end}'\n) GROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: line
+    unit: 人
+    tags:
+      - user
+      - engagement
+  - id: MTR-USR-003
+    name: 复购率
+    alias: repurchase_rate
+    description: 统计周期内，有≥2笔有效订单的用户数除以有≥1笔有效订单的用户数
+    formula_description: COUNT(DISTINCT user_id with >=2 orders) / COUNT(DISTINCT user_id with >=1 order)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-008
+    sql_template: "SELECT strftime('%Y-%m-%d', gmt_create) AS period,\n       CAST(COUNT(DISTINCT CASE WHEN order_count >= 2 THEN buyer_id END) AS REAL) /\n       NULLIF(COUNT(DISTINCT buyer_id), 0) AS repurchase_rate\nFROM (\n  SELECT buyer_id,\n         strftime('%Y-%m-%d', gmt_create) AS period,\n         COUNT(DISTINCT order_id) AS order_count\n  FROM t_order\n  WHERE status NOT IN (5, 6)\n    AND gmt_create BETWEEN '{date_start}' AND '{date_end}'\n  GROUP BY buyer_id, period\n) GROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: line
+    unit: '%'
+    tags:
+      - user
+      - loyalty
+  - id: MTR-USR-004
+    name: 用户留存率
+    alias: user_retention_rate
+    description: 统计周期内，在指定时间点（如7/30/90天后）仍活跃的用户数除以初始活跃用户数
+    formula_description: COUNT(DISTINCT user_id active at day N) / COUNT(DISTINCT user_id active at day 0)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-001
+      - ENT-USR-002
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-009
+    sql_template: "WITH initial_users AS (\n  SELECT DISTINCT user_id\n  FROM t_user_behavior\n  WHERE gmt_create BETWEEN '{date_start}' AND '{date_end}'\n  UNION\n  SELECT DISTINCT buyer_id AS user_id\n  FROM t_order\n  WHERE gmt_create BETWEEN '{date_start}' AND '{date_end}'\n),\nretained_users AS (\n  SELECT DISTINCT ub.user_id\n  FROM initial_users iu\n  JOIN t_user_behavior ub ON iu.user_id = ub.user_id\n  WHERE ub.gmt_create BETWEEN '{retention_start}' AND '{retention_end}'\n  UNION\n  SELECT DISTINCT o.buyer_id AS user_id\n  FROM initial_users iu\n  JOIN t_order o ON iu.user_id = o.buyer_id\n  WHERE o.gmt_create BETWEEN '{retention_start}' AND '{retention_end}'\n)\nSELECT CAST((SELECT COUNT(*) FROM retained_users) AS REAL) /\n       NULLIF((SELECT COUNT(*) FROM initial_users), 0) AS user_retention_rate\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: line
+    unit: '%'
+    tags:
+      - user
+      - retention
+  - id: MTR-USR-005
+    name: 用户流失率
+    alias: user_churn_rate
+    description: 统计周期内，曾经活跃但近期（如30天）无任何行为的用户数除以总活跃用户数
+    formula_description: COUNT(DISTINCT user_id active before but not in recent 30 days) / COUNT(DISTINCT user_id active before)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-001
+      - ENT-USR-002
+    rule_refs:
+      - RULE-MTR-010
+    sql_template: "WITH previously_active AS (\n  SELECT DISTINCT user_id\n  FROM t_user_behavior\n  WHERE gmt_create BETWEEN '{prev_start}' AND '{prev_end}'\n  UNION\n  SELECT DISTINCT buyer_id AS user_id\n  FROM t_order\n  WHERE gmt_create BETWEEN '{prev_start}' AND '{prev_end}'\n),\nrecently_active AS (\n  SELECT DISTINCT user_id\n  FROM t_user_behavior\n  WHERE gmt_create BETWEEN '{recent_start}' AND '{recent_end}'\n  UNION\n  SELECT DISTINCT buyer_id AS user_id\n  FROM t_order\n  WHERE gmt_create BETWEEN '{recent_start}' AND '{recent_end}'\n)\nSELECT CAST(COUNT(DISTINCT pa.user_id) - COUNT(DISTINCT ra.user_id) AS REAL) /\n       NULLIF(COUNT(DISTINCT pa.user_id), 0) AS user_churn_rate\nFROM previously_active pa\nLEFT JOIN recently_active ra ON pa.user_id = ra.user_id\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: line
+    unit: '%'
+    tags:
+      - user
+      - churn
+  - id: MTR-USR-006
+    name: 新用户首单转化率
+    alias: new_user_first_order_rate
+    description: 统计周期内，注册后30天内完成首单（有效订单）的新用户比例
+    formula_description: COUNT(DISTINCT user_id with first order within 30 days) / COUNT(DISTINCT new_user_id)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-001
+      - ENT-ORD-001
+    rule_refs:
+      - RULE-MTR-017
+    sql_template: "SELECT strftime('%Y-%m-%d', u.register_date) AS period,\n       CAST(COUNT(DISTINCT CASE WHEN o.order_id IS NOT NULL THEN u.user_id END) AS REAL) /\n       NULLIF(COUNT(DISTINCT u.user_id), 0) AS new_user_first_order_rate\nFROM t_user u\nLEFT JOIN t_order o ON u.user_id = o.buyer_id\n  AND o.status NOT IN (5, 6)\n  AND o.gmt_create >= u.register_date\n  AND o.gmt_create < date(u.register_date, '+30 days')\nWHERE u.register_date BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: line
+    unit: '%'
+    tags:
+      - user
+      - conversion
+  - id: MTR-USR-007
+    name: 总用户数
+    alias: total_user_count
+    description: 截至统计周期末的累计注册用户总数
+    formula_description: COUNT(user_id) WHERE register_date <= period end
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-USR-001
+    rule_refs: []
+    sql_template: "SELECT '{date_end}' AS period,\n       COUNT(DISTINCT user_id) AS total_user_count\nFROM t_user\nWHERE register_date <= '{date_end}'\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - register_channel
+      - province
+      - user_level
+    default_visualization: number
+    unit: 人
+    tags:
+      - user
+      - scale
+  - id: MTR-PRD-001
+    name: 商品销售额
+    alias: product_sales_amount
+    description: 统计周期内，按商品SPU汇总的有效订单实付金额
+    formula_description: SUM(t_order_item.pay_price * quantity) WHERE order status NOT IN (5,6)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+      - ENT-ORD-002
+      - ENT-PRD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', o.gmt_create) AS period,\n       oi.product_id,\n       SUM(oi.pay_price * oi.quantity) AS product_sales_amount\nFROM t_order o\nJOIN t_order_item oi ON o.order_id = oi.order_id\nWHERE o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period, oi.product_id ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - product
+      - category
+      - shop
+    default_visualization: bar
+    unit: 元
+    tags:
+      - product
+      - sales
+  - id: MTR-PRD-002
+    name: 商品销量
+    alias: product_sales_quantity
+    description: 统计周期内，按商品SPU汇总的有效订单销售数量
+    formula_description: SUM(t_order_item.quantity) WHERE order status NOT IN (5,6)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-ORD-001
+      - ENT-ORD-002
+      - ENT-PRD-001
+    rule_refs: []
+    sql_template: "SELECT strftime('%Y-%m-%d', o.gmt_create) AS period,\n       oi.product_id,\n       SUM(oi.quantity) AS product_sales_quantity\nFROM t_order o\nJOIN t_order_item oi ON o.order_id = oi.order_id\nWHERE o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period, oi.product_id ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - product
+      - category
+      - shop
+    default_visualization: bar
+    unit: 件
+    tags:
+      - product
+      - sales
+  - id: MTR-PRD-003
+    name: 商品动销率
+    alias: product_sell_through_rate
+    description: 统计周期内，有销售的商品SPU数除以总上架商品SPU数
+    formula_description: COUNT(DISTINCT product_id with sales) / COUNT(DISTINCT product_id on shelf)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-PRD-001
+      - ENT-ORD-002
+    rule_refs:
+      - RULE-MTR-018
+    sql_template: "SELECT strftime('%Y-%m-%d', o.gmt_create) AS period,\n       CAST(COUNT(DISTINCT oi.product_id) AS REAL) /\n       NULLIF((SELECT COUNT(DISTINCT product_id) FROM t_product WHERE status = 1), 0) AS product_sell_through_rate\nFROM t_order o\nJOIN t_order_item oi ON o.order_id = oi.order_id\nWHERE o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - DAY
+      - WEEK
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - category
+      - shop
+    default_visualization: line
+    unit: '%'
+    tags:
+      - product
+      - efficiency
+  - id: MTR-PRD-004
+    name: 库存周转率
+    alias: inventory_turnover_rate
+    description: 统计周期内，商品销售成本除以平均库存成本
+    formula_description: SUM(sales_cost) / AVG(inventory_cost)
+    computation_type: SQL_COMPUTE
+    depends_on_entities:
+      - ENT-PRD-002
+      - ENT-ORD-002
+    rule_refs:
+      - RULE-MTR-019
+    sql_template: "SELECT strftime('%Y-%m-%d', o.gmt_create) AS period,\n       SUM(oi.quantity * sku.cost_price) /\n       NULLIF(AVG(sku.stock * sku.cost_price), 0) AS inventory_turnover_rate\nFROM t_order o\nJOIN t_order_item oi ON o.order_id = oi.order_id\nJOIN t_sku sku ON oi.sku_id = sku.sku_id\nWHERE o.status NOT IN (5, 6)\n  AND o.gmt_create BETWEEN '{date_start}' AND '{date_end}'\nGROUP BY period ORDER BY period\n"
+    stat_algorithm: null
+    supported_grains:
+      - MONTH
+      - QUARTER
+      - YEAR
+    supported_dimensions:
+      - product
+      - category
+      - shop
+    default_visualization: line
+    unit: 次
+    tags:
+      - product
+      - efficiency
+  - id: MTR-PRD-005
+    name: 商品平均评分
+    alias: avg_product_rating
+    description: 统计周期内，有销售商品的平均评分
+    formula_description: AVG(t_product.avg_rating) WHERE product has sales in period
+    computation_type: SQL_COMP

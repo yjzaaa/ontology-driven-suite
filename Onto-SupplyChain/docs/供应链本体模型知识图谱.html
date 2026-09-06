@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>供应链本体模型知识图谱</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg-primary: #0a0e1a;
+    --bg-secondary: #0f1628;
+    --bg-card: #131929;
+    --bg-panel: #0d1220;
+    --border: rgba(99,179,237,0.15);
+    --border-bright: rgba(99,179,237,0.4);
+    --text-primary: #e8edf8;
+    --text-secondary: #8899bb;
+    --text-dim: #4a5878;
+    --accent-blue: #63b3ed;
+    --accent-teal: #4fd1c5;
+    --accent-purple: #b794f4;
+    --accent-amber: #f6ad55;
+    --accent-coral: #fc8181;
+    --accent-green: #68d391;
+    --glow-blue: rgba(99,179,237,0.3);
+    --glow-teal: rgba(79,209,197,0.3);
+
+    /* domain colors */
+    --demand: #fc8181;
+    --demand-glow: rgba(252,129,129,0.25);
+    --production: #63b3ed;
+    --production-glow: rgba(99,179,237,0.25);
+    --supply: #4fd1c5;
+    --supply-glow: rgba(79,209,197,0.25);
+    --planning: #f6ad55;
+    --planning-glow: rgba(246,173,85,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Noto Sans SC', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-panel);
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: #fff;
+    box-shadow: 0 0 20px var(--glow-blue);
+  }
+
+  .header-title { font-size: 15px; font-weight: 500; letter-spacing: 0.02em; }
+  .header-sub { font-size: 11px; color: var(--text-secondary); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  .header-controls { display: flex; gap: 8px; align-items: center; }
+
+  .ctrl-btn {
+    padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-secondary); font-size: 12px;
+    cursor: pointer; transition: all 0.2s; font-family: 'Noto Sans SC', sans-serif;
+  }
+  .ctrl-btn:hover { border-color: var(--border-bright); color: var(--text-primary); background: rgba(99,179,237,0.08); }
+  .ctrl-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(99,179,237,0.1); }
+
+  /* ── Layout ── */
+  .workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Left Panel: Legend ── */
+  .panel-left {
+    width: 200px;
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+
+  .panel-section-title {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+    color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px;
+  }
+
+  .domain-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 6px;
+    cursor: pointer; transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .domain-item:hover { background: rgba(255,255,255,0.03); }
+  .domain-item.active { background: rgba(255,255,255,0.05); border-color: var(--border); }
+
+  .domain-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .domain-label { font-size: 12px; color: var(--text-secondary); }
+  .domain-count {
+    margin-left: auto; font-size: 10px; color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .relation-item {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .relation-line {
+    width: 28px; height: 1px; position: relative;
+  }
+  .relation-line::after {
+    content: ''; position: absolute; right: 0; top: -3px;
+    width: 0; height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+  }
+  .relation-label { font-size: 11px; color: var(--text-secondary); }
+
+  /* ── Graph Canvas ── */
+  #graph-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  svg#graph {
+    width: 100%; height: 100%;
+    cursor: grab;
+  }
+  svg#graph:active { cursor: grabbing; }
+
+  /* ── Node styles (applied via D3) ── */
+  .node-group { cursor: pointer; }
+
+  .node-circle {
+    transition: filter 0.2s;
+  }
+
+  .node-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    pointer-events: none;
+    dominant-baseline: middle;
+    text-anchor: middle;
+  }
+
+  .node-en-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    pointer-events: none;
+    dominant-baseline: middle;
+    text-anchor: middle;
+    opacity: 0.6;
+  }
+
+  .link {
+    fill: none;
+    stroke-width: 1.5;
+    opacity: 0.6;
+  }
+
+  .link-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 9.5px;
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  /* ── Right Panel: Detail ── */
+  .panel-right {
+    width: 280px;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: width 0.3s;
+  }
+  .panel-right.collapsed { width: 0; }
+
+  .detail-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .detail-domain-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .detail-name { font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .detail-en { font-size: 11px; color: var(--text-secondary); margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
+  .detail-desc { font-size: 12px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6; }
+
+  .detail-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+  .detail-section { margin-bottom: 18px; }
+  .detail-section-title {
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+    color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px;
+  }
+
+  .attr-item {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 7px 10px; border-radius: 5px;
+    background: rgba(255,255,255,0.03);
+    margin-bottom: 4px; border-left: 2px solid var(--border);
+  }
+  .attr-name { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--accent-teal); }
+  .attr-type { font-size: 10px; color: var(--text-dim); }
+  .attr-desc { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .rel-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 10px; border-radius: 5px;
+    background: rgba(255,255,255,0.02);
+    margin-bottom: 4px;
+  }
+  .rel-arrow { font-size: 12px; color: var(--text-dim); margin-top: 1px; flex-shrink: 0; }
+  .rel-content { flex: 1; }
+  .rel-target { font-size: 11px; font-weight: 500; }
+  .rel-verb { font-size: 10px; color: var(--text-secondary); }
+
+  .rule-item {
+    padding: 8px 10px; border-radius: 5px;
+    background: rgba(246,173,85,0.06); border-left: 2px solid var(--accent-amber);
+    margin-bottom: 6px;
+  }
+  .rule-id { font-size: 9px; font-family: 'JetBrains Mono', monospace; color: var(--accent-amber); margin-bottom: 3px; }
+  .rule-text { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ── Bottom status bar ── */
+  .status-bar {
+    padding: 6px 20px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 20px;
+    background: var(--bg-panel);
+    flex-shrink: 0;
+  }
+  .status-item { font-size: 10px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+  .status-item span { color: var(--text-secondary); }
+
+  /* ── Tooltip ── */
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: var(--bg-card); border: 1px solid var(--border-bright);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 12px; color: var(--text-primary);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    opacity: 0; transition: opacity 0.15s;
+    max-width: 220px; z-index: 1000;
+  }
+  #tooltip .tt-title { font-weight: 600; margin-bottom: 4px; }
+  #tooltip .tt-domain { font-size: 10px; color: var(--text-secondary); margin-bottom: 6px; }
+  #tooltip .tt-hint { font-size: 10px; color: var(--text-dim); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── Search ── */
+  .search-wrap {
+    position: relative; display: flex; align-items: center;
+  }
+  .search-input {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 12px 6px 30px;
+    color: var(--text-primary); font-size: 12px; width: 160px;
+    font-family: 'Noto Sans SC', sans-serif; outline: none;
+    transition: all 0.2s;
+  }
+  .search-input:focus { border-color: var(--border-bright); background: rgba(255,255,255,0.07); }
+  .search-icon {
+    position: absolute; left: 8px; font-size: 12px; color: var(--text-dim);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="logo-mark">本</div>
+    <div>
+      <div class="header-title">供应链本体模型知识图谱</div>
+      <div class="header-sub">ATP / APS · Supply Chain Ontology · v1.0</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="searchInput" type="text" placeholder="搜索实体...">
+    </div>
+    <button class="ctrl-btn" id="btnReset">重置视图</button>
+    <button class="ctrl-btn active" id="btnLabels">关系标签</button>
+    <button class="ctrl-btn active" id="btnDetail">详情面板</button>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- Left Legend Panel -->
+  <div class="panel-left">
+    <div>
+      <div class="panel-section-title">业务域</div>
+      <div class="domain-item active" data-domain="demand">
+        <div class="domain-dot" style="background:var(--demand); box-shadow:0 0 6px var(--demand);"></div>
+        <div class="domain-label">需求域</div>
+        <div class="domain-count">3</div>
+      </div>
+      <div class="domain-item" data-domain="production">
+        <div class="domain-dot" style="background:var(--production); box-shadow:0 0 6px var(--production);"></div>
+        <div class="domain-label">生产域</div>
+        <div class="domain-count">3</div>
+      </div>
+      <div class="domain-item" data-domain="supply">
+        <div class="domain-dot" style="background:var(--supply); box-shadow:0 0 6px var(--supply);"></div>
+        <div class="domain-label">供应域</div>
+        <div class="domain-count">3</div>
+      </div>
+      <div class="domain-item" data-domain="planning">
+        <div class="domain-dot" style="background:var(--planning); box-shadow:0 0 6px var(--planning);"></div>
+        <div class="domain-label">计划域</div>
+        <div class="domain-count">2</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">关系类型</div>
+      <div class="relation-item">
+        <div class="relation-line" style="background:var(--demand); color:var(--demand);"></div>
+        <div class="relation-label" style="font-size:11px; color:var(--text-secondary);">需求关系</div>
+      </div>
+      <div class="relation-item">
+        <div class="relation-line" style="background:var(--production); color:var(--production);"></div>
+        <div class="relation-label" style="font-size:11px; color:var(--text-secondary);">生产关系</div>
+      </div>
+      <div class="relation-item">
+        <div class="relation-line" style="background:var(--supply); color:var(--supply);"></div>
+        <div class="relation-label" style="font-size:11px; color:var(--text-secondary);">供应关系</div>
+      </div>
+      <div class="relation-item">
+        <div class="relation-line" style="background:var(--planning); color:var(--planning);"></div>
+        <div class="relation-label" style="font-size:11px; color:var(--text-secondary);">计划关系</div>
+      </div>
+      <div class="relation-item">
+        <div class="relation-line" style="background:var(--accent-purple); color:var(--accent-purple);"></div>
+        <div class="relation-label" style="font-size:11px; color:var(--text-secondary);">跨域关系</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">节点大小</div>
+      <div style="font-size:11px; color:var(--text-secondary); line-height:1.8;">
+        <div>● 大 — 中心枢纽实体</div>
+        <div>● 中 — 核心业务实体</div>
+        <div>● 小 — 支撑实体</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel-section-title">操作提示</div>
+      <div style="font-size:11px; color:var(--text-secondary); line-height:2;">
+        <div>🖱 拖拽 — 移动节点</div>
+        <div>🖱 滚轮 — 缩放图谱</div>
+        <div>👆 点击 — 查看详情</div>
+        <div>🖱 拖拽背景 — 平移</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graph Canvas -->
+  <div id="graph-container">
+    <svg id="graph"></svg>
+  </div>
+
+  <!-- Right Detail Panel -->
+  <div class="panel-right" id="panelRight">
+    <div class="detail-header" id="detailHeader">
+      <div style="color:var(--text-dim); font-size:12px; padding-top:20px;">
+        点击图谱中的节点<br>查看实体详细信息
+      </div>
+    </div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+
+</div>
+
+<div class="status-bar">
+  <div class="status-item">节点 <span id="statNodes">11</span></div>
+  <div class="status-item">关系 <span id="statLinks">16</span></div>
+  <div class="status-item">业务域 <span>4</span></div>
+  <div class="status-item" id="statSelected">未选中节点</div>
+  <div class="status-item" style="margin-left:auto;">供应链 ATP/APS 本体模型 · 力导向图</div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-title" id="ttTitle"></div>
+  <div class="tt-domain" id="ttDomain"></div>
+  <div class="tt-hint">点击查看详情</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const DOMAIN_COLOR = {
+  demand:     '#fc8181',
+  production: '#63b3ed',
+  supply:     '#4fd1c5',
+  planning:   '#f6ad55'
+};
+
+const DOMAIN_NAME = {
+  demand: '需求域', production: '生产域',
+  supply: '供应域', planning: '计划域'
+};
+
+const nodes = [
+  // Demand
+  {
+    id: 'CustomerOrder', label: '客户订单', en: 'CustomerOrder',
+    domain: 'demand', size: 42,
+    desc: '本体模型的中心枢纽实体，连接需求、生产、供应、计划四个业务域。记录客户的每一张订单的全生命周期信息。',
+    attrs: [
+      { name: 'order_id', type: 'String', desc: 'SAP销售凭证号，全局唯一标识' },
+      { name: 'quantity', type: 'Decimal', desc: '需求数量及单位' },
+      { name: 'requested_date', type: 'Date', desc: '客户要求交期' },
+      { name: 'committed_date', type: 'Date', desc: '系统最新承诺交期' },
+      { name: 'order_priority', type: 'Int', desc: '当前排程优先级，1为最高' },
+      { name: 'order_type', type: 'Enum', desc: 'Standard/Rush/Frame/Sample' },
+      { name: 'status', type: 'OrderStatus', desc: '新建→确认→生产中→完工→发货→关闭' },
+    ],
+    relations: [
+      { target: 'Customer', verb: 'places（由客户下达）', dir: 'in' },
+      { target: 'FinishedItem', verb: 'orders（指定成品）', dir: 'out' },
+      { target: 'ProductionOrder', verb: 'triggers（触发工单）', dir: 'out' },
+      { target: 'Routing', verb: 'governed_by（遵循工艺路线）', dir: 'out' },
+      { target: 'Inventory', verb: 'requires（扣减库存）', dir: 'out' },
+      { target: 'ATPCommitment', verb: 'generates（生成承诺）', dir: 'out' },
+    ],
+    rules: [
+      { id: 'T-02', text: 'VIP客户订单产能锁定：priority_level=VIP时，关联产能资源不可被低优先级订单抢占' },
+      { id: 'T-03', text: '延误风险预警：forecast_end - committed_date > 3天时，自动触发DeliveryRiskAlert事件' },
+    ]
+  },
+  {
+    id: 'Customer', label: '客户', en: 'Customer',
+    domain: 'demand', size: 30,
+    desc: '记录客户的战略等级、合同条款和历史绩效，是AI推理客户优先级和违约风险的核心语义来源。',
+    attrs: [
+      { name: 'priority_level', type: 'Enum', desc: 'VIP / Key / Standard / Trial' },
+      { name: 'penalty_threshold_days', type: 'Int', desc: '延误超过N天触发合同罚款' },
+      { name: 'penalty_rate', type: 'Decimal', desc: '罚款比率（占订单金额百分比）' },
+      { name: 'delivery_reliability', type: 'Decimal', desc: '历史交期履约率 0-1' },
+      { name: 'complaint_sensitivity', type: 'Enum', desc: 'High / Medium / Low' },
+    ],
+    relations: [
+      { target: 'CustomerOrder', verb: 'places（下达订单）', dir: 'out' },
+    ],
+    rules: [
+      { id: 'SC-02', text: 'VIP客户优先级权重=10，Standard客户=1，权重直接影响冲突解决时的方案选择' },
+    ]
+  },
+  {
+    id: 'FinishedItem', label: '成品物料', en: 'FinishedItem',
+    domain: 'demand', size: 28,
+    desc: '定义产品的生产策略（备货/按单/按单装配）、批量规则和物料分类，决定ATP计算的起始路径。',
+    attrs: [
+      { name: 'item_category', type: 'Enum', desc: 'MTS备货 / MTO按单生产 / ATO按单装配' },
+      { name: 'min_order_quantity', type: 'Decimal', desc: '最小生产批量' },
+      { name: 'lot_size_rule', type: 'Enum', desc: 'Fixed / EOQ / Multiples' },
+      { name: 'abc_classification', type: 'Enum', desc: 'A高价值 / B / C低价值' },
+      { name: 'safety_stock', type: 'Decimal', desc: '安全库存水位' },
+    ],
+    relations: [
+      { target: 'CustomerOrder', verb: 'ordered by（被订购）', dir: 'in' },
+      { target: 'BOMLevel', verb: 'defined_by（由BOM定义）', dir: 'out' },
+      { target: 'Routing', verb: 'produced_via（经工艺路线生产）', dir: 'out' },
+    ],
+    rules: [
+      { id: 'HC-03', text: 'MOQ约束：生产工单数量不得低于min_order_quantity（除非特批）' },
+    ]
+  },
+
+  // Production
+  {
+    id: 'WorkCenter', label: '工作中心', en: 'WorkCenter',
+    domain: 'production', size: 32,
+    desc: '产能约束的核心载体。建模超越单一数字，包含班次配置、效率系数、换模矩阵等动态产能属性。',
+    attrs: [
+      { name: 'standard_capacity', type: 'Decimal', desc: '标准产能（件/小时）' },
+      { name: 'efficiency_factor', type: 'Decimal', desc: '实际效率系数 0.6-1.0，含换模损耗' },
+      { name: 'overtime_capacity', type: 'Decimal', desc: '加班最大产能（需审批）' },
+      { name: 'setup_matrix', type: 'Matrix', desc: '产品间换模时间矩阵（非对称）' },
+      { name: 'bottleneck_flag', type: 'Boolean', desc: '是否为系统识别的瓶颈工作中心' },
+      { name: 'utilization_target', type: 'Decimal', desc: '目标利用率，超出触发预警' },
+    ],
+    relations: [
+      { target: 'Operation', verb: 'executes（执行工序）', dir: 'in' },
+      { target: 'Routing', verb: 'assigned_by（由路线分配）', dir: 'in' },
+    ],
+    rules: [
+      { id: 'C-01', text: '日可用产能 = SUM(班次时长) × 标准产能 × efficiency_factor - 维护时间' },
+      { id: 'T-01', text: '超负荷触发重排：current_load > daily_capacity时，自动生成CapacityConflictEvent' },
+    ]
+  },
+  {
+    id: 'ProductionOrder', label: '生产工单', en: 'ProductionOrder',
+    domain: 'production', size: 30,
+    desc: '捕捉计划与实际的状态偏差。forecast_end（AI预测完工）与planned_end（ERP计划）的差值是ATP置信度的核心输入。',
+    attrs: [
+      { name: 'planned_end', type: 'DateTime', desc: 'ERP基于标准工时的理论完工时间' },
+      { name: 'actual_start', type: 'DateTime', desc: 'MES记录的实际开工时间' },
+      { name: 'forecast_end', type: 'DateTime', desc: 'ML模型预测的实际完工时间' },
+      { name: 'delay_risk_score', type: 'Decimal', desc: '延误风险评分 0-1（ML计算）' },
+      { name: 'bom_snapshot', type: 'BOMSnapshot', desc: '工单创建时的BOM快照（防变更影响）' },
+    ],
+    relations: [
+      { target: 'CustomerOrder', verb: 'triggered_by（由订单触发）', dir: 'in' },
+      { target: 'Operation', verb: 'contains（包含工序）', dir: 'out' },
+    ],
+    rules: [
+      { id: 'C-03', text: '最早完工时间 = 基于precedes关系构建DAG，关键路径法（CPM）计算各工序earliest_end的最大值' },
+    ]
+  },
+  {
+    id: 'Operation', label: '工序', en: 'Operation',
+    domain: 'production', size: 26,
+    desc: '工序是产能计算的最小粒度单元，支持线性链、并行、部分完工触发、跨工单四种依赖拓扑结构。',
+    attrs: [
+      { name: 'op_sequence', type: 'Int', desc: '工序序号（10,20,30步进，便于插入）' },
+      { name: 'setup_time', type: 'Decimal', desc: '准备时间（含换模，查setup_matrix）' },
+      { name: 'processing_time', type: 'Decimal', desc: '加工时间（小时/件）' },
+      { name: 'completion_percentage', type: 'Decimal', desc: 'MES实时完成百分比 0-100' },
+      { name: 'predecessor_ops', type: '→Operation[]', desc: '前置工序列表（支持多前置）' },
+      { name: 'parallel_flag', type: 'Boolean', desc: '是否可与前序工序并行执行' },
+      { name: 'quality_hold_flag', type: 'Boolean', desc: '是否因质量问题暂停' },
+    ],
+    relations: [
+      { target: 'ProductionOrder', verb: 'contained_in（属于工单）', dir: 'in' },
+      { target: 'WorkCenter', verb: 'executed_at（在工作中心执行）', dir: 'out' },
+      { target: 'Operation', verb: 'precedes（工序依赖）', dir: 'self' },
+    ],
+    rules: [
+      { id: 'C-02', text: '工序实际时长 = setup_time + processing_time×qty + queue_time（负荷>85%时×1.5）+ move_time' },
+    ]
+  },
+
+  // Supply
+  {
+    id: 'Inventory', label: '库存', en: 'Inventory',
+    domain: 'supply', size: 28,
+    desc: '四维数量模型：现货/在途/已预留/可用。ATP必须使用available_qty，不可使用on_hand_qty，避免重复承诺。',
+    attrs: [
+      { name: 'on_hand_qty', type: 'Decimal', desc: '实际在库数量（可立即使用）' },
+      { name: 'in_transit_qty', type: 'Decimal', desc: '在途数量（已采购未到库）' },
+      { name: 'reserved_qty', type: 'Decimal', desc: '已预留数量（被其他订单锁定）' },
+      { name: 'available_qty', type: 'Decimal', desc: '可用量 = 现货 + 在途 - 预留' },
+      { name: 'data_source', type: 'Enum', desc: 'SAP_LIVE / SAP_SNAPSHOT / MES_ADJUSTED' },
+    ],
+    relations: [
+      { target: 'CustomerOrder', verb: 'consumed_by（被订单扣减）', dir: 'in' },
+      { target: 'Supplier', verb: 'replenished_by（供应商补充）', dir: 'in' },
+    ],
+    rules: [
+      { id: 'CR-01', text: '不可重复承诺：所有在途订单预留量之和不得超过 on_hand + 预计到货的in_transit' },
+      { id: 'CR-02', text: '在途库存时效：仅当expected_arrival ≤ committed_date - 2天时，在途量才可计入ATP资源' },
+    ]
+  },
+  {
+    id: 'BOMLevel', label: 'BOM层级', en: 'BOMLevel',
+    domain: 'supply', size: 28,
+    desc: '支持多层BOM展开和替代料推理。AI可基于alternative_items建议："主料缺货，替代料B库存充足，可提前交期4天"。',
+    attrs: [
+      { name: 'level', type: 'Int', desc: '0=成品，1=一级组件，2=原材料' },
+      { name: 'quantity_per', type: 'Decimal', desc: '单位父项需用量' },
+      { name: 'scrap_factor', type: 'Decimal', desc: '损耗系数（1.05=5%损耗）' },
+      { name: 'alternative_items', type: '→AlternativeItem[]', desc: '替代料清单（含优先级和替代比例）' },
+      { name: 'phantom_flag', type: 'Boolean', desc: '虚拟件（展开时跳过不产生工单）' },
+      { name: 'purchase_or_make', type: 'Enum', desc: 'Make自制 / Buy外购 / Either两可' },
+    ],
+    relations: [
+      { target: 'FinishedItem', verb: 'defines（定义成品结构）', dir: 'out' },
+      { target: 'Supplier', verb: 'sourced_from（从供应商采购）', dir: 'out' },
+      { target: 'ProductionOrder', verb: 'generates（展开生成工单）', dir: 'out' },
+    ],
+    rules: [
+      { id: 'CR-03', text: '替代料使用条件：approval_status=Approved，替代料库存充足，客户合同未禁止，不影响质量认证' },
+    ]
+  },
+  {
+    id: 'Supplier', label: '供应商', en: 'Supplier',
+    domain: 'supply', size: 26,
+    desc: '建模供应风险维度。single_source_flag=true且准时率<85%时，AI自动在ATP承诺中增加安全缓冲天数。',
+    attrs: [
+      { name: 'supplier_tier', type: 'Enum', desc: 'Tier1 / Tier2 / Approved / Backup' },
+      { name: 'standard_lt', type: 'Int', desc: '标准供货提前期（天）' },
+      { name: 'lt_variability', type: 'Decimal', desc: '提前期变异系数（越大越不稳定）' },
+      { name: 'on_time_rate', type: 'Decimal', desc: '近12个月准时交货率' },
+      { name: 'single_source_flag', type: 'Boolean', desc: '是否为唯一来源（单一供应风险）' },
+      { name: 'geo_risk_level', type: 'Enum', desc: '地缘风险：Low / Medium / High' },
+    ],
+    relations: [
+      { target: 'Inventory', verb: 'replenishes（补充库存）', dir: 'out' },
+      { target: 'BOMLevel', verb: 'supplies（供应物料）', dir: 'in' },
+    ],
+    rules: [
+      { id: 'RISK-01', text: 'single_source_flag=true且on_time_rate<0.85时，AI自动在ATP承诺中标注供应风险并增加缓冲' },
+    ]
+  },
+
+  // Planning
+  {
+    id: 'Routing', label: '工艺路线', en: 'Routing',
+    domain: 'planning', size: 28,
+    desc: '定义生产路径和工序编排。支持替代工艺路线，当主路线瓶颈时AI可评估替代路线绕开瓶颈的可行性。',
+    attrs: [
+      { name: 'total_lead_time', type: 'Decimal', desc: '总理论提前期（工序时间之和）' },
+      { name: 'critical_path_ops', type: '→Operation[]', desc: '关键路径工序列表' },
+      { name: 'bottleneck_wc', type: '→WorkCenter', desc: '当前识别的瓶颈工作中心' },
+      { name: 'alternative_routings', type: '→Routing[]', desc: '替代工艺路线及适用条件' },
+      { name: 'min_batch_size', type: 'Decimal', desc: '最小经济批量' },
+    ],
+    relations: [
+      { target: 'CustomerOrder', verb: 'governs（指导订单生产）', dir: 'out' },
+      { target: 'WorkCenter', verb: 'assigns（分配工作中心）', dir: 'out' },
+      { target: 'FinishedItem', verb: 'applies_to（适用于成品）', dir: 'in' },
+    ],
+    rules: [
+      { id: 'ALT-01', text: '替代路线评估：主路线瓶颈利用率>95%时，AI自动评估alternative_routings的可行性和时间代价' },
+    ]
+  },
+  {
+    id: 'ATPCommitment', label: '交期承诺', en: 'ATPCommitment',
+    domain: 'planning', size: 34,
+    desc: '本方案新增的核心独立实体。承诺独立成实体使每次承诺可被追溯、版本化，并形成反馈学习的数据基础。',
+    attrs: [
+      { name: 'committed_date', type: 'Date', desc: '承诺交期' },
+      { name: 'commitment_type', type: 'Enum', desc: 'Standard/Overtime/PrioritySwap/PartialDelivery/AlternativeRouting' },
+      { name: 'confidence_score', type: 'Decimal', desc: '置信度 0-100（ML计算）' },
+      { name: 'risk_level', type: 'Enum', desc: 'High / Medium / Low' },
+      { name: 'reason_chain', type: 'String[]', desc: 'AI生成的可解释推理原因链' },
+      { name: 'created_by', type: 'Enum', desc: 'AI_AUTO / HUMAN_CONFIRMED / HUMAN_OVERRIDE' },
+      { name: 'actual_delivery_date', type: 'Date', desc: '实际交货日（事后填入，用于ML反馈学习）' },
+      { name: 'deviation_days', type: 'Int', desc: '偏差天数（负=提前，正=延误）' },
+    ],
+    relations: [
+      { target: 'CustomerOrder', verb: 'generated_from（来自订单）', dir: 'in' },
+    ],
+    rules: [
+      { id: 'AUTO-01', text: '自动化阈值：confidence>90% 且影响订单数<阈值 → 全自动执行；60-90% → 推送人工审核；<60% → 强制人工' },
+      { id: 'LEARN-01', text: '反馈学习：actual_delivery_date填入后，自动计算deviation_days并写入向量库，用于ML模型迭代' },
+    ]
+  },
+];
+
+const links = [
+  { source: 'Customer',        target: 'CustomerOrder',   label: '下达',     domain: 'demand' },
+  { source: 'CustomerOrder',   target: 'FinishedItem',    label: '指定',     domain: 'demand' },
+  { source: 'CustomerOrder',   target: 'ProductionOrder', label: '触发',     domain: 'production' },
+  { source: 'CustomerOrder',   target: 'Routing',         label: '遵循',     domain: 'planning' },
+  { source: 'CustomerOrder',   target: 'Inventory',       label: '扣减',     domain: 'supply' },
+  { source: 'CustomerOrder',   target: 'ATPCommitment',   label: '生成',     domain: 'planning' },
+  { source: 'FinishedItem',    target: 'BOMLevel',        label: '定义',     domain: 'supply' },
+  { source: 'FinishedItem',    target: 'Routing',         label: '适用',     domain: 'planning' },
+  { source: 'ProductionOrder', target: 'Operation',       label: '包含',     domain: 'production' },
+  { source: 'Operation',       target: 'WorkCenter',      label: '执行于',   domain: 'production' },
+  { source: 'Routing',         target: 'WorkCenter',      label: '分配',     domain: 'planning' },
+  { source: 'BOMLevel',        target: 'Supplier',        label: '采购自',   domain: 'supply' },
+  { source: 'Supplier',        target: 'Inventory',       label: '补充',     domain: 'supply' },
+  { source: 'BOMLevel',        target: 'ProductionOrder', label: '展开→',   domain: 'supply' },
+  { source: 'Operation',       target: 'Operation',       label: '前置依赖', domain: 'production' },
+  { source: 'WorkCenter',      target: 'ATPCommitment',   label: '产能影响', domain: 'planning' },
+];
+
+// ═══════════════════════════════════════════════════════
+//  D3 FORCE GRAPH
+// ═══════════════════════════════════════════════════════
+const svg = d3.select('#graph');
+const container = document.getElementById('graph-container');
+
+let showLabels = true;
+let selectedNode = null;
+let transform = d3.zoomIdentity;
+
+function getWidth()  { return container.clientWidth; }
+function getHeight() { return container.clientHeight; }
+
+const g = svg.append('g').attr('class', 'root-g');
+
+// Defs: arrowheads per domain
+const defs = svg.append('defs');
+const arrowDomains = ['demand', 'production', 'supply', 'planning', 'cross'];
+const arrowColors  = { demand: '#fc8181', production: '#63b3ed', supply: '#4fd1c5', planning: '#f6ad55', cross: '#b794f4' };
+
+arrowDomains.forEach(d => {
+  defs.append('marker')
+    .attr('id', `arrow-${d}`)
+    .attr('viewBox', '0 -4 10 8')
+    .attr('refX', 22).attr('refY', 0)
+    .attr('markerWidth', 6).attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path')
+      .attr('d', 'M0,-4L10,0L0,4')
+      .attr('fill', arrowColors[d])
+      .attr('opacity', 0.8);
+});
+
+// Self-link arrow
+defs.append('marker')
+  .attr('id', 'arrow-self')
+  .attr('viewBox', '0 -4 10 8')
+  .attr('refX', 10).attr('refY', 0)
+  .attr('markerWidth', 5).attr('markerHeight', 5)
+  .attr('orient', 'auto')
+  .append('path')
+    .attr('d', 'M0,-4L10,0L0,4')
+    .attr('fill', '#63b3ed').attr('opacity', 0.8);
+
+// Glow filter
+const filter = defs.append('filter').attr('id', 'glow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+filter.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
+const feMerge = filter.append('feMerge');
+feMerge.append('feMergeNode').attr('in', 'blur');
+feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+// Build simulation
+const nodeMap = {};
+nodes.forEach(n => nodeMap[n.id] = n);
+
+const sim = d3.forceSimulation(nodes)
+  .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+    if (d.source.id === 'CustomerOrder' || d.target.id === 'CustomerOrder') return 140;
+    if (d.source.id === 'ATPCommitment' || d.target.id === 'ATPCommitment') return 130;
+    return 110;
+  }).strength(0.5))
+  .force('charge', d3.forceManyBody().strength(-600))
+  .force('center', d3.forceCenter(getWidth() / 2, getHeight() / 2))
+  .force('collision', d3.forceCollide().radius(d => d.size + 18))
+  .force('x', d3.forceX(getWidth() / 2).strength(0.04))
+  .force('y', d3.forceY(getHeight() / 2).strength(0.04));
+
+// Links
+const linkG = g.append('g').attr('class', 'links');
+const linkSel = linkG.selectAll('g.link-grp')
+  .data(links).join('g').attr('class', 'link-grp');
+
+const linkPath = linkSel.append('path')
+  .attr('class', 'link')
+  .attr('stroke', d => arrowColors[d.domain] || '#b794f4')
+  .attr('marker-end', d => `url(#arrow-${d.domain})`)
+  .attr('stroke-dasharray', d => d.source === d.target ? '4,3' : null);
+
+const linkLabelSel = linkSel.append('text')
+  .attr('class', 'link-label')
+  .attr('fill', d => arrowColors[d.domain])
+  .attr('opacity', 0.75)
+  .text(d => d.label);
+
+// Nodes
+const nodeG = g.append('g').attr('class', 'nodes');
+const nodeSel = nodeG.selectAll('g.node-group')
+  .data(nodes).join('g')
+  .attr('class', 'node-group')
+  .call(d3.drag()
+    .on('start', dragStart)
+    .on('drag',  dragged)
+    .on('end',   dragEnd))
+  .on('click', onNodeClick)
+  .on('mouseover', onNodeOver)
+  .on('mouseout',  onNodeOut);
+
+// Outer glow ring
+nodeSel.append('circle')
+  .attr('r', d => d.size + 6)
+  .attr('fill', 'none')
+  .attr('stroke', d => DOMAIN_COLOR[d.domain])
+  .attr('stroke-width', 1)
+  .attr('opacity', 0.2);
+
+// Main circle
+nodeSel.append('circle')
+  .attr('class', 'node-circle')
+  .attr('r', d => d.size)
+  .attr('fill', d => {
+    const c = DOMAIN_COLOR[d.domain];
+    return `${c}22`;
+  })
+  .attr('stroke', d => DOMAIN_COLOR[d.domain])
+  .attr('stroke-width', 1.5);
+
+// Chinese label
+nodeSel.append('text')
+  .attr('class', 'node-label')
+  .attr('fill', d => DOMAIN_COLOR[d.domain])
+  .attr('dy', d => d.size > 30 ? '-6' : '-3')
+  .text(d => d.label);
+
+// EN label
+nodeSel.append('text')
+  .attr('class', 'node-en-label')
+  .attr('fill', d => DOMAIN_COLOR[d.domain])
+  .attr('dy', d => d.size > 30 ? '10' : '11')
+  .text(d => d.en);
+
+// Zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.3, 3])
+  .on('zoom', e => {
+    transform = e.transform;
+    g.attr('transform', transform);
+  });
+svg.call(zoom);
+
+// Tick
+sim.on('tick', () => {
+  linkPath.attr('d', d => {
+    if (d.source === d.target || d.source.id === d.target.id) {
+      // self loop
+      const x = d.source.x, y = d.source.y, r = d.source.size;
+      return `M${x},${y - r} C${x + 60},${y - 80} ${x + 80},${y + 20} ${x},${y + r}`;
+    }
+    const dx = d.target.x - d.source.x;
+    const dy = d.target.y - d.source.y;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    // curve
+    const mx = (d.source.x + d.target.x) / 2 - dy * 0.12;
+    const my = (d.source.y + d.target.y) / 2 + dx * 0.12;
+    return `M${d.source.x},${d.source.y} Q${mx},${my} ${d.target.x},${d.target.y}`;
+  });
+
+  linkLabelSel.attr('transform', d => {
+    if (d.source === d.target || d.source.id === d.target.id) {
+      return `translate(${d.source.x + 60}, ${d.source.y - 40})`;
+    }
+    const mx = (d.source.x + d.target.x) / 2 - (d.target.y - d.source.y) * 0.12;
+    const my = (d.source.y + d.target.y) / 2 + (d.target.x - d.source.x) * 0.12;
+    return `translate(${mx}, ${my})`;
+  }).style('display', showLabels ? null : 'none');
+
+  nodeSel.attr('transform', d => `translate(${d.x},${d.y})`);
+});
+
+// Drag
+function dragStart(e, d) {
+  if (!e.active) sim.alphaTarget(0.3).restart();
+  d.fx = d.x; d.fy = d.y;
+}
+function dragged(e, d) { d.fx = e.x; d.fy = e.y; }
+function dragEnd(e, d) {
+  if (!e.active) sim.alphaTarget(0);
+  d.fx = null; d.fy = null;
+}
+
+// ═══════════════════════════════════════════════════════
+//  INTERACTIONS
+// ═══════════════════════════════════════════════════════
+const tooltip = document.getElementById('tooltip');
+const ttTitle  = document.getElementById('ttTitle');
+const ttDomain = document.getElementById('ttDomain');
+
+function onNodeOver(e, d) {
+  if (selectedNode && selectedNode.id === d.id) return;
+  ttTitle.textContent  = `${d.label}（${d.en}）`;
+  ttDomain.textContent = DOMAIN_NAME[d.domain] + ' · ' + d.desc.slice(0, 40) + '…';
+  tooltip.style.opacity = '1';
+  tooltip.style.left = (e.clientX + 14) + 'px';
+  tooltip.style.top  = (e.clientY - 10) + 'px';
+
+  // highlight connected
+  const connected = new Set([d.id]);
+  links.forEach(l => {
+    if (l.source.id === d.id) connected.add(l.target.id);
+    if (l.target.id === d.id) connected.add(l.source.id);
+  });
+  nodeSel.attr('opacity', n => connected.has(n.id) ? 1 : 0.25);
+  linkPath.attr('opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.08);
+  linkLabelSel.attr('opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0);
+}
+
+function onNodeOut() {
+  tooltip.style.opacity = '0';
+  nodeSel.attr('opacity', 1);
+  linkPath.attr('opacity', 0.6);
+  linkLabelSel.attr('opacity', showLabels ? 0.75 : 0);
+}
+
+function onNodeClick(e, d) {
+  e.stopPropagation();
+  selectedNode = d;
+  document.getElementById('statSelected').textContent = `已选中：${d.label}`;
+
+  // Highlight
+  const connected = new Set([d.id]);
+  links.forEach(l => {
+    if (l.source.id === d.id) connected.add(l.target.id);
+    if (l.target.id === d.id) connected.add(l.source.id);
+  });
+  nodeSel.attr('opacity', n => connected.has(n.id) ? 1 : 0.2);
+  linkPath.attr('opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.06);
+
+  // Detail panel
+  renderDetail(d);
+}
+
+svg.on('click', () => {
+  selectedNode = null;
+  document.getElementById('statSelected').textContent = '未选中节点';
+  nodeSel.attr('opacity', 1);
+  linkPath.attr('opacity', 0.6);
+  linkLabelSel.attr('opacity', showLabels ? 0.75 : 0);
+  document.getElementById('detailHeader').innerHTML = `<div style="color:var(--text-dim);font-size:12px;padding-top:20px;">点击图谱中的节点<br>查看实体详细信息</div>`;
+  document.getElementById('detailBody').innerHTML = '';
+});
+
+function renderDetail(d) {
+  const color = DOMAIN_COLOR[d.domain];
+  const domainName = DOMAIN_NAME[d.domain];
+
+  document.getElementById('detailHeader').innerHTML = `
+    <div class="detail-domain-badge" style="background:${color}18;color:${color};border:1px solid ${color}44;">
+      <span>●</span> ${domainName}
+    </div>
+    <div class="detail-name" style="color:${color};">${d.label}</div>
+    <div class="detail-en">${d.en}</div>
+    <div class="detail-desc">${d.desc}</div>
+  `;
+
+  let html = '';
+
+  // Attrs
+  if (d.attrs && d.attrs.length) {
+    html += `<div class="detail-section">
+      <div class="detail-section-title">核心属性</div>`;
+    d.attrs.forEach(a => {
+      html += `<div class="attr-item">
+        <div class="attr-name">${a.name}</div>
+        <div class="attr-type">${a.type}</div>
+        <div class="attr-desc">${a.desc}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Relations
+  if (d.relations && d.relations.length) {
+    html += `<div class="detail-section">
+      <div class="detail-section-title">对象关系</div>`;
+    d.relations.forEach(r => {
+      const arrow = r.dir === 'in' ? '←' : r.dir === 'self' ? '↻' : '→';
+      const tc = r.target === d.id ? color : (nodeMap[r.target] ? DOMAIN_COLOR[nodeMap[r.target].domain] : '#aaa');
+      html += `<div class="rel-item">
+        <div class="rel-arrow">${arrow}</div>
+        <div class="rel-content">
+          <div class="rel-target" style="color:${tc};">${r.target}</div>
+          <div class="rel-verb">${r.verb}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Rules
+  if (d.rules && d.rules.length) {
+    html += `<div class="detail-section">
+      <div class="detail-section-title">行为规则</div>`;
+    d.rules.forEach(r => {
+      html += `<div class="rule-item">
+        <div class="rule-id">${r.id}</div>
+        <div class="rule-text">${r.text}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('detailBody').innerHTML = html;
+}
+
+// Controls
+document.getElementById('btnReset').addEventListener('click', () => {
+  svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity);
+  sim.alpha(0.5).restart();
+});
+
+document.getElementById('btnLabels').addEventListener('click', function() {
+  showLabels = !showLabels;
+  this.classList.toggle('active', showLabels);
+  linkLabelSel.style('display', showLabels ? null : 'none');
+});
+
+document.getElementById('btnDetail').addEventListener('click', function() {
+  const panel = document.getElementById('panelRight');
+  const collapsed = panel.classList.toggle('collapsed');
+  this.classList.toggle('active', !collapsed);
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  if (!q) {
+    nodeSel.attr('opacity', 1);
+    linkPath.attr('opacity', 0.6);
+    return;
+  }
+  nodeSel.attr('opacity', d =>
+    d.label.toLowerCase().includes(q) || d.en.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q) ? 1 : 0.15
+  );
+  linkPath.attr('opacity', 0.15);
+});
+
+// Domain filter
+document.querySelectorAll('.domain-item').forEach(item => {
+  item.addEventListener('click', function() {
+    const allActive = [...document.querySelectorAll('.domain-item')].every(i => i.classList.contains('active'));
+    if (allActive) {
+      document.querySelectorAll('.domain-item').forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+    } else if (this.classList.contains('active') && document.querySelectorAll('.domain-item.active').length === 1) {
+      document.querySelectorAll('.domain-item').forEach(i => i.classList.add('active'));
+    } else {
+      this.classList.toggle('active');
+    }
+
+    const activeDomains = new Set([...document.querySelectorAll('.domain-item.active')].map(i => i.dataset.domain));
+    nodeSel.attr('opacity', d => activeDomains.has(d.domain) ? 1 : 0.1);
+    linkPath.attr('opacity', l => (activeDomains.has(l.source.domain || nodeMap[l.source.id]?.domain) && activeDomains.has(l.target.domain || nodeMap[l.target.id]?.domain)) ? 0.6 : 0.05);
+  });
+});
+
+// Resize
+window.addEventListener('resize', () => {
+  sim.force('center', d3.forceCenter(getWidth() / 2, getHeight() / 2))
+     .force('x', d3.forceX(getWidth() / 2).strength(0.04))
+     .force('y', d3.forceY(getHeight() / 2).strength(0.04));
+  sim.alpha(0.2).restart();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,616 @@
+本体模型维护需求 V2
+
+一、文档定位
+
+本文件是“本体模型编辑器 Web 页面”的 V2 需求基线，用于后续代码开发。
+
+本文件在以下资料基础上修订形成：
+1. ontology_modeling_framework.md：作为上位建模规范参考。
+2. 原始需求和AI的对话.txt：作为树状展示和“定义/引用分离”原则的来源。
+3. 本体模型维护需求.txt：作为上一版编辑器需求草稿。
+
+本 V2 文档的目标不是完全照搬 ontology_modeling_framework.md，而是在用户已明确澄清的基础上，形成一份可直接用于开发的一期需求说明。
+
+
+二、一期范围
+
+一期编辑器范围只覆盖以下模型：
+1. M1 对象模型
+2. M2 行为模型
+3. M3 规则模型
+4. M4 场景模型
+5. 独立事件模型 Event Model
+
+明确不纳入一期范围：
+1. M5 主体模型
+2. M6 异常补偿模型
+3. M7 质量约束模型
+
+说明：
+1. 虽然上位规范中事件定义内嵌于行为模型，但本项目一期调整为“事件独立存储、独立编辑、独立展示”。
+2. 后续如需要向 M5/M6/M7 扩展，数据结构和页面布局应预留扩展位，但一期不实现完整功能。
+3. 一期的重点是把 YAML 中已有的模型语义完整维护起来，而不是为了界面方便而压缩模型结构。
+
+
+三、总体设计原则
+
+1. 定义与引用分离
+行为、规则、事件、场景中的步骤和依赖必须区分“定义”和“引用”。
+
+2. 单一事实来源
+每个模型元素只能有一个可编辑定义位置，其余位置均为引用视图。
+
+3. 树状导航优先
+页面主导航以树状结构为主，支持从对象、规则、事件、场景四个主入口浏览模型。
+
+4. 存储与展示分离
+树上“显示在对象下面”不等于“存储在对象文件内”。行为在界面上展示为对象的子节点，但实际存储在独立的 M2 文件中，通过 ownerEntity 归属对象。
+
+5. 多文件模型组织
+模型按文件拆分存储，不采用单一聚合 YAML 文件。
+
+6. YAML 为唯一持久化载体
+一期不以数据库作为本体模型的正式存储介质。系统运行时可在内存中维护统一模型仓库，但保存结果必须落回 YAML 文件。
+
+7. 导入导出尽量保真
+从 YAML 导入后，模型中的业务说明、备注、描述、规则表达式、行为说明、流程说明等语义信息应尽量完整保留；导出时不得无故丢失这些字段。
+
+
+四、技术栈
+
+技术栈已确认如下：
+1. 前端：React + TypeScript
+2. 后端：Python + Flask
+
+一期目标是先完成一个可运行的本体模型编辑器 Web 应用，支持模型查看、编辑、校验、导入、导出。
+
+补充说明：
+1. 本项目一期不要求将模型持久化到数据库。
+2. 后端 Flask 的职责主要是文件读写、模型校验、导入导出、模型编排和前端接口服务。
+
+
+五、模型范围与边界
+
+5.1 M1 对象模型
+
+M1 负责定义业务实体本身，包含：
+1. Entity
+2. Attribute
+3. Relation
+4. ReferentialConstraint
+5. lifecycle
+6. tags
+
+注意：
+1. M1 不直接存储行为定义。
+2. 树上对象节点下看到的“行为”是从 M2 按 ownerEntity 聚合出来的展示结果。
+
+
+5.2 M2 行为模型
+
+M2 负责定义行为本身，行为是独立存储的。
+
+行为定义至少包含以下信息：
+1. id
+2. name
+3. ownerEntity
+4. behaviorType
+5. triggerType
+6. description
+7. preconditions
+8. postconditions
+9. appliedRules
+
+一期不实现：
+1. requiredPermissions
+2. qualityAnnotation
+3. compensationRef
+
+说明：
+1. 行为必须归属于一个对象，即必须有 ownerEntity。
+2. 场景中出现的行为只能是 BehaviorRef，不允许在场景中定义新行为。
+3. 规则中如出现对行为的使用或反向追踪，也只能通过引用实现。
+
+
+5.3 M3 规则模型
+
+规则为独立定义，可被多个行为或场景引用。
+
+一期规则至少支持以下类型：
+1. VALIDATION
+2. CALCULATION
+3. DERIVATION
+4. TRANSFORMATION
+5. RISK
+
+规则应至少包含：
+1. id
+2. name
+3. ruleType
+4. description
+5. inputParams
+6. outputType
+7. expression
+8. version
+9. reusedBy
+
+
+5.4 独立事件模型
+
+本项目一期采用“事件独立存储”的方式，不将事件内嵌在行为定义中。
+
+事件模型的职责：
+1. 定义事件本身
+2. 定义哪个行为产生该事件
+3. 定义哪些行为订阅该事件
+4. 作为树状结构中的一级节点独立展示
+
+事件定义建议至少包含：
+1. eventId
+2. eventName
+3. description
+4. producerBehaviorRef
+5. producerEntityRef
+6. triggerCondition
+7. payload
+8. subscriberBehaviorRefs
+9. ordering
+
+设计决策：
+1. 事件的触发源以 Behavior 为主，而不是 Entity。
+2. 为了便于树上展示，可冗余保存 producerEntityRef；但其值必须可由 producerBehaviorRef 推导并校验一致。
+3. 行为是否发出事件，以事件模型中的 producerBehaviorRef 为准。
+4. 行为是否被事件订阅，以事件模型中的 subscriberBehaviorRefs 为准。
+
+
+5.5 M4 场景模型
+
+M4 负责表达业务用例和业务流程。
+
+一期保留双层结构：
+1. UseCase
+2. BusinessProcess
+
+一期场景步骤至少支持以下类型：
+1. BEHAVIOR_CALL
+2. EVENT_WAIT
+3. EVENT_EMIT
+4. GATEWAY
+5. EXTERNAL_CALL
+
+一期网关至少支持：
+1. AND_SPLIT
+2. AND_JOIN
+3. XOR_SPLIT
+4. EVENT_GATEWAY
+
+一期不实现：
+1. M6 补偿编排
+2. M7 QoS 标注
+
+说明：
+1. 场景中原则上不直接定义“规则步骤”作为一级执行节点，规则主要通过行为的 appliedRules 承载。
+2. 若页面需要展示某步骤依赖的规则，应作为行为详情或步骤附属信息展示，而不是替代行为定义。
+
+
+六、定义与引用规则
+
+6.1 行为
+
+1. 行为定义只存在于 M2 行为模型文件中。
+2. 树上对象节点下的行为属于“定义视图”。
+3. 树上场景节点下的行为属于“引用视图”。
+4. 树上事件节点下的 producer/subscriber 行为属于“引用视图”。
+
+6.2 规则
+
+1. 规则定义只存在于 M3 规则模型文件中。
+2. 行为中通过 appliedRules 引用规则。
+3. 场景中不直接创建规则定义。
+
+6.3 事件
+
+1. 事件定义只存在于独立事件模型文件中。
+2. 行为和场景只引用事件。
+3. 事件的生产者和订阅者均使用行为引用，不使用可编辑副本。
+
+6.4 对象
+
+1. 对象定义只存在于 M1 对象模型文件中。
+2. 行为通过 ownerEntity 引用对象。
+3. 规则通过 sourceField 或 dependencies 引用对象字段。
+4. 场景通过 behaviorRef 间接关联对象。
+
+
+七、YAML 文件组织方式
+
+参考 sample 目录中的多文件组织方式，一期统一采用按模型拆分的目录结构：
+
+models/
+├── {domain}/
+│   ├── m1-object-model.yaml
+│   ├── m2-behavior-model.yaml
+│   ├── m3-rule-model.yaml
+│   ├── m4-scenario-model.yaml
+│   └── event-model.yaml
+
+说明：
+1. 不采用单一聚合 YAML。
+2. 页面内编辑时可以在内存中形成统一模型仓库，但导入导出时必须按文件维度进行。
+3. 后续若支持 M5/M6/M7，再继续增加对应文件。
+4. 运行时内存模型仅作为编辑态工作副本，不视为正式持久化结果。
+
+
+八、核心数据结构要求
+
+8.1 M1 对象模型
+
+Entity 至少包含：
+1. id
+2. name
+3. alias
+4. description
+5. lifecycle
+6. attributes
+7. constraints
+8. tags
+9. remark 或 notes（如源 YAML 中存在业务备注字段，应保留）
+
+Attribute 至少包含：
+1. name
+2. label
+3. type
+4. required
+5. unique
+6. defaultValue
+7. enumValues
+8. refEntity
+9. refCardinality
+
+Relation 至少包含：
+1. id
+2. type
+3. sourceEntity
+4. targetEntity
+5. sourceRole
+6. targetRole
+7. sourceCardinality
+8. targetCardinality
+9. inverseOf
+10. cascadeDelete
+
+ReferentialConstraint 至少包含：
+1. constraintType
+2. scope
+3. expression
+4. violationMessage
+5. enforcedAt
+
+
+8.2 M2 行为模型
+
+BehaviorDefinition 至少包含：
+1. id
+2. name
+3. ownerEntity
+4. behaviorType
+5. triggerType
+6. description
+7. preconditions
+8. postconditions
+9. appliedRules
+10. remark 或 notes（如源 YAML 中存在）
+
+一期建议：
+1. preconditions 使用表达式列表。
+2. postconditions 使用状态变更列表。
+3. 行为不内嵌事件定义。
+
+BehaviorRef 至少包含：
+1. id
+2. name
+3. ownerEntity
+4. paramMapping
+
+
+8.3 M3 规则模型
+
+Rule 至少包含：
+1. id
+2. name
+3. ruleType
+4. description
+5. inputParams
+6. outputType
+7. expression
+8. version
+9. reusedBy
+10. violationMessage 或等价说明字段
+11. remark 或 notes（如源 YAML 中存在）
+
+
+8.4 独立事件模型
+
+EventDefinition 至少包含：
+1. eventId
+2. eventName
+3. description
+4. producerBehaviorRef
+5. producerEntityRef
+6. triggerCondition
+7. payload
+8. subscriberBehaviorRefs
+9. ordering
+10. remark 或 notes（如源 YAML 中存在）
+
+EventRef 至少包含：
+1. eventId
+2. eventName
+
+
+8.5 M4 场景模型
+
+UseCase 至少包含：
+1. id
+2. name
+3. description
+4. actors
+5. preconditions
+6. postconditions
+7. primaryFlow
+8. alternativeFlows
+9. exceptionFlows
+10. remark 或 notes（如源 YAML 中存在）
+
+BusinessProcess 至少包含：
+1. id
+2. name
+3. description
+4. useCases
+5. orchestration
+6. remark 或 notes（如源 YAML 中存在）
+
+FlowStep 至少包含以下公共字段：
+1. stepId
+2. stepType
+3. description
+4. nextSteps
+
+按不同 stepType 增补：
+1. BEHAVIOR_CALL：behaviorRef
+2. EVENT_WAIT：eventRef 或 waitForEvent
+3. EVENT_EMIT：eventRef
+4. GATEWAY：gatewayType、condition
+5. EXTERNAL_CALL：externalName、inputMapping、outputMapping
+
+
+九、页面结构需求
+
+9.1 主界面结构
+
+主页面至少包含以下区域：
+1. 左侧模型树
+2. 中间主编辑区
+3. 右侧属性/引用详情区
+4. 顶部工具栏
+
+顶部工具栏至少提供：
+1. 新建
+2. 保存
+3. 导入
+4. 导出
+5. 校验
+6. 搜索
+7. 文件状态提示（未保存、已修改、校验失败）
+
+
+9.2 树状结构
+
+根节点下一级节点固定为：
+1. 对象模型
+2. 行为模型总览
+3. 规则模型
+4. 事件模型
+5. 场景模型
+
+说明：
+1. 为了满足“行为定义显示在对象下”和“行为可全局浏览”两个需求，保留双入口。
+2. 默认导航可优先展示对象模型视图。
+
+对象模型树：
+1. 对象节点下显示属性、关系、约束、行为。
+2. 其中“行为”是从 M2 聚合展示。
+3. 在对象节点下点击行为，打开的是行为定义编辑面板。
+
+行为模型总览树：
+1. 按对象分组或扁平列表方式展示所有行为。
+2. 点击后定位到同一个行为定义。
+
+规则模型树：
+1. 显示规则列表。
+2. 展开后可查看规则类型、输入参数、引用来源。
+
+事件模型树：
+1. 显示事件列表。
+2. 展开后显示触发行为、触发对象、订阅行为。
+3. 触发行为只能有一个。
+4. 订阅行为可以有多个。
+
+场景模型树：
+1. 分为 UseCase 和 BusinessProcess 两层。
+2. 展开后显示流程步骤。
+3. 步骤中的行为和事件均为引用视图。
+
+
+9.3 编辑规则
+
+对象编辑：
+1. 可编辑实体基本信息。
+2. 可编辑属性。
+3. 可编辑关系。
+4. 可编辑参照完整性约束。
+5. 可查看该对象下挂接的行为列表。
+
+行为编辑：
+1. 只能在行为定义视图中编辑。
+2. 可编辑 ownerEntity、behaviorType、triggerType、description。
+3. 可编辑 preconditions、postconditions、appliedRules。
+4. 不在行为中编辑事件定义。
+
+规则编辑：
+1. 可编辑规则类型、输入参数、表达式、版本。
+
+事件编辑：
+1. 可编辑事件名称、描述、triggerCondition、payload、ordering。
+2. 可选择唯一 producerBehaviorRef。
+3. 根据 producerBehaviorRef 自动推导或联动显示 producerEntityRef。
+4. 可配置多个 subscriberBehaviorRefs。
+5. 应支持维护事件备注、说明类字段。
+
+场景编辑：
+1. 可编辑 UseCase 与 BusinessProcess。
+2. 可新增、删除、调整步骤顺序。
+3. 可配置步骤类型和 nextSteps。
+4. 行为步骤必须从既有行为中选择。
+5. 事件等待步骤必须从既有事件中选择。
+6. 应支持维护流程说明、步骤说明、异常路径说明等长文本信息。
+
+
+十、导入导出需求
+
+10.1 导入
+
+系统应支持按目录或按文件导入：
+1. m1-object-model.yaml
+2. m2-behavior-model.yaml
+3. m3-rule-model.yaml
+4. m4-scenario-model.yaml
+5. event-model.yaml
+
+导入流程：
+1. 解析 YAML
+2. 基础结构校验
+3. 跨文件引用校验
+4. 冲突检测
+5. 生成导入结果报告
+6. 将可识别的说明类字段完整映射到内存模型
+7. 对暂不参与编辑但存在于源 YAML 的扩展字段进行保留
+
+冲突检测至少包括：
+1. ID 冲突
+2. 引用悬空
+3. producerBehaviorRef 找不到
+4. subscriberBehaviorRefs 找不到
+5. ownerEntity 找不到
+
+导入保真要求：
+1. 源 YAML 中明确存在的 description、remark、notes、violationMessage、表达式、步骤说明等字段，导入后不得丢失。
+2. 对于当前页面未提供专门编辑器的字段，也应在内部模型中保留，并在导出时原样输出或尽量等价输出。
+3. 如果源 YAML 中存在系统暂未识别的扩展字段，应以扩展属性方式保留，避免导出时丢失。
+4. 如源 YAML 使用的是注释 `#` 而非结构化字段承载业务说明，系统可以尽量保留，但一期不承诺百分之百保留注释格式；重要备注建议建模为显式字段。
+
+
+10.2 导出
+
+系统导出时必须按文件拆分导出，不导出为单体聚合 YAML。
+
+导出要求：
+1. 保持稳定字段顺序
+2. 保持引用字段可读
+3. 保持与 sample 目录同类文件风格一致
+4. 不得因系统内部简化模型而丢失原有业务语义字段
+5. 对导入时保留的扩展字段，导出时应继续输出
+6. 导出结果应继续可被系统再次导入，形成稳定闭环
+
+
+十一、模型一致性校验规则
+
+一期必须实现以下校验：
+
+1. 对象唯一性
+Entity.id 全局唯一。
+
+2. 对象别名唯一性
+Entity.alias 在同一 domain 内唯一。
+
+3. 属性规则校验
+当属性 type=Enum 时必须有 enumValues；
+当属性 type=Reference 时必须有 refEntity。
+
+4. 关系校验
+Relation 的 sourceEntity 和 targetEntity 必须存在。
+
+5. 约束校验
+ReferentialConstraint 的 scope、constraintType、enforcedAt 必须合法。
+
+6. 行为归属校验
+Behavior.ownerEntity 必须存在于 M1。
+
+7. 行为唯一性校验
+同一对象下不允许出现重复行为 id。
+
+8. 行为引用校验
+场景、事件中引用的 BehaviorRef 必须存在。
+
+9. 规则引用校验
+Behavior.appliedRules 中的 RuleRef 必须存在。
+
+10. 事件生产者校验
+每个事件必须且只能有一个 producerBehaviorRef。
+
+11. 事件对象一致性校验
+producerEntityRef 必须与 producerBehaviorRef.ownerEntity 一致。
+
+12. 事件订阅者校验
+subscriberBehaviorRefs 中的行为必须存在。
+
+13. 场景步骤校验
+FlowStep 的引用对象必须存在，nextSteps 不能引用不存在的 stepId。
+
+14. 用例和流程引用校验
+BusinessProcess.useCases 中引用的 UseCase 必须存在。
+
+15. 保真字段校验
+导入后再导出时，结构化说明字段、备注字段、表达式字段不得无故缺失。
+
+
+十二、关键交互约束
+
+1. 在对象树下点击行为时，打开的是行为定义编辑。
+2. 在场景树下点击行为步骤时，默认打开的是行为引用信息，不允许直接修改该行为的定义。
+3. 在事件树下点击 producer/subscriber 行为时，默认跳转到行为定义。
+4. 删除对象前，必须检查是否仍被行为 ownerEntity、规则 sourceField、关系、场景、事件引用。
+5. 删除行为前，必须检查是否仍被场景或事件引用。
+6. 删除事件前，必须检查是否仍被场景步骤引用。
+
+
+十三、一期可交付目标
+
+一期完成后，系统至少应达到以下能力：
+1. 可以编辑 M1 对象模型的实体、属性、关系、约束。
+2. 可以编辑 M2 行为模型，并通过 ownerEntity 归属对象。
+3. 可以编辑 M3 规则模型，并把规则绑定到行为。
+4. 可以编辑独立事件模型，并配置生产者行为、订阅者行为。
+5. 可以编辑 M4 的 UseCase 和 BusinessProcess。
+6. 可以从树状结构浏览“对象、行为、规则、事件、场景”五类模型。
+7. 可以导入和导出多文件 YAML。
+8. 可以执行跨文件一致性校验并给出错误提示。
+9. 可以将 YAML 作为唯一持久化结果保存，不依赖数据库。
+10. 可以尽量完整保留源 YAML 中已有的说明、备注、规则表达式、行为描述、流程描述等信息。
+
+
+十四、后续扩展说明
+
+本 V2 文档是一期基线，不覆盖以下高级能力：
+1. M5 权限主体模型
+2. M6 补偿与 Saga
+3. M7 质量约束
+4. 多人协作编辑
+5. 版本比较与差异合并
+6. 基于模型自动生成代码
+
+后续扩展时，应优先保持以下原则不变：
+1. 定义与引用分离
+2. 多文件存储
+3. 树状导航主视图
+4. 跨模型一致性校验

@@ -1,0 +1,103 @@
+behaviors:
+  - behaviorType: COMMAND
+    id: Schema_Generate
+    name: LLM 生成 App Schema
+    ownerEntity: AppSchema
+    preconditions:
+      - sourceProject.isNotEmpty()
+      - model.m1.exists()
+    postconditions:
+      - field: schema.lifecycle
+        setValue: 草稿
+    producedEvents:
+      - Schema.Generated
+    requiredPermissions:
+      - PERM-SCHEMA-GENERATE
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: Schema_Validate
+    name: 校验 App Schema
+    ownerEntity: AppSchema
+    postconditions:
+      - field: schema.lifecycle
+        setValue: 已校验
+    preconditions:
+      - schema.pages.count() > 0
+      - 'forall(p in schema.pages): p.id.isNotEmpty()'
+    producedEvents:
+      - Schema.Validated
+    requiredPermissions:
+      - PERM-SCHEMA-VALIDATE
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: Schema_Reject
+    name: 打回重生成
+    ownerEntity: AppSchema
+    postconditions:
+      - field: schema.lifecycle
+        setValue: 草稿
+    preconditions:
+      - validation.failed == true
+    producedEvents:
+      - Schema.Rejected
+    requiredPermissions:
+      - PERM-SCHEMA-VALIDATE
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: API_GenerateCRUD
+    name: 生成 CRUD API
+    ownerEntity: Block
+    preconditions:
+      - block.entity.exists()
+    producedEvents:
+      - API.Generated
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: API_GenerateBehavior
+    name: 生成行为 API
+    ownerEntity: Block
+    preconditions:
+      - block.behavior.exists()
+    producedEvents:
+      - API.Generated
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: App_Generate
+    name: 生成应用
+    ownerEntity: AppSchema
+    postconditions:
+      - field: schema.lifecycle
+        setValue: 已生成
+    preconditions:
+      - schema.lifecycle == '已校验'
+    producedEvents:
+      - App.Generated
+    requiredPermissions:
+      - PERM-APP-GENERATE
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: App_Run
+    name: 启动应用
+    ownerEntity: AppSchema
+    producedEvents:
+      - App.Started
+    requiredPermissions:
+      - PERM-APP-RUN
+    triggerType: SYSTEM
+  - behaviorType: COMMAND
+    id: Renderer_Render
+    name: 渲染页面
+    ownerEntity: Block
+    preconditions:
+      - block.type in ['form','table','stat','detail']
+    triggerType: SYSTEM
+  - behaviorType: QUERY
+    id: Schema_Report
+    name: Schema 校验报告
+    ownerEntity: AppSchema
+    description: 返回结构化错误清单：断链/非法控件/重复 id
+    requiredPermissions:
+      - PERM-SCHEMA-VALIDATE
+domain: 本体工作台 V3 应用生成机制
+model_type: BEHAVIOR
+version: '1.1'

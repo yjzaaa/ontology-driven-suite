@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>中国高中理科生知识体系 - 中间层矩阵</title>
+<style>
+body{font-family:"Microsoft YaHei",Arial,sans-serif;background:#f7f8fa;margin:0;padding:20px;color:#1a1a2e}h2{text-align:center}.note{max-width:1100px;margin:0 auto 14px;color:#555;font-size:13px;line-height:1.6}.ctrl{display:flex;justify-content:center;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.ctrl select{padding:5px 9px;border:1px solid #c8d0e4;border-radius:4px;background:#fff}table{border-collapse:collapse;margin:0 auto;background:#fff;box-shadow:0 2px 8px #0001}th,td{border:1px solid #d7dbe8;padding:10px 14px;vertical-align:top;min-width:165px;max-width:285px}th{background:#3f51b5;color:#fff}.row-h{background:#5c6bc0;color:#fff;font-weight:bold}.cell{font-size:13px;line-height:1.58}.d0{background:#fff}.d1{background:#f6f8ff}.d2{background:#eef2ff}.d3{background:#e3e9ff}.level-beginner{background:#dff6e5}.level-intermediate{background:#fff1b8}.level-advanced{background:#f2c94c}.level-block{border-radius:6px;margin:5px 0;padding:7px 9px;border:1px solid #00000012}.group{margin:0 0 3px;font-weight:700;color:#1f2a3d}.legend{text-align:center;margin-top:14px;color:#555;font-size:13px}.legend span{display:inline-block;width:14px;height:14px;margin:0 4px;vertical-align:middle;border:1px solid #00000018}
+</style>
+</head>
+<body>
+<h2>中国高中理科生 · 动态多维知识矩阵</h2>
+<div class="note">可任选两个维度生成矩阵：知识模块、学习场景、难度层级。默认按模块 × 场景展示；筛选为“全部”时，难度分组用绿色/浅黄色/深黄色区分。</div>
+<div class="ctrl"><label>行维度：<select id="rowDim" onchange="syncDims()"></select></label><label>列维度：<select id="colDim" onchange="syncDims()"></select></label><label id="filterBox">筛选：<select id="filterVal" onchange="render()"></select></label></div>
+<table id="mt"></table>
+<div class="legend">难度层级：<span class="level-beginner"></span>入门 <span class="level-intermediate"></span>进阶 <span class="level-advanced"></span>高级 ｜ 知识密度：<span class="d1"></span>低 <span class="d2"></span>中 <span class="d3"></span>高 ｜ “—”表示非主线或待补充</div>
+<script>
+const dims={module:['数学','物理','化学','生物','语文','英语','通用能力','学习策略'],scenario:['课堂学习','作业训练','实验探究','综合应用','考试输出'],level:['入门','进阶','高级']};
+const dimLabel={module:'知识模块',scenario:'学习场景',level:'难度层级'};
+const entries=[
+{name:'函数与映射/基础运算',module:'数学',scenario:'课堂学习',level:'入门'},{name:'导数与最值',module:'数学',scenario:'作业训练',level:'进阶'},{name:'解析几何综合题',module:'数学',scenario:'考试输出',level:'高级'},{name:'概率统计与图表',module:'数学',scenario:'综合应用',level:'进阶'},
+{name:'受力分析',module:'物理',scenario:'课堂学习',level:'入门'},{name:'牛顿定律综合',module:'物理',scenario:'作业训练',level:'进阶'},{name:'电磁感应压轴',module:'物理',scenario:'考试输出',level:'高级'},{name:'力电模型化',module:'物理',scenario:'综合应用',level:'高级'},
+{name:'物质的量计算',module:'化学',scenario:'课堂学习',level:'入门'},{name:'离子/氧化还原方程',module:'化学',scenario:'作业训练',level:'进阶'},{name:'化学平衡与电化学',module:'化学',scenario:'考试输出',level:'高级'},{name:'实验方案评价',module:'化学',scenario:'实验探究',level:'进阶'},
+{name:'细胞结构与代谢',module:'生物',scenario:'课堂学习',level:'入门'},{name:'遗传规律计算',module:'生物',scenario:'作业训练',level:'进阶'},{name:'生物实验设计',module:'生物',scenario:'实验探究',level:'高级'},{name:'图表型遗传题',module:'生物',scenario:'考试输出',level:'高级'},
+{name:'现代文信息提取',module:'语文',scenario:'课堂学习',level:'入门'},{name:'文言文与古诗',module:'语文',scenario:'作业训练',level:'进阶'},{name:'材料作文立意',module:'语文',scenario:'考试输出',level:'高级'},{name:'材料整合表达',module:'语文',scenario:'综合应用',level:'进阶'},
+{name:'词汇语法',module:'英语',scenario:'课堂学习',level:'入门'},{name:'长难句分析',module:'英语',scenario:'作业训练',level:'进阶'},{name:'阅读理解与七选五',module:'英语',scenario:'考试输出',level:'进阶'},{name:'应用文/读后续写',module:'英语',scenario:'考试输出',level:'高级'},
+{name:'数据整理',module:'通用能力',scenario:'课堂学习',level:'入门'},{name:'图表解读',module:'通用能力',scenario:'综合应用',level:'进阶'},{name:'模型意识',module:'通用能力',scenario:'综合应用',level:'高级'},{name:'计算工具与信息检索',module:'通用能力',scenario:'作业训练',level:'入门'},
+{name:'目标拆解',module:'学习策略',scenario:'课堂学习',level:'入门'},{name:'错题复盘',module:'学习策略',scenario:'作业训练',level:'进阶'},{name:'考试节奏控制',module:'学习策略',scenario:'考试输出',level:'高级'},{name:'变量控制与实验安全',module:'学习策略',scenario:'实验探究',level:'进阶'}
+];
+const keys=Object.keys(dims),rowSel=document.getElementById('rowDim'),colSel=document.getElementById('colDim'),filterSel=document.getElementById('filterVal');
+function fillSelect(sel,selected){sel.innerHTML=keys.map(k=>`<option value="${k}" ${k===selected?'selected':''}>${dimLabel[k]}</option>`).join('')}
+function otherDim(){const r=rowSel.value,c=colSel.value;return keys.find(k=>k!==r&&k!==c)}
+function syncDims(){if(rowSel.value===colSel.value)colSel.value=keys.find(k=>k!==rowSel.value)||rowSel.value;const f=otherDim();document.getElementById('filterBox').style.display=f?'inline-block':'none';filterSel.innerHTML=f?'<option value="__all__">全部</option>'+dims[f].map(v=>`<option value="${v}">${v}</option>`).join(''):'';render()}
+function cls(n){return n===0?'d0':(n<=1?'d1':(n<=3?'d2':'d3'))}function levelCls(v){return v==='入门'?'level-beginner':(v==='进阶'?'level-intermediate':(v==='高级'?'level-advanced':''))}function isDifficultyDim(dim){return dim==='level'||/难度|层级|阶段/.test(dimLabel[dim]||dim)}
+function itemsFor(rDim,rVal,cDim,cVal,fDim,fVal){return entries.filter(e=>e[rDim]===rVal&&e[cDim]===cVal&&(!fDim||fVal==='__all__'||e[fDim]===fVal))}
+function render(){const rDim=rowSel.value,cDim=colSel.value,fDim=otherDim(),fVal=filterSel.value||'__all__',rows=dims[rDim],cols=dims[cDim];let html=`<tr><th>${dimLabel[rDim]} \\ ${dimLabel[cDim]}</th>`+cols.map(c=>`<th>${c}</th>`).join('')+'</tr>';for(const r of rows){html+=`<tr><td class="row-h">${r}</td>`;for(const c of cols){const items=itemsFor(rDim,r,cDim,c,fDim,fVal);let body='—';let cellLevelClass=isDifficultyDim(rDim)?levelCls(r):(isDifficultyDim(cDim)?levelCls(c):'');if(items.length&&fDim&&fVal==='__all__'){body=dims[fDim].map(v=>{const group=items.filter(x=>x[fDim]===v);const blockClass=isDifficultyDim(fDim)?` level-block ${levelCls(v)}`:'';return group.length?`<div class="${blockClass.trim()}"><div class="group">${v}</div>`+group.map(x=>'• '+x.name).join('<br>')+'</div>':''}).filter(Boolean).join('')}else if(items.length){body=items.map(x=>'• '+x.name).join('<br>');if(fDim&&isDifficultyDim(fDim)&&fVal!=='__all__')cellLevelClass=levelCls(fVal)}html+=`<td class="cell ${cellLevelClass||cls(items.length)}">${body}</td>`}html+='</tr>'}document.getElementById('mt').innerHTML=html}
+fillSelect(rowSel,'module');fillSelect(colSel,'scenario');syncDims();
+</script>
+</body>
+</html>

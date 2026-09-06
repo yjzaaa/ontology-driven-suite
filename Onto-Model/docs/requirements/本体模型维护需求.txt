@@ -1,0 +1,156 @@
+这是一个非常关键的步骤。为了确保后续 AI 编程能够准确生成符合你本体规范的代码，我们需要一份极其严谨的需求规约（Requirements Specification）。
+这份提示词（Prompt）将作为 AI 的“产品说明书”，强制它遵循正交分解原则，并严格处理**定义（Definition）与引用（Reference）**的区别。
+你可以直接使用以下内容作为对 AI 编程助手（如 GitHub Copilot、Cursor、Claude 或你自己启动的代码模型）的指令：
+AI 编程指令：本体建模编辑器需求定义
+角色设定：
+你是一个资深的全栈开发者，正在构建一个基于 React + TypeScript 的本体驱动建模编辑器。
+后端采用Python+Flask来实现。
+
+你需要生成一套完整的、类型安全的代码，用于管理复杂的业务本体模型。
+核心目标：
+开发一个支持 CRUD（增删改查） 的管理界面和逻辑层，能够处理两种数据源：
+1.手工录入/编辑：用户通过表单界面创建和修改本体。
+2.YAML 文件导入/导出：系统能够解析符合特定 Schema 的 YAML 文件，并将其映射到内部模型。
+第一部分：核心数据模型定义 (TypeScript Interface)
+首先，请根据 M1-M7 本体规范 定义严格的 TypeScript 接口。注意处理好  "定义 (Definition)"  与  "引用 (Reference)"  的区别。
+1. M1: 对象模型 (Entity)
+interface Entity {
+  id: string; // 唯一标识符
+  name: string;
+  description: string;
+  attributes: Attribute[]; // 属性列表
+  behaviors: BehaviorDefinition[]; // 注意：这里是定义数组，不是引用
+  lifecycle: StateMachine; // 状态机定义
+}
+
+interface Attribute {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  required: boolean;
+}
+2. M2: 行为模型 (Behavior)
+关键约束：行为必须归属于一个对象（ownerEntity），但在其他地方（如场景）被引用时，只能存储 behaviorRef。
+// 行为定义 (存储在对象下)
+interface BehaviorDefinition {
+  id: string;
+  name: string;
+  displayName: string;
+  type: 'Command' | 'Query'; // 命令或查询
+  ownerEntity: string; // 关联回 Entity.id，这是行为的“源头”
+  inputParams: Parameter[];
+  outputParams: Parameter[];
+  // 业务规则
+  preConditions: RuleRef[]; // 引用 M3 规则
+  postConditions: RuleRef[];
+  // 事件
+  producedEvents: EventRef[]; // 引用 M7 事件
+  // 异常
+  compensationRef?: BehaviorRef; // 引用另一个行为作为补偿 (M6)
+}
+
+// 行为引用 (用于在场景中组装，不可编辑定义)
+interface BehaviorRef {
+  id: string; // 指向 BehaviorDefinition.id
+  displayName: string;
+  // 注意：引用对象不应包含 input/output 的定义，只包含映射
+  paramMapping?: { source: string; target: string }[];
+}
+3. M3: 规则模型 (Rule)
+interface Rule {
+  id: string;
+  name: string;
+  type: 'Validation' | 'Calculation' | 'Derivation';
+  logic: string; // 或者更复杂的逻辑树结构
+  // 规则依赖的对象和属性
+  dependencies: {
+    entityRef: string;
+    attributeRefs: string[];
+  }[];
+}
+4. M4: 场景模型 (Scenario)
+关键约束：场景中的行为必须是 BehaviorRef，即只读引用。
+interface Scenario {
+  id: string;
+  name: string;
+  description: string;
+  steps: FlowStep[];
+}
+
+type FlowStep = 
+  | { type: 'behavior'; data: BehaviorRef } 
+  | { type: 'rule'; data: RuleRef }
+  | { type: 'condition'; condition: string; then: FlowStep[]; else: FlowStep[] }
+  | { type: 'parallel'; branches: FlowStep[][] };
+5. M7: 事件模型 (Event)
+interface Event {
+  id: string;
+  name: string;
+  producer: EntityRef; // 触发对象 (单)
+  consumers: EntityRef[]; // 订阅对象 (多)
+  payload: Parameter[]; // 携带的数据
+}
+第二部分：UI 功能需求 (React Component)
+1. 树状控件 (Tree View)
+•结构：根节点 -> 对象、规则、场景、事件。
+•对象节点：
+◦显示实体名称。
+◦子节点：属性 (叶子节点)、行为 (分支节点)。
+◦行为节点 (在对象下)：显示行为名称。双击打开定义面板（可编辑输入/输出、前置条件）。
+•场景节点：
+◦子节点：流程步骤。
+◦行为节点 (在场景下)：显示为“引用”。图标应为“链接”或“线框”样式。双击打开引用配置面板（仅可配置参数映射，不可修改行为定义）。
+2. 表单编辑器 (Form Editor)
+•实体编辑表单：支持增删改 Entity 及其 attributes。
+•行为编辑表单（仅限对象下）：
+◦输入参数表格。
+◦输出参数表格。
+◦下拉选择 preConditions 和 postConditions (从 M3 规则中选)。
+◦下拉选择 producedEvents。
+•场景编排表单：
+◦提供“添加步骤”按钮。
+◦选择行为时，必须从全局已定义的行为列表中选择（过滤掉非当前对象拥有的行为，或者允许跨对象引用？需明确，通常允许引用）。
+◦选中后，自动填充 BehaviorRef，并允许用户配置 paramMapping。
+️ 第三部分：数据导入/导出需求 (YAML)
+1. YAML Schema 约束
+系统必须支持读写符合以下逻辑结构的 YAML 文件。
+对象 YAML 示例片段：
+entities:
+  - id: Order
+    name: 订单
+    attributes:
+      - name: status
+        type: string
+    behaviors: # 这里是定义
+      - id: CreateOrder
+        name: 创建订单
+        type: Command
+        preConditions: 
+          - ruleId: ValidateOrderData # 引用
+        producedEvents:
+          - eventId: OrderCreated # 引用
+场景 YAML 示例片段：
+scenarios:
+  - id: PlaceOrderFlow
+    name: 下单流程
+    steps:
+      - type: behavior
+        ref: Order.CreateOrder # 必须是 "对象.行为" 的全路径引用
+        paramMapping:
+          - source: input.orderData
+            target: Order.attributes
+2. 导入逻辑
+•解析：使用 js-yaml 解析 YAML 字符串。
+•校验：必须验证 YAML 结构是否符合上述接口定义。
+•ID 冲突处理：如果导入的 ID 已存在，提示用户“覆盖”或“跳过”。
+•引用解析：导入场景时，必须验证 ref 指向的实体和行为是否在当前模型库中存在。如果不存在，标记为“断链”或报错。
+3. 导出逻辑
+•将内存中的 TypeScript 对象（Entity[], Scenario[] 等）序列化为标准的 YAML 格式。
+第四部分：关键业务规则约束 (Must Implement)
+在生成代码时，必须强制执行以下约束，以防止数据不一致：
+1.行为唯一性：同一个 Entity 下不能有两个同名的行为 id。
+2.引用有效性：在场景中引用的行为，必须在 entities 列表中存在对应的定义。
+3.事件一致性：行为定义中产生的事件，必须在 events 列表中存在定义。
+4.编辑权限隔离：
+◦当用户在 对象树节点 下编辑行为时，允许修改 input, output, preConditions。
+◦当用户在 场景树节点 下点击行为时，仅允许修改 paramMapping，禁止修改行为定义本身。
+请基于以上需求规约，首先生成 TypeScript 接口定义文件，并规划 React 组件的目录结构。

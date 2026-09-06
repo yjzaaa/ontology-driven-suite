@@ -1,0 +1,87 @@
+﻿source,target,type,weight
+架构愿景,EA价值定位,depends,0.82
+架构原则,架构愿景,contains,0.72
+架构治理委员会,架构原则,depends,0.72
+架构合规评审,架构治理委员会,contains,0.68
+投资组合对齐,架构愿景,evolved,0.62
+ADM预备阶段,EA价值定位,depends,0.7
+ADM A架构愿景,ADM预备阶段,evolved,0.72
+ADM B业务架构,ADM A架构愿景,depends,0.7
+ADM C信息系统架构,ADM B业务架构,depends,0.68
+ADM D技术架构,ADM C信息系统架构,depends,0.62
+ADM E机会与方案,ADM D技术架构,evolved,0.58
+ADM F迁移规划,ADM E机会与方案,depends,0.68
+ADM G实施治理,ADM F迁移规划,evolved,0.56
+ADM H架构变更管理,ADM G实施治理,evolved,0.52
+需求管理,ADM A架构愿景,contains,0.5
+需求管理,BABOK需求引出,analogy,0.45
+业务能力模型,架构愿景,depends,0.72
+价值流,业务能力模型,contains,0.65
+组织映射,业务能力模型,contains,0.52
+BABOK需求引出,利益相关者地图,depends,0.62
+业务规则,BABOK需求引出,evolved,0.5
+业务服务,业务能力模型,contains,0.6
+运营模型,价值流,contains,0.62
+运营模型,组织映射,depends,0.46
+数据域,业务能力模型,depends,0.62
+主数据,数据域,contains,0.68
+元数据,数据域,contains,0.58
+数据标准,主数据,contains,0.62
+数据质量,数据标准,depends,0.6
+数据安全,数据域,contains,0.55
+DCMM成熟度,数据质量,evolved,0.52
+DAMA数据管理职能,数据域,evolved,0.58
+DAMA数据管理职能,DCMM成熟度,analogy,0.42
+应用组合,业务能力模型,depends,0.66
+应用能力映射,应用组合,contains,0.72
+应用能力映射,业务能力模型,depends,0.72
+应用服务,应用能力映射,evolved,0.54
+API架构,应用服务,contains,0.62
+事件驱动架构,领域事件,depends,0.66
+应用现代化,应用组合,evolved,0.66
+产品化团队,业务能力模型,evolved,0.45
+基础设施架构,ADM D技术架构,contains,0.58
+混合云架构,基础设施架构,evolved,0.58
+容器平台,混合云架构,evolved,0.54
+Kubernetes,容器平台,contains,0.68
+服务网格,Kubernetes,evolved,0.48
+可观测性,Kubernetes,contains,0.58
+SRE,可观测性,evolved,0.58
+零信任,数据安全,analogy,0.42
+限界上下文,业务能力模型,depends,0.68
+聚合,限界上下文,contains,0.58
+领域事件,限界上下文,contains,0.62
+事件风暴,领域事件,evolved,0.52
+微服务自治,限界上下文,depends,0.72
+数据库独立,微服务自治,contains,0.58
+服务契约,微服务自治,contains,0.62
+服务契约,API架构,analogy,0.48
+微服务自治,应用现代化,evolved,0.58
+基线架构,应用组合,contains,0.5
+基线架构,基础设施架构,contains,0.48
+目标架构,架构愿景,depends,0.76
+差距分析,基线架构,depends,0.7
+差距分析,目标架构,depends,0.7
+过渡架构,差距分析,evolved,0.62
+工作包,过渡架构,contains,0.58
+架构路线图,工作包,contains,0.7
+变更管理,架构路线图,evolved,0.48
+架构仓库,架构制品目录矩阵图,contains,0.5
+参考架构,架构仓库,contains,0.58
+架构模式,参考架构,contains,0.45
+ArchiMate,架构制品目录矩阵图,analogy,0.52
+C4模型,应用服务,analogy,0.42
+架构决策记录ADR,架构合规评审,contains,0.48
+EA工具链,架构仓库,evolved,0.54
+复杂度度量,应用组合,depends,0.58
+技术债,应用现代化,contains,0.52
+架构KPI,架构路线图,depends,0.58
+架构雷达,参考架构,evolved,0.42
+例外治理,架构合规评审,contains,0.52
+持续改进闭环,架构KPI,evolved,0.62
+持续改进闭环,ADM H架构变更管理,analogy,0.58
+目标架构,ADM C信息系统架构,contains,0.48
+目标架构,ADM D技术架构,contains,0.48
+架构路线图,ADM F迁移规划,analogy,0.7
+架构合规评审,ADM G实施治理,analogy,0.62
+持续改进闭环,例外治理,contains,0.44

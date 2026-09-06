@@ -1,0 +1,392 @@
+behaviors:
+- appliedRules:
+  - RULE-OWNER-DEPT-CONSISTENT
+  behaviorType: COMMAND
+  id: Contract_SaveAsDraft
+  name: 保存合同草稿
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 草稿
+  preconditions:
+  - 合同已完成线下签字盖章
+  - 引用的产品、客户、部门、人员有效
+  requiredPermissions:
+  - PERM-CONTRACT-CREATE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-CONTRACT-APPROVAL-LEVEL
+  - RULE-OWNER-DEPT-CONSISTENT
+  behaviorType: COMMAND
+  id: Contract_Submit
+  name: 提交合同审批
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 待财务经理审批
+  preconditions:
+  - contract.status == '草稿'
+  - 付款比例合计等于 100%
+  requiredPermissions:
+  - PERM-CONTRACT-CREATE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-CONTRACT-APPROVAL-LEVEL
+  - RULE-OWNER-DEPT-CONSISTENT
+  behaviorType: COMMAND
+  id: Contract_Resubmit
+  name: 修改并重新提交合同
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 待财务经理审批
+  preconditions:
+  - contract.status == '已驳回'
+  requiredPermissions:
+  - PERM-CONTRACT-CREATE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-CONTRACT-INVOICE-ELIGIBLE
+  - RULE-PAYSTAGE-REMAIN-QUOTA
+  - RULE-INVOICE-TAXRATE-CONSISTENT
+  - RULE-ALLOCATION-CONTRACT-CONSISTENT
+  behaviorType: COMMAND
+  id: Invoice_SaveAsDraft
+  name: 保存开票草稿
+  ownerEntity: AGG-INVOICE-001
+  postconditions:
+  - field: invoice.approvalStatus
+    setValue: 草稿
+  preconditions:
+  - 对应合同已纳入管理且未作废、未归档
+  requiredPermissions:
+  - PERM-INVOICE-ISSUE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-CONTRACT-INVOICE-ELIGIBLE
+  - RULE-PAYSTAGE-REMAIN-QUOTA
+  - RULE-INVOICE-TAXRATE-CONSISTENT
+  - RULE-ALLOCATION-CONTRACT-CONSISTENT
+  behaviorType: COMMAND
+  id: Invoice_Submit
+  name: 提交开票审批
+  ownerEntity: AGG-INVOICE-001
+  postconditions:
+  - field: invoice.approvalStatus
+    setValue: 待财务经理审批
+  preconditions:
+  - invoice.approvalStatus == '草稿'
+  - 分摊金额合计等于开票金额
+  requiredPermissions:
+  - PERM-INVOICE-ISSUE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-CONTRACT-INVOICE-ELIGIBLE
+  - RULE-PAYSTAGE-REMAIN-QUOTA
+  - RULE-INVOICE-TAXRATE-CONSISTENT
+  - RULE-ALLOCATION-CONTRACT-CONSISTENT
+  behaviorType: COMMAND
+  id: Invoice_Resubmit
+  name: 修改并重新提交开票
+  ownerEntity: AGG-INVOICE-001
+  postconditions:
+  - field: invoice.approvalStatus
+    setValue: 待财务经理审批
+  preconditions:
+  - invoice.approvalStatus == '已驳回'
+  requiredPermissions:
+  - PERM-INVOICE-ISSUE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-INVOICE-REMAIN-RECEIPT-QUOTA
+  - RULE-RECEIPT-CONTRACT-CONSISTENT
+  behaviorType: COMMAND
+  id: Receipt_Record
+  name: 录入合同收款
+  ownerEntity: AGG-RECEIPT-001
+  postconditions:
+  - field: receipt.status
+    setValue: 已登记
+  preconditions:
+  - 对应开票已批准且未作废
+  - 对应合同未作废
+  - 累计有效收款不超过开票金额
+  requiredPermissions:
+  - PERM-RECEIPT-RECORD
+  syncTriggers:
+  - behaviorRef: Invoice_UpdateReceiptStatus
+    description: 收款登记后同步更新开票收款状态
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: COMMAND
+  id: Receipt_Reverse
+  name: 冲销错误收款
+  ownerEntity: AGG-RECEIPT-001
+  postconditions:
+  - field: receipt.status
+    setValue: 已冲销
+  preconditions:
+  - receipt.status == '已登记'
+  requiredPermissions:
+  - PERM-RECEIPT-REVERSE
+  syncTriggers:
+  - behaviorRef: Invoice_UpdateReceiptStatus
+    description: 收款冲销后同步重算开票收款状态
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-CONTRACT-VOID-ELIGIBLE
+  behaviorType: COMMAND
+  id: Contract_VoidOrArchive
+  name: 作废或归档合同
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 已作废或已归档
+  preconditions:
+  - 作废时不存在已批准开票或有效收款；归档时合同已结束执行
+  requiredPermissions:
+  - PERM-CONTRACT-VOID
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-INVOICE-VOID-ELIGIBLE
+  behaviorType: COMMAND
+  id: Invoice_Void
+  name: 作废开票
+  ownerEntity: AGG-INVOICE-001
+  postconditions:
+  - field: invoice.approvalStatus
+    setValue: 已作废
+  preconditions:
+  - invoice.approvalStatus == '已批准'
+  - 不存在有效收款
+  requiredPermissions:
+  - PERM-INVOICE-VOID
+  syncTriggers:
+  - behaviorRef: PaymentStage_UpdateInvoiceStatus
+    description: 开票作废后同步释放付款阶段开票额度
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: COMMAND
+  id: Product_Maintain
+  name: 维护产品信息
+  ownerEntity: AGG-PRODUCT-001
+  postconditions: []
+  preconditions:
+  - 具备主数据维护权限
+  requiredPermissions:
+  - PERM-MASTERDATA-MAINTAIN
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: COMMAND
+  id: Customer_Maintain
+  name: 维护客户信息
+  ownerEntity: AGG-CUSTOMER-001
+  postconditions: []
+  preconditions:
+  - 具备主数据维护权限
+  requiredPermissions:
+  - PERM-MASTERDATA-MAINTAIN
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: COMMAND
+  id: Department_Maintain
+  name: 维护部门信息
+  ownerEntity: AGG-DEPARTMENT-001
+  postconditions: []
+  preconditions:
+  - 具备主数据维护权限
+  requiredPermissions:
+  - PERM-MASTERDATA-MAINTAIN
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: COMMAND
+  id: Employee_Maintain
+  name: 维护人员信息
+  ownerEntity: AGG-EMPLOYEE-001
+  postconditions: []
+  preconditions:
+  - 具备主数据维护权限
+  requiredPermissions:
+  - PERM-MASTERDATA-MAINTAIN
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: QUERY
+  id: Contract_QueryList
+  name: 查询合同列表
+  ownerEntity: AGG-CONTRACT-001
+  postconditions: []
+  preconditions: []
+  queryReportRef: REP-CONTRACT-LIST
+  requiredPermissions:
+  - PERM-CONTRACT-QUERY-LIST
+  - PERM-CONTRACT-QUERY-LIST-OWN-DEPT
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: QUERY
+  id: Contract_QueryDetail
+  name: 查看合同详情
+  ownerEntity: AGG-CONTRACT-001
+  postconditions: []
+  preconditions: []
+  queryReportRef: REP-CONTRACT-DETAIL
+  requiredPermissions:
+  - PERM-CONTRACT-QUERY-DETAIL
+  - PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: QUERY
+  id: Contract_QueryExecutionAnalysis
+  name: 查询合同执行情况分析
+  ownerEntity: AGG-CONTRACT-001
+  postconditions: []
+  preconditions: []
+  queryReportRef: REP-CONTRACT-EXECUTION
+  requiredPermissions:
+  - PERM-CONTRACT-QUERY-EXECUTION
+  - PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: QUERY
+  id: Contract_QueryDepartmentSummary
+  name: 查询部门合同统计分析
+  ownerEntity: AGG-CONTRACT-001
+  postconditions: []
+  preconditions: []
+  queryReportRef: REP-DEPT-CONTRACT-SUMMARY
+  requiredPermissions:
+  - PERM-CONTRACT-QUERY-DEPT-SUMMARY
+  - PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: QUERY
+  id: Contract_QueryInvoicedUnreceived
+  name: 查询已开票未收款合同
+  ownerEntity: AGG-CONTRACT-001
+  postconditions: []
+  preconditions: []
+  queryReportRef: REP-INVOICED-UNRECEIVED
+  requiredPermissions:
+  - PERM-CONTRACT-QUERY-UNRECEIVED
+  - PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-APPROVAL-SOD
+  - RULE-CONTRACT-APPROVAL-LEVEL
+  behaviorType: COMMAND
+  id: Contract_ApproveFinance
+  name: 财务经理审批合同
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 已纳入管理 / 待总经理审批 / 已驳回
+  preconditions:
+  - contract.status == '待财务经理审批'
+  - 审批人不是提交人
+  requiredPermissions:
+  - PERM-CONTRACT-APPROVE-FINANCE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-APPROVAL-SOD
+  behaviorType: COMMAND
+  id: Contract_ApproveGeneralManager
+  name: 总经理审批合同
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 已纳入管理 / 已驳回
+  preconditions:
+  - contract.status == '待总经理审批'
+  - 审批人不是提交人
+  requiredPermissions:
+  - PERM-CONTRACT-APPROVE-LARGE
+  syncTriggers: []
+  triggerType: USER_ACTION
+- appliedRules:
+  - RULE-APPROVAL-SOD
+  behaviorType: COMMAND
+  id: Invoice_ApproveFinance
+  name: 财务经理审批开票
+  ownerEntity: AGG-INVOICE-001
+  postconditions:
+  - field: invoice.approvalStatus
+    setValue: 已批准 / 已驳回
+  preconditions:
+  - invoice.approvalStatus == '待财务经理审批'
+  - 审批人不是提交人
+  requiredPermissions:
+  - PERM-INVOICE-APPROVE
+  syncTriggers:
+  - behaviorRef: PaymentStage_UpdateInvoiceStatus
+    description: 审批通过后同步更新付款阶段开票状态
+  triggerType: USER_ACTION
+- appliedRules: []
+  behaviorType: COMMAND
+  id: PaymentStage_UpdateInvoiceStatus
+  name: 更新付款阶段开票状态
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: paymentStage.invoiceStatus
+    setValue: 未开票 / 部分开票 / 已足额开票
+  preconditions:
+  - 开票批准或作废后触发
+  requiredPermissions: []
+  syncTriggers:
+  - behaviorRef: Contract_UpdateSettlementStatus
+    description: 付款阶段开票状态更新后判断合同结清资格
+    ruleRef: RULE-CONTRACT-SETTLEMENT
+  triggerType: SYSTEM
+- appliedRules:
+  - RULE-INVOICE-RECEIPT-STATUS
+  behaviorType: COMMAND
+  id: Invoice_UpdateReceiptStatus
+  name: 更新开票收款状态
+  ownerEntity: AGG-INVOICE-001
+  postconditions:
+  - field: invoice.receivedAmount
+    setValue: 有效收款累计金额
+  - field: invoice.receivedFlag
+    setValue: 是否全部收齐
+  - field: invoice.receivedDate
+    setValue: 全部收齐时更新为收款完成时间
+  preconditions:
+  - 收款登记或冲销后触发
+  requiredPermissions: []
+  syncTriggers:
+  - behaviorRef: Contract_UpdateSettlementStatus
+    description: 开票收款状态更新后判断合同结清资格
+    ruleRef: RULE-CONTRACT-SETTLEMENT
+  triggerType: SYSTEM
+- appliedRules:
+  - RULE-CONTRACT-SETTLEMENT
+  behaviorType: COMMAND
+  id: Contract_UpdateSettlementStatus
+  name: 更新合同结清状态
+  ownerEntity: AGG-CONTRACT-001
+  postconditions:
+  - field: contract.status
+    setValue: 已结清 / 已纳入管理
+  preconditions:
+  - RULE-CONTRACT-SETTLEMENT 判定后触发
+  requiredPermissions: []
+  syncTriggers: []
+  triggerType: SYSTEM
+domain: 销售合同执行管理
+model_type: BEHAVIOR
+version: '1.0'

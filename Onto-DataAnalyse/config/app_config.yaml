@@ -1,0 +1,25 @@
+# 应用配置
+app:
+  name: 本体驱动电商数据智能分析系统
+  version: "1.0.0"
+  project_id: default                    # 单一默认项目（无登录无多项目）
+
+paths:
+  models_dir: ./backend/models           # 本体 YAML 落盘目录
+  prompts_dir: ./backend/prompts         # AI Prompt 模板目录
+  scenarios_dir: ./backend/scenarios     # 场景配置目录
+  demo_files_dir: ./demo_files           # 演示上传文件目录
+
+sql:
+  max_rows: 10000
+  forbidden_keywords:
+    - INSERT
+    - UPDATE
+    - DELETE
+    - DROP
+    - CREATE
+    - ALTER
+    - TRUNCATE
+    - REPLACE
+    - ATTACH
+    - PRAGMA

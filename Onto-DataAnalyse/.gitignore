@@ -1,0 +1,38 @@
+# Secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+ENV/
+
+# Node
+node_modules/
+dist/
+.vite/
+*.log
+
+# Generated runtime data (the demo database is intentionally tracked)
+backend/data/system.db
+backend/data/*.db-journal
+backend/models/*/
+!backend/models/.gitkeep
+!backend/models/default/
+!backend/models/default/*.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

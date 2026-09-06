@@ -1,0 +1,57 @@
+# M7 质量约束模型 - 合同管理
+model_type: QUALITY
+version: "1.1"
+domain: "合同管理"
+
+quality_annotations:
+  - qaId: QA-CONTRACT-SAVE
+    name: 合同录入一致性要求
+    appliesTo: [Contract_Create, UC-CONTRACT-ENTRY]
+    performance:
+      maxResponseMs: 2000
+      targetTps: 30
+      maxConcurrency: 20
+    consistency:
+      level: STRONG
+    concurrency:
+      strategy: OPTIMISTIC_LOCK
+    auditRequired: true
+
+  - qaId: QA-CONTRACT-QUERY
+    name: 合同查询性能要求
+    appliesTo: [Contract_Query, Contract_GetDetail, UC-CONTRACT-QUERY]
+    performance:
+      maxResponseMs: 500
+      targetTps: 100
+      maxConcurrency: 200
+    consistency:
+      level: READ_YOUR_WRITES
+    auditRequired: true
+
+  - qaId: QA-INVOICE-SAVE
+    name: 开票保存质量要求
+    appliesTo: [Invoice_Create, UC-INVOICE-PROCESS]
+    performance:
+      maxResponseMs: 1500
+      targetTps: 50
+      maxConcurrency: 30
+    consistency:
+      level: STRONG
+    concurrency:
+      strategy: OPTIMISTIC_LOCK
+    auditRequired: true
+    idempotencyRequired: true
+
+  - qaId: QA-PAYMENT-RECEIVE
+    name: 收款确认质量要求
+    appliesTo: [Payment_Receive, UC-PAYMENT-PROCESS]
+    performance:
+      maxResponseMs: 1000
+      targetTps: 50
+      maxConcurrency: 20
+    consistency:
+      level: STRONG
+    concurrency:
+      strategy: QUEUE_SERIALIZE
+    auditRequired: true
+    idempotencyRequired: true

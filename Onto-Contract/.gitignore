@@ -1,0 +1,19 @@
+# Local secrets and runtime configuration
+deepseek.config.yaml
+
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Node dependencies and build output
+frontend/node_modules/
+frontend/dist/
+
+# Local tooling and OS files
+.pytest_cache/
+.mypy_cache/
+.coverage
+.DS_Store
+Thumbs.db

@@ -1,0 +1,182 @@
+# M2 行为模型 - 合同管理
+model_type: BEHAVIOR
+version: "1.1"
+domain: "合同管理"
+
+behaviors:
+  - id: Contract_Create
+    name: 合同录入
+    ownerEntity: Contract
+    behaviorType: COMMAND
+    triggerType: USER_ACTION
+    preconditions:
+      - "contract.contractNo.isNotEmpty()"
+      - "contract.paymentTerms.count() > 0"
+      - "sum(contract.paymentTerms.ratio) == 1.0"
+    postconditions:
+      - field: contract.status
+        setValue: "生效"
+      - field: contract.invoicedAmountTotal
+        setValue: 0
+      - field: contract.receivedAmountTotal
+        setValue: 0
+      - field: contract.invoiceStatus
+        setValue: "未开票"
+      - field: contract.receiptStatus
+        setValue: "未收款"
+    requiredPermissions:
+      - PERM-CONTRACT-CREATE
+    producedEvents:
+      - Contract.Created
+    qualityAnnotation: QA-CONTRACT-SAVE
+    compensationRef: COMP-Contract_Create
+
+  - id: Contract_Void
+    name: 合同作废
+    ownerEntity: Contract
+    behaviorType: COMMAND
+    triggerType: SYSTEM
+    preconditions:
+      - "contract.status == '生效'"
+    postconditions:
+      - field: contract.status
+        setValue: "作废"
+
+  - id: Invoice_Create
+    name: 合同开票录入
+    ownerEntity: Invoice
+    behaviorType: COMMAND
+    triggerType: USER_ACTION
+    preconditions:
+      - "invoice.contractId.exists()"
+      - "invoice.amount > 0"
+      - "invoice.stageMappings.count() > 0"
+      - "invoice.status != '已冲销'"
+    appliedRules:
+      - RULE-INVOICE-AMT-CHECK
+      - RULE-INVOICE-STAGE-MAPPING-CHECK
+      - RULE-TAX-CALC
+    postconditions:
+      - field: invoice.status
+        setValue: "已开票"
+      - field: invoice.isReceived
+        setValue: false
+    requiredPermissions:
+      - PERM-INVOICE-CREATE
+    producedEvents:
+      - Invoice.Created
+    qualityAnnotation: QA-INVOICE-SAVE
+    compensationRef: COMP-Invoice_Create
+
+  - id: Invoice_Delete
+    name: 开票记录冲销
+    ownerEntity: Invoice
+    behaviorType: COMMAND
+    triggerType: SYSTEM
+    preconditions:
+      - "invoice.status != '已冲销'"
+    postconditions:
+      - field: invoice.status
+        setValue: "已冲销"
+      - field: invoice.isReceived
+        setValue: false
+      - field: invoice.receivedDate
+        setValue: NULL
+
+  - id: Payment_Receive
+    name: 合同收款录入
+    ownerEntity: Invoice
+    behaviorType: COMMAND
+    triggerType: USER_ACTION
+    preconditions:
+      - "invoice.status == '已开票'"
+      - "invoice.isReceived == false"
+    postconditions:
+      - field: invoice.isReceived
+        setValue: true
+      - field: invoice.receivedDate
+        setValue: NOW()
+      - field: invoice.status
+        setValue: "已收款"
+    requiredPermissions:
+      - PERM-PAYMENT-RECEIVE
+    producedEvents:
+      - Payment.Received
+    qualityAnnotation: QA-PAYMENT-RECEIVE
+    compensationRef: COMP-Payment_Receive
+
+  - id: Payment_Receive_Rollback
+    name: 收款确认回滚
+    ownerEntity: Invoice
+    behaviorType: COMMAND
+    triggerType: SYSTEM
+    preconditions:
+      - "invoice.isReceived == true"
+    postconditions:
+      - field: invoice.isReceived
+        setValue: false
+      - field: invoice.receivedDate
+        setValue: NULL
+      - field: invoice.status
+        setValue: "已开票"
+
+  - id: Contract_UpdateInvoiceSummary
+    name: 更新合同开票汇总
+    ownerEntity: Contract
+    behaviorType: EVENT_HANDLER
+    triggerType: EVENT
+    preconditions:
+      - "contract.status == '生效'"
+      - "event.amount > 0"
+    postconditions:
+      - field: contract.invoicedAmountTotal
+        setValue: "contract.invoicedAmountTotal + event.amount"
+      - field: contract.invoiceStatus
+        setValue: "IF contract.invoicedAmountTotal + event.amount >= contract.totalAmount THEN '已开票' ELSE '部分开票'"
+    producedEvents:
+      - Contract.InvoiceSummaryUpdated
+
+  - id: Contract_UpdateReceiptSummary
+    name: 更新合同收款汇总
+    ownerEntity: Contract
+    behaviorType: EVENT_HANDLER
+    triggerType: EVENT
+    preconditions:
+      - "contract.status == '生效'"
+      - "event.amount > 0"
+    postconditions:
+      - field: contract.receivedAmountTotal
+        setValue: "contract.receivedAmountTotal + event.amount"
+      - field: contract.receiptStatus
+        setValue: "IF contract.receivedAmountTotal + event.amount >= contract.totalAmount THEN '已收款' ELSE '部分收款'"
+    producedEvents:
+      - Contract.ReceiptSummaryUpdated
+
+  - id: Contract_Query
+    name: 合同信息模糊查询
+    ownerEntity: Contract
+    behaviorType: QUERY
+    triggerType: USER_ACTION
+    inputParams:
+      - [contractNo, String]
+      - [contractName, String]
+      - [productType, String]
+      - [deptId, Reference]
+      - [signDateStart, Date]
+      - [signDateEnd, Date]
+    requiredPermissions:
+      - PERM-CONTRACT-QUERY
+    qualityAnnotation: QA-CONTRACT-QUERY
+    description: 支持按合同编号、名称、产品类型、部门及签订日期范围进行模糊查询
+
+  - id: Contract_GetDetail
+    name: 获取合同详细信息
+    ownerEntity: Contract
+    behaviorType: QUERY
+    triggerType: USER_ACTION
+    inputParams:
+      - [contractId, String]
+    requiredPermissions:
+      - PERM-CONTRACT-DETAIL
+    qualityAnnotation: QA-CONTRACT-QUERY
+    description: 获取合同、付款条款、开票记录及收款汇总的完整信息

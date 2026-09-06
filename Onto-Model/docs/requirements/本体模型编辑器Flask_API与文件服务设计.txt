@@ -1,0 +1,425 @@
+本体模型编辑器 Flask API 与文件服务设计
+
+一、文档定位
+
+本文件基于 [本体模型维护需求V2.txt](d:/myapp1/meta/Requirement/本体模型维护需求V2.txt)，用于指导后端 Python + Flask 开发。
+
+本文件关注：
+1. Flask 服务边界
+2. 文件读写策略
+3. API 设计
+4. YAML 解析与保真策略
+5. 校验与错误返回格式
+
+
+二、后端总体职责
+
+后端不是数据库业务系统，而是 YAML 模型工作区服务。
+
+后端主要负责：
+1. 打开模型目录
+2. 读取多文件 YAML
+3. 解析为统一工作区结构
+4. 执行跨文件校验
+5. 处理保存与导出
+6. 分析引用关系
+7. 为前端提供统一 API
+
+一期不负责：
+1. 数据库存储
+2. 用户权限系统
+3. 多人协同锁
+4. 审批流
+
+
+三、后端模块划分
+
+建议拆分为以下模块：
+1. `app.py` 或应用工厂
+2. `routes/`
+3. `services/workspace_service.py`
+4. `services/file_service.py`
+5. `services/yaml_service.py`
+6. `services/model_registry.py`
+7. `services/validation_service.py`
+8. `services/reference_service.py`
+9. `schemas/`
+10. `utils/`
+
+
+四、工作区模型
+
+4.1 工作区概念
+
+后端每次操作围绕一个“工作区”展开。
+
+工作区包含：
+1. domain 名称
+2. 文件路径集合
+3. 解析后的五类模型
+4. 扩展字段
+5. 校验结果
+6. 文件摘要
+
+
+4.2 工作区数据建议
+
+建议统一返回以下结构：
+1. `workspaceMeta`
+2. `models.objectModel`
+3. `models.behaviorModel`
+4. `models.ruleModel`
+5. `models.eventModel`
+6. `models.scenarioModel`
+7. `validation`
+8. `fileStats`
+9. `extensions`
+
+说明：
+1. `extensions` 用于承载暂不编辑但必须保留的原始扩展字段。
+2. 工作区结构仅用于接口传输和内存处理，不作为最终持久化格式。
+
+
+五、文件组织与路径约定
+
+一期文件组织固定为：
+1. `m1-object-model.yaml`
+2. `m2-behavior-model.yaml`
+3. `m3-rule-model.yaml`
+4. `m4-scenario-model.yaml`
+5. `event-model.yaml`
+
+工作区打开时应支持：
+1. 通过目录路径打开
+2. 通过上传文件集合打开
+
+
+六、Flask API 设计
+
+6.1 工作区接口
+
+`POST /api/workspace/open`
+用途：
+1. 按目录打开工作区
+
+请求体建议：
+```json
+{
+  "directory": "D:/models/contract"
+}
+```
+
+响应体至少包含：
+1. 工作区元信息
+2. 五类模型
+3. 初始校验结果
+
+
+`POST /api/workspace/open-upload`
+用途：
+1. 通过上传 YAML 文件集合打开工作区
+
+适用场景：
+1. 浏览器选择本地文件
+2. 临时编辑未落盘文件集合
+
+
+`GET /api/workspace/current`
+用途：
+1. 获取当前工作区状态
+
+
+`POST /api/workspace/save`
+用途：
+1. 将当前工作区保存回原始 YAML 文件
+
+请求体建议：
+```json
+{
+  "workspace": {},
+  "options": {
+    "validateBeforeSave": true
+  }
+}
+```
+
+
+`POST /api/workspace/save-as`
+用途：
+1. 另存到新目录
+
+
+6.2 校验接口
+
+`POST /api/validation/run`
+用途：
+1. 对整个工作区执行完整校验
+
+返回内容至少包括：
+1. errors
+2. warnings
+3. nodeMarkers
+4. fileMarkers
+
+
+`POST /api/validation/node`
+用途：
+1. 对单个节点执行局部校验
+
+
+6.3 引用分析接口
+
+`POST /api/references/find`
+用途：
+1. 查询某节点被哪些地方引用
+
+请求体建议：
+```json
+{
+  "nodeType": "behavior",
+  "nodeId": "Contract_Create"
+}
+```
+
+
+`POST /api/references/delete-impact`
+用途：
+1. 删除前影响分析
+
+
+6.4 模型更新接口
+
+建议提供两种策略，二选一：
+1. 前端整体提交工作区，后端统一落盘
+2. 前端按节点提交 patch，后端更新工作区
+
+一期更建议采用：
+1. 整体工作区提交保存
+2. 局部节点校验单独调用
+
+原因：
+1. 实现更简单
+2. 与 YAML 文件整体写回模式更一致
+3. 更利于保真导出
+
+
+6.5 导入导出辅助接口
+
+`POST /api/import/preview`
+用途：
+1. 导入前预检
+2. 返回可识别文件、缺失文件、错误摘要
+
+
+`POST /api/export/preview`
+用途：
+1. 导出前生成文件预览
+2. 展示将要输出的文件与摘要
+
+
+七、YAML 解析与序列化策略
+
+7.1 基本要求
+
+后端必须支持：
+1. 解析标准 YAML
+2. 映射到统一工作区结构
+3. 序列化回多文件 YAML
+
+
+7.2 保真要求
+
+后端必须尽量保留以下内容：
+1. `description`
+2. `remark`
+3. `notes`
+4. `violationMessage`
+5. `expression`
+6. 长文本说明
+7. 未被前端显式编辑但源 YAML 中存在的扩展字段
+
+一期说明：
+1. 结构化字段保真是硬要求。
+2. 注释 `#` 的原样保留不是硬要求，但可以作为增强项。
+
+
+7.3 扩展字段保留机制
+
+建议在解析时采用：
+1. 已知字段进入标准模型
+2. 未知字段进入 `_extensions` 或 `extensions`
+
+示例：
+```json
+{
+  "id": "RULE-001",
+  "name": "金额校验",
+  "description": "说明",
+  "_extensions": {
+    "ownerTeam": "财务组",
+    "reviewStatus": "draft"
+  }
+}
+```
+
+导出时：
+1. 标准字段按规范输出
+2. `_extensions` 中内容继续输出为原层级等价字段
+
+
+八、文件服务设计
+
+8.1 文件读取
+
+`file_service` 负责：
+1. 路径检查
+2. 文件存在性检查
+3. 读取文本内容
+4. UTF-8 编码处理
+
+
+8.2 文件写入
+
+写入策略建议：
+1. 先写临时文件
+2. 校验写入成功
+3. 再原子替换目标文件
+
+目标：
+1. 避免中途失败导致原 YAML 损坏
+
+
+8.3 文件清单校验
+
+打开目录时应检查：
+1. 必需文件是否存在
+2. 文件名是否符合约定
+3. 是否存在额外模型文件
+
+对于额外文件：
+1. 可以记录为旁路文件
+2. 不参与一期标准编辑
+
+
+九、模型校验服务设计
+
+`validation_service` 至少应实现以下校验：
+1. 结构校验
+2. 跨文件引用校验
+3. 唯一性校验
+4. 事件生产者校验
+5. 场景步骤引用校验
+6. 保真字段校验
+
+返回结构建议：
+```json
+{
+  "errors": [
+    {
+      "code": "BEHAVIOR_OWNER_NOT_FOUND",
+      "message": "Behavior.ownerEntity 不存在",
+      "nodeType": "behavior",
+      "nodeId": "Contract_Create",
+      "file": "m2-behavior-model.yaml",
+      "path": "behaviors[0].ownerEntity",
+      "severity": "error"
+    }
+  ],
+  "warnings": []
+}
+```
+
+
+十、引用服务设计
+
+`reference_service` 负责构建统一引用索引。
+
+至少支持：
+1. 行为 -> 对象
+2. 行为 -> 规则
+3. 事件 -> producer 行为
+4. 事件 -> subscriber 行为
+5. 场景 -> 行为
+6. 场景 -> 事件
+7. 流程 -> 用例
+
+删除分析结果建议返回：
+1. 是否允许删除
+2. 直接引用列表
+3. 间接影响摘要
+
+
+十一、错误处理规范
+
+后端接口应统一错误格式：
+```json
+{
+  "success": false,
+  "error": {
+    "code": "WORKSPACE_SAVE_FAILED",
+    "message": "保存失败",
+    "details": {}
+  }
+}
+```
+
+错误分类建议：
+1. `FILE_NOT_FOUND`
+2. `YAML_PARSE_ERROR`
+3. `MODEL_VALIDATION_ERROR`
+4. `REFERENCE_CONFLICT`
+5. `SAVE_FAILED`
+6. `UNSUPPORTED_FORMAT`
+
+
+十二、序列化输出规范
+
+导出 YAML 时应遵循：
+1. 文件拆分稳定
+2. 字段顺序稳定
+3. 数组顺序尽量稳定
+4. 长文本使用可读形式输出
+5. 空字段不随意大量输出
+6. 再次导入应得到等价工作区结构
+
+
+十三、推荐后端目录结构
+
+backend/
+├── app.py
+├── config.py
+├── routes/
+│   ├── workspace_routes.py
+│   ├── validation_routes.py
+│   ├── reference_routes.py
+│   └── import_export_routes.py
+├── services/
+│   ├── workspace_service.py
+│   ├── file_service.py
+│   ├── yaml_service.py
+│   ├── validation_service.py
+│   ├── reference_service.py
+│   └── serializer_service.py
+├── models/
+│   └── workspace_models.py
+├── schemas/
+│   ├── request_schemas.py
+│   └── response_schemas.py
+├── utils/
+└── tests/
+
+
+十四、一期后端交付清单
+
+一期建议最少交付：
+1. 工作区打开接口
+2. 工作区保存接口
+3. 另存导出接口
+4. 全量校验接口
+5. 单节点校验接口
+6. 引用分析接口
+7. 删除影响分析接口
+8. YAML 解析与序列化服务
+9. 扩展字段保留机制
+10. 原子写文件机制
+

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Palantir APEX · 供应链本体论 · D3.js 可视化</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;background:#FAFBFC;color:#37474F;overflow-x:auto;}
+  .wrap{min-width:1640px;padding:20px;}
+  .header{background:linear-gradient(90deg,#1A237E,#3949AB);color:#fff;padding:22px 30px;border-radius:8px 8px 0 0;}
+  .header h1{font-size:24px;font-weight:700;margin-bottom:4px;}
+  .header p{font-size:13px;color:#C5CAE9;}
+
+  .stage-bar{display:flex;background:#fff;border-left:1px solid #E0E0E0;border-right:1px solid #E0E0E0;padding:8px 0;}
+  .stage-item{flex:1;text-align:center;font-size:12px;font-weight:600;color:#90A4AE;border-right:1px dashed #ECEFF1;padding:4px 0;}
+  .stage-item:last-child{border-right:none;}
+
+  .canvas-box{background:#fff;border:1px solid #E0E0E0;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;}
+  svg{display:block;}
+
+  /* tooltip */
+  .d3-tooltip{position:absolute;pointer-events:none;background:rgba(26,35,126,0.96);color:#fff;padding:10px 14px;border-radius:6px;font-size:12px;line-height:1.6;max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;z-index:100;}
+  .d3-tooltip .tt-title{font-size:13px;font-weight:700;margin-bottom:4px;color:#FFF176;}
+  .d3-tooltip .tt-role{font-size:11px;color:#B3E5FC;margin-bottom:6px;}
+  .d3-tooltip .tt-body{font-size:11px;color:#E8EAF6;}
+
+  /* detail panel */
+  .detail-panel{position:fixed;top:20px;right:20px;width:320px;background:#fff;border:1px solid #CFD8DC;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.12);padding:18px 20px;z-index:200;display:none;font-size:12px;line-height:1.7;}
+  .detail-panel.show{display:block;animation:slideIn .25s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+  .detail-panel .dp-close{float:right;cursor:pointer;color:#90A4AE;font-size:18px;line-height:1;}
+  .detail-panel .dp-close:hover{color:#E53935;}
+  .detail-panel .dp-shape{display:inline-block;width:14px;height:14px;border-radius:2px;vertical-align:middle;margin-right:6px;}
+  .detail-panel h3{font-size:15px;color:#1A237E;margin-bottom:8px;}
+  .detail-panel .dp-label{font-weight:700;color:#546E7A;}
+  .detail-panel .dp-section{margin-top:10px;padding-top:10px;border-top:1px solid #ECEFF1;}
+
+  .legend-box{margin-top:16px;background:#fff;border:1px solid #E0E0E0;border-radius:8px;padding:18px 24px;display:flex;gap:40px;flex-wrap:wrap;}
+  .legend-section h4{font-size:13px;color:#1A237E;margin-bottom:10px;}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#37474F;margin-bottom:6px;}
+  .legend-line{display:flex;align-items:center;gap:8px;font-size:12px;color:#37474F;margin-bottom:6px;}
+
+  .footer-tip{margin-top:12px;font-size:12px;color:#78909C;text-align:center;}
+  .footer-tip b{color:#546E7A;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Palantir APEX · 自主规划与执行 · 供应链本体论可视化</h1>
+    <p>Fortune 100 CPG 案例 · Foundry 整合 S&amp;OE 与 S&amp;OP · 6 个月创造 $100M+ 价值 · 基于 SBR 建模法 · D3.js 交互呈现</p>
+  </div>
+
+  <div class="stage-bar" id="stageBar"></div>
+
+  <div class="canvas-box">
+    <svg id="viz" width="1600" height="680" viewBox="0 0 1600 680"></svg>
+  </div>
+
+  <div class="legend-box">
+    <div class="legend-section">
+      <h4>组件形状（Structure）</h4>
+      <div class="legend-item"><svg width="20" height="16"><rect x="1" y="1" width="18" height="14" rx="2" fill="#E3F2FD" stroke="#1976D2" stroke-width="1.5"/></svg>矩形：基础功能组件</div>
+      <div class="legend-item"><svg width="20" height="16"><rect x="1" y="1" width="18" height="14" rx="6" fill="#E8F5E9" stroke="#388E3C" stroke-width="1.5"/></svg>圆角矩形：有状态/记忆组件</div>
+      <div class="legend-item"><svg width="22" height="16"><polygon points="11,1 21,8 11,15 1,8" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5"/></svg>菱形：判断/分支节点</div>
+      <div class="legend-item"><svg width="24" height="16"><polygon points="6,1 18,1 23,8 18,15 6,15 1,8" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5"/></svg>六边形：决策/控制组件</div>
+      <div class="legend-item"><svg width="20" height="16"><circle cx="10" cy="8" r="7" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5"/></svg>圆形：数据存储/资源池</div>
+      <div class="legend-item"><svg width="24" height="16"><path d="M3,14 C1,14 1,9 5,8 C4,3 12,2 14,6 C16,1 22,3 21,8 C24,8 24,14 20,14 Z" fill="#F5F5F5" stroke="#757575" stroke-width="1.2"/></svg>云形：外部系统/环境</div>
+    </div>
+    <div class="legend-section">
+      <h4>连接线类型（Relation）</h4>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#D32F2F" stroke-width="3"/><polygon points="36,1 44,5 36,9" fill="#D32F2F"/></svg>关键路径（主流程）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#1976D2" stroke-width="2"/><polygon points="36,1 44,5 36,9" fill="#1976D2"/></svg>数据流（实线）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#388E3C" stroke-width="1.5" stroke-dasharray="6,3"/><polygon points="36,1 44,5 36,9" fill="#388E3C"/></svg>控制流（虚线·触发）</div>
+      <div class="legend-line"><svg width="44" height="10"><line x1="2" y1="5" x2="38" y2="5" stroke="#F57C00" stroke-width="1.6" stroke-dasharray="4,3"/><polygon points="36,1 44,5 36,9" fill="#F57C00"/></svg>反馈流（点线·闭环）</div>
+    </div>
+    <div class="legend-section" style="flex:1;min-width:380px;">
+      <h4>核心逻辑闭环 · 本体论驱动的自主供应链</h4>
+      <div style="font-size:12px;line-height:1.8;color:#37474F;">
+        <div><b style="color:#D32F2F;">主路径：</b>ERP/TMS/WMS → Foundry数据集成 → Ontology语义建模 → 根因信号检测 → APEX差异预测 → 自主执行 → 业务价值</div>
+        <div><b style="color:#F57C00;">闭环反馈：</b>APEX 自动更新 Source of Truth，并反向刷新 Ontology 本体，使规划与执行不再孤立</div>
+        <div><b style="color:#7B1FA2;">本体论核心：</b>对象（库存/订单/移动）+ 动作（重分配/重排）+ 关系（差异检测）+ 规则（根因→预测→行动）建模为可计算的语义模型</div>
+        <div><b style="color:#388E3C;">价值落点：</b>打通 S&amp;OP（周级规划）与 S&amp;OE（日级执行）孤岛，反应窗口从 &lt;24h 延长到数周，6 个月创造 $100M+ 价值</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-tip">
+    交互方式：<b>悬停组件</b>查看摘要 · <b>点击组件</b>查看详情 · <b>双击空白</b>重置高亮 · 红色主路径带流动动画
+  </div>
+</div>
+
+<div class="d3-tooltip" id="tooltip"></div>
+<div class="detail-panel" id="detailPanel">
+  <span class="dp-close" onclick="document.getElementById('detailPanel').classList.remove('show')">&times;</span>
+  <div id="detailContent"></div>
+</div>
+
+<script>
+// ====== 阶段标签 ======
+const stages = [
+  {label:"① 数据接入", x:135},
+  {label:"② 语义建模", x:250},
+  {label:"③ 根因检测", x:490},
+  {label:"④ 预测引擎", x:730},
+  {label:"⑤ 自主执行", x:975},
+  {label:"⑥ 价值输出", x:1215}
+];
+const stageBar = d3.select("#stageBar");
+stages.forEach(s=>{
+  stageBar.append("div").attr("class","stage-item").style("flex","1").text(s.label);
+});
+
+// ====== 组件数据 ======
+const nodes = [
+  {
+    id:"erp", shape:"cloud", x:135, y:120, w:170, h:90,
+    fill:"#F5F5F5", stroke:"#757575", textColor:"#424242",
+    title:"ERP / TMS / WMS", sub:"企业供应链数据源",
+    role:"外部环境 · 数据源",
+    desc:"企业资源规划(ERP)、运输管理(TMS)、仓储管理(WMS)三大系统，提供订单、库存、物流、生产等原始数据。APEX 的数据底座。",
+    behavior:"输入：无（源头） → 输出：原始业务数据流",
+    props:["订单数据","库存快照","生产计划","物流状态"]
+  },
+  {
+    id:"foundry", shape:"rect", x:250, y:340, w:180, h:90,
+    fill:"#E3F2FD", stroke:"#1976D2", textColor:"#0D47A1",
+    title:"Foundry", sub:"数据集成 · 统一视图",
+    role:"核心层 · 数据集成",
+    desc:"Palantir Foundry 将 ERP/TMS/WMS 的多源异构数据整合为统一本体视图，消除规划与执行之间的数据孤岛。这是本体论落地的第一步。",
+    behavior:"输入：多源原始数据 → 处理：清洗/关联/语义化 → 输出：统一本体数据",
+    props:["数据管道","本体映射","统一标识"]
+  },
+  {
+    id:"ontology", shape:"roundrect", x:490, y:340, w:200, h:90,
+    fill:"#E8F5E9", stroke:"#388E3C", textColor:"#1B5E20",
+    title:"Ontology 本体", sub:"对象·属性·动作·规则",
+    role:"核心层 · 语义模型（本体论核心）",
+    desc:"Palantir 本体论的核心：将现实世界的供应链实体建模为「对象（库存/订单/移动）+ 属性 + 动作（重分配/重排）+ 关系 + 规则」的可计算语义模型。它是整个 APEX 系统的大脑模型。",
+    behavior:"输入：统一数据 → 处理：语义建模/规则绑定 → 输出：可推理的业务对象图",
+    props:["Object 类型","Action 类型","Rule 规则","Relation 关系"]
+  },
+  {
+    id:"rootcause", shape:"diamond", x:730, y:340, w:160, h:110,
+    fill:"#FFF9C4", stroke:"#F9A825", textColor:"#F57F17",
+    title:"根因信号检测", sub:"生产·供应商·物流",
+    role:"核心层 · 判断/分支",
+    desc:"在执行过程中实时检测导致计划偏差的根因信号，例如：生产步骤产出低于目标、供应商只交付了 40% 订单、物流延误等。信号在根因层面被捕获，而非事后补救。",
+    behavior:"输入：执行实时信号 → 判断：是否偏离计划 → 输出：根因事件 + 影响范围",
+    props:["生产偏差","供应商违约","物流延误","库存异常"]
+  },
+  {
+    id:"apex", shape:"hexagon", x:975, y:340, w:180, h:90,
+    fill:"#F3E5F5", stroke:"#7B1FA2", textColor:"#4A148C",
+    title:"APEX 预测引擎", sub:"差异预测·方案推荐",
+    role:"核心层 · 决策控制",
+    desc:"APEX（Autonomous Planning & Execution）基于根因信号，向前预测库存差异将在何时何地发生，并自动推荐解决方案。它把反应窗口从 <24h 延长到数周，让规划可以提前介入。",
+    behavior:"输入：根因事件 → 处理：前向预测/方案生成 → 输出：差异预警 + 行动建议",
+    props:["差异预测","方案推荐","反应窗口扩展"]
+  },
+  {
+    id:"autoexec", shape:"hexagon", x:1215, y:340, w:180, h:90,
+    fill:"#F3E5F5", stroke:"#7B1FA2", textColor:"#4A148C",
+    title:"自动化执行引擎", sub:"重分配·重排·移动",
+    role:"核心层 · 决策控制",
+    desc:"在供应商延误或生产失败时，自动部署解决方案：重分配滞留库存、重排即将过期的库存消耗、自动执行库存移动。案例中自动完成 9,700+ 次移动操作。",
+    behavior:"输入：行动建议 → 处理：自动编排/执行 → 输出：库存移动/重排指令",
+    props:["库存重分配","消耗重排","自动移动(9700+)"]
+  },
+  {
+    id:"sot", shape:"circle", x:580, y:560, w:150, h:150,
+    fill:"#FFF9C4", stroke:"#F9A825", textColor:"#F57F17",
+    title:"Source of Truth", sub:"真相源·单一事实",
+    role:"存储层 · 数据池",
+    desc:"Foundry 维护的单一事实源（Single Source of Truth）。APEX 检测到差异后，会自动更新真相源，使所有下游优化流程（S&OP/S&OE）都基于最新事实重新求解，避免基于过时数据决策。",
+    behavior:"输入：APEX 更新 → 存储：最新事实 → 输出：刷新 Ontology 与下游流程",
+    props:["单一事实","实时刷新","下游可信源"]
+  },
+  {
+    id:"sandop", shape:"roundrect", x:980, y:540, w:220, h:90,
+    fill:"#FFE0B2", stroke:"#E65100", textColor:"#BF360C",
+    title:"S&OP / S&OE", sub:"规划与执行整合",
+    role:"输出层 · 业务流程",
+    desc:"S&OP（销售与运营规划，周级）与 S&OE（销售与运营执行，日级）原本是割裂的两大孤岛。APEX 通过本体论把它们打通：执行信号实时反馈到规划，规划基于真相源动态调整。",
+    behavior:"输入：真相源刷新 → 处理：规划调整/执行对齐 → 输出：整合的供应链运营",
+    props:["S&OP 周级规划","S&OE 日级执行","反应窗口 24h→数周"]
+  },
+  {
+    id:"kpi", shape:"cloud", x:1335, y:120, w:290, h:100,
+    fill:"#F5F5F5", stroke:"#757575", textColor:"#424242",
+    title:"业务成果 KPI", sub:"$100M+ 价值",
+    role:"外部环境 · 价值输出",
+    desc:"6 个月交付成果：创造 $100M+ 价值；防止 $69M 短单（本有库存却缺货）；重分配 $15.6M 滞留库存（临期风险）；重排 $3M 消耗（本将过期）；自动执行 9,700+ 次库存移动。",
+    behavior:"输入：自动化执行结果 → 输出：可量化的业务价值",
+    props:["$100M+ 价值","$69M 防短单","$15.6M 重分配","$3M 重排消耗","9700+ 移动"]
+  }
+];
+
+// ====== 连接线数据 ======
+const links = [
+  {from:"erp", to:"foundry", type:"main", label:"ERP数据", ctrl:null},
+  {from:"foundry", to:"ontology", type:"main", label:null, ctrl:null},
+  {from:"ontology", to:"rootcause", type:"main", label:null, ctrl:null},
+  {from:"rootcause", to:"apex", type:"main", label:"信号", ctrl:null},
+  {from:"apex", to:"autoexec", type:"main", label:"方案", ctrl:null},
+  {from:"autoexec", to:"kpi", type:"data", label:"业务输出", ctrl:{c1x:1270,c1y:250,c2x:1340,c2y:230}},
+  {from:"autoexec", to:"sandop", type:"data", label:"执行接入流程", ctrl:{c1x:1215,c1y:480,c2x:980,c2y:490}},
+  {from:"sandop", to:"sot", type:"data", label:"流程刷新", bidir:true, ctrl:null},
+  {from:"apex", to:"sot", type:"feedback", label:"① 更新真相源", ctrl:{c1x:975,c1y:500,c2x:720,c2y:530}},
+  {from:"sot", to:"ontology", type:"feedback", label:"② 刷新本体", ctrl:{c1x:520,c1y:490,c2x:470,c2y:450}},
+  {from:"apex", to:"autoexec", type:"control", label:"触发自主执行", ctrl:{c1x:975,c1y:280,c2x:1215,c2y:280}}
+];
+
+// ====== 颜色映射 ======
+const linkColor = {main:"#D32F2F", data:"#1976D2", control:"#388E3C", feedback:"#F57C00"};
+const linkWidth = {main:3, data:2, control:1.5, feedback:1.6};
+const linkDash = {main:null, data:null, control:"6,3", feedback:"4,3"};
+
+// ====== SVG 初始化 ======
+const svg = d3.select("#viz");
+const W = 1600, H = 680;
+const g = svg.append("g");
+
+// 箭头定义
+const defs = svg.append("defs");
+["blue","green","orange","red"].forEach(c=>{
+  const color = {blue:"#1976D2",green:"#388E3C",orange:"#F57C00",red:"#D32F2F"}[c];
+  defs.append("marker").attr("id","arrow-"+c).attr("markerWidth",10).attr("markerHeight",8)
+    .attr("refX",9).attr("refY",4).attr("orient","auto")
+    .append("polygon").attr("points","0 0, 10 4, 0 8").attr("fill",color);
+});
+defs.append("marker").attr("id","arrow-blue-start").attr("markerWidth",10).attr("markerHeight",8)
+  .attr("refX",1).attr("refY",4).attr("orient","auto")
+  .append("polygon").attr("points","10 0, 0 4, 10 8").attr("fill","#1976D2");
+
+// 流动动画渐变
+const flowGrad = defs.append("linearGradient").attr("id","flow-grad").attr("x1","0%").attr("y1","0%").attr("x2","100%").attr("y2","0%");
+flowGrad.append("stop").attr("offset","0%").attr("stop-color","#D32F2F").attr("stop-opacity",0);
+flowGrad.append("stop").attr("offset","50%").attr("stop-color","#FFCDD2").attr("stop-opacity",1);
+flowGrad.append("stop").attr("offset","100%").attr("stop-color","#D32F2F").attr("stop-opacity",0);
+
+// 背景层带
+const layerData = [
+  {y:70, h:130, label:"外部环境层", color:"#F5F7FA"},
+  {y:210, h:230, label:"Foundry 核心处理层", color:"#FFFDE7"},
+  {y:450, h:200, label:"存储与输出层", color:"#F3E5F5"}
+];
+const layerG = g.append("g").attr("class","layers");
+layerData.forEach(d=>{
+  layerG.append("rect").attr("x",0).attr("y",d.y).attr("width",W).attr("height",d.h).attr("fill",d.color).attr("opacity",0.35);
+  layerG.append("text").attr("x",16).attr("y",d.y+18).attr("font-size",11).attr("fill","#90A4AE").attr("font-weight",600).text(d.label);
+});
+
+// ====== 绘制连接线 ======
+function getEdgePoint(node, towardNode){
+  // 返回节点边界上朝向目标的点（简单用中心 + 边界近似）
+  const cx = node.x, cy = node.y;
+  const dx = towardNode.x - cx, dy = towardNode.y - cy;
+  // 根据形状估算边界半径
+  let rx, ry;
+  if(node.shape==="circle"){ rx = node.w/2; ry = node.h/2; }
+  else if(node.shape==="diamond"){ rx = node.w/2; ry = node.h/2; }
+  else if(node.shape==="hexagon"){ rx = node.w/2; ry = node.h/2; }
+  else { rx = node.w/2; ry = node.h/2; }
+  const ang = Math.atan2(dy, dx);
+  // 椭圆边界近似
+  const px = cx + rx * Math.cos(ang) * 0.9;
+  const py = cy + ry * Math.sin(ang) * 0.9;
+  return {x:px, y:py};
+}
+
+const linkG = g.append("g").attr("class","links");
+const linkPaths = [];
+
+links.forEach((lk,i)=>{
+  const sNode = nodes.find(n=>n.id===lk.from);
+  const tNode = nodes.find(n=>n.id===lk.to);
+  const sp = getEdgePoint(sNode, tNode);
+  const tp = getEdgePoint(tNode, sNode);
+  let pathD;
+  if(lk.ctrl){
+    pathD = `M ${sp.x},${sp.y} C ${lk.ctrl.c1x},${lk.ctrl.c1y} ${lk.ctrl.c2x},${lk.ctrl.c2y} ${tp.x},${tp.y}`;
+  } else {
+    // 简单贝塞尔
+    const mx = (sp.x+tp.x)/2;
+    pathD = `M ${sp.x},${sp.y} C ${mx},${sp.y} ${mx},${tp.y} ${tp.x},${tp.y}`;
+  }
+
+  const color = linkColor[lk.type];
+  const colorKey = lk.type==="main"?"red":lk.type==="data"?"blue":lk.type==="control"?"green":"orange";
+
+  const path = linkG.append("path")
+    .attr("d", pathD)
+    .attr("fill","none")
+    .attr("stroke", color)
+    .attr("stroke-width", linkWidth[lk.type])
+    .attr("stroke-dasharray", linkDash[lk.type]||"none")
+    .attr("marker-end", `url(#arrow-${colorKey})`)
+    .attr("class","link-path")
+    .attr("data-from", lk.from)
+    .attr("data-to", lk.to)
+    .attr("data-type", lk.type)
+    .style("cursor","pointer")
+    .style("transition","opacity .2s, stroke-width .2s");
+
+  if(lk.bidir){
+    path.attr("marker-start","url(#arrow-blue-start)");
+  }
+
+  // 标签
+  if(lk.label){
+    // 取路径中点
+    const midX = lk.ctrl ? (sp.x+tp.x+lk.ctrl.c1x+lk.ctrl.c2x)/4 : (sp.x+tp.x)/2;
+    const midY = lk.ctrl ? (sp.y+tp.y+lk.ctrl.c1y+lk.ctrl.c2y)/4 : (sp.y+tp.y)/2;
+    linkG.append("rect")
+      .attr("x", midX-32).attr("y", midY-9).attr("width",64).attr("height",16).attr("rx",8)
+      .attr("fill","#fff").attr("stroke",color).attr("stroke-width",1).attr("opacity",0.92)
+      .attr("class","link-label-bg").attr("data-link-idx",i);
+    linkG.append("text")
+      .attr("x", midX).attr("y", midY+3).attr("text-anchor","middle")
+      .attr("font-size",10).attr("fill",color).attr("font-weight",600)
+      .attr("class","link-label").attr("data-link-idx",i)
+      .text(lk.label);
+  }
+
+  linkPaths.push({el:path, data:lk, sp, tp});
+});
+
+// 主路径流动动画（在红色路径上叠加流动光点）
+linkPaths.filter(p=>p.data.type==="main").forEach(p=>{
+  p.flow = linkG.append("circle")
+    .attr("r",3.5).attr("fill","#FFEB3B").attr("opacity",0.9)
+    .style("filter","drop-shadow(0 0 4px #FFC107)");
+  // 动画
+  function moveFlow(){
+    p.flow.transition()
+      .duration(2200)
+      .ease(d3.easeLinear)
+      .attrTween("transform", ()=>{
+        const pa = d3.select(p.el[0][0] ? p.el.node() : p.el.node()).node();
+        return (t)=>{
+          const pt = pa.getPointAtLength(pa.getTotalLength()*t);
+          return `translate(${pt.x},${pt.y})`;
+        };
+      })
+      .on("end", moveFlow);
+  }
+  moveFlow();
+});
+
+// ====== 绘制组件 ======
+const nodeG = g.append("g").attr("class","nodes");
+const tooltip = d3.select("#tooltip");
+const detailPanel = d3.select("#detailPanel");
+const detailContent = d3.select("#detailContent");
+
+const shapeColorKey = {rect:"rect",roundrect:"roundrect",diamond:"diamond",hexagon:"hexagon",circle:"circle",cloud:"cloud"};
+const shapeLabel = {rect:"矩形·基础功能",roundrect:"圆角矩形·有状态",diamond:"菱形·判断分支",hexagon:"六边形·决策控制",circle:"圆形·数据池",cloud:"云形·外部环境"};
+
+nodes.forEach(node=>{
+  const ng = nodeG.append("g")
+    .attr("class","node-group")
+    .attr("data-id", node.id)
+    .attr("transform", `translate(${node.x},${node.y})`)
+    .style("cursor","pointer");
+
+  let shape;
+  const hw = node.w/2, hh = node.h/2;
+
+  if(node.shape==="cloud"){
+    shape = ng.append("path")
+      .attr("d", ()=>{
+        const w=node.w, h=node.h;
+        return `M ${-w/2+10},${h/2}
+          C ${-w/2-5},${h/2} ${-w/2-5},${-h/4} ${-w/4},${-h/4}
+          C ${-w/4},${-h/2-8} ${w/4},${-h/2-8} ${w/4},${-h/4}
+          C ${w/2+8},${-h/4} ${w/2+8},${h/4} ${w/2-5},${h/2}
+          Z`;
+      })
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="rect"){
+    shape = ng.append("rect")
+      .attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",4)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="roundrect"){
+    shape = ng.append("rect")
+      .attr("x",-hw).attr("y",-hh).attr("width",node.w).attr("height",node.h).attr("rx",14)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="diamond"){
+    shape = ng.append("polygon")
+      .attr("points",`0,${-hh} ${hw},0 0,${hh} ${-hw},0`)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="hexagon"){
+    const cx=0, cy=0, w=node.w, h=node.h;
+    shape = ng.append("polygon")
+      .attr("points",`${-w/2+h/3},0 ${-w/2+h/3},${-h/2} ${w/2-h/3},${-h/2} ${w/2-h/3},0 ${w/2-h/3},${h/2} ${-w/2+h/3},${h/2}`)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  } else if(node.shape==="circle"){
+    shape = ng.append("circle")
+      .attr("r",node.w/2)
+      .attr("fill",node.fill).attr("stroke",node.stroke).attr("stroke-width",2)
+      .style("filter","drop-shadow(1px 2px 2px rgba(0,0,0,.12))");
+  }
+
+  shape.attr("class","node-shape");
+
+  // 文字
+  ng.append("text").attr("text-anchor","middle").attr("y",-6)
+    .attr("font-size",14).attr("font-weight",700).attr("fill",node.textColor)
+    .attr("class","node-title").text(node.title);
+  ng.append("text").attr("text-anchor","middle").attr("y",12)
+    .attr("font-size",10).attr("fill",node.textColor).attr("opacity",0.8)
+    .attr("class","node-sub").text(node.sub);
+
+  // 端口圆点（输入/输出）
+  if(["foundry","ontology","apex"].includes(node.id)){
+    ng.append("circle").attr("cx",-hw-2).attr("cy",0).attr("r",3.5).attr("fill",node.stroke);
+    ng.append("circle").attr("cx",hw+2).attr("cy",0).attr("r",3.5).attr("fill","none").attr("stroke",node.stroke).attr("stroke-width",1.5);
+  }
+
+  // 交互：悬停
+  ng.on("mouseenter", function(event){
+    tooltip.style("opacity",1)
+      .html(`<div class="tt-title">${node.title}</div>
+             <div class="tt-role">${node.role}</div>
+             <div class="tt-body">${node.desc}</div>`)
+      .style("left",(event.pageX+14)+"px")
+      .style("top",(event.pageY-10)+"px");
+    highlightNode(node.id, true);
+  })
+  .on("mousemove", function(event){
+    tooltip.style("left",(event.pageX+14)+"px").style("top",(event.pageY-10)+"px");
+  })
+  .on("mouseleave", function(){
+    tooltip.style("opacity",0);
+    if(!detailPanel.classed("show") || detailPanel.attr("data-active")!==node.id){
+      resetHighlight();
+    }
+  })
+  .on("click", function(){
+    showDetail(node);
+  });
+
+  // 入场动画
+  ng.attr("opacity",0).transition().duration(600).delay(nodes.indexOf(node)*80).attr("opacity",1);
+});
+
+// ====== 高亮逻辑 ======
+function highlightNode(nodeId, dimOthers){
+  const connected = new Set([nodeId]);
+  links.forEach(lk=>{
+    if(lk.from===nodeId) connected.add(lk.to);
+    if(lk.to===nodeId) connected.add(lk.from);
+  });
+
+  nodeG.selectAll(".node-group").transition().duration(200)
+    .style("opacity", d=> dimOthers ? (connected.has(d3.select(this).attr("data-id"))?1:0.25) : 1);
+  // 上面 this 不对，改写
+  nodeG.selectAll(".node-group").each(function(){
+    const id = d3.select(this).attr("data-id");
+    const op = dimOthers ? (connected.has(id)?1:0.22) : 1;
+    d3.select(this).transition().duration(200).style("opacity",op);
+  });
+
+  linkG.selectAll(".link-path").each(function(){
+    const el = d3.select(this);
+    const f = el.attr("data-from"), t = el.attr("data-to");
+    const active = (f===nodeId || t===nodeId) || !dimOthers;
+    el.transition().duration(200)
+      .style("opacity", active?1:0.12)
+      .attr("stroke-width", active ? parseFloat(el.attr("stroke-width"))+1 : parseFloat(el.attr("stroke-width")));
+  });
+  linkG.selectAll(".link-label-bg,.link-label").each(function(){
+    const idx = d3.select(this).attr("data-link-idx");
+    if(idx==null) return;
+    const lk = links[+idx];
+    const active = (lk.from===nodeId || lk.to===nodeId) || !dimOthers;
+    d3.select(this).transition().duration(200).style("opacity", active?1:0.12);
+  });
+}
+
+function resetHighlight(){
+  nodeG.selectAll(".node-group").transition().duration(200).style("opacity",1);
+  linkG.selectAll(".link-path").each(function(){
+    const el = d3.select(this);
+    const base = linkWidth[el.attr("data-type")];
+    el.transition().duration(200).style("opacity",1).attr("stroke-width",base);
+  });
+  linkG.selectAll(".link-label-bg,.link-label").transition().duration(200).style("opacity",1);
+}
+
+// ====== 详情面板 ======
+function showDetail(node){
+  const shapeBg = node.fill;
+  const html = `
+    <h3><span class="dp-shape" style="background:${shapeBg};border:1.5px solid ${node.stroke};border-radius:${node.shape==='circle'?'50%':node.shape==='roundrect'?'6px':'2px'};"></span>${node.title}</h3>
+    <div class="dp-label">角色定位</div>
+    <div style="color:#455A64;">${node.role}</div>
+    <div class="dp-label" style="margin-top:8px;">形状语义</div>
+    <div style="color:#455A64;">${shapeLabel[node.shape]}</div>
+    <div class="dp-section">
+      <div class="dp-label">职责说明</div>
+      <div style="color:#455A64;">${node.desc}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-label">行为（Behavior）</div>
+      <div style="color:#455A64;">${node.behavior}</div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-label">关键属性（Structure）</div>
+      <div style="color:#455A64;">${node.props.map(p=>`<span style="display:inline-block;background:#ECEFF1;border-radius:10px;padding:2px 10px;margin:2px 4px 2px 0;font-size:11px;">${p}</span>`).join("")}</div>
+    </div>
+  `;
+  detailContent.html(html);
+  detailPanel.classed("show",true).attr("data-active",node.id);
+  highlightNode(node.id, true);
+}
+
+// 双击空白重置
+svg.on("dblclick", function(event){
+  if(event.target.tagName==="svg" || event.target===svg.node()){
+    detailPanel.classed("show",false);
+    resetHighlight();
+  }
+});
+
+// 连接线点击也显示信息
+linkG.selectAll(".link-path").on("click", function(event, d){
+  event.stopPropagation();
+  const lk = links.find(l=> l===d);
+});
+</script>
+</body>
+</html>

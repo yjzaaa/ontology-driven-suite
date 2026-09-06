@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金刚经导图 · SBR可视化动态模型</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#1a1a2e;
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  overflow:auto;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+}
+#container{
+  width:1600px;
+  height:900px;
+  position:relative;
+  background:radial-gradient(ellipse at center,#2a2a4a 0%,#1a1a2e 70%,#0f0f1e 100%);
+}
+#canvas{display:block;}
+#tooltip{
+  position:absolute;
+  pointer-events:none;
+  background:rgba(20,20,40,0.95);
+  border:1px solid rgba(212,160,23,0.6);
+  border-radius:8px;
+  padding:12px 16px;
+  max-width:360px;
+  font-size:13px;
+  color:#e0e0e0;
+  line-height:1.6;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:100;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  word-wrap:break-word;
+}
+#tooltip .tt-title{
+  font-size:15px;
+  font-weight:bold;
+  color:#D4A017;
+  margin-bottom:6px;
+}
+#tooltip .tt-section{
+  margin-top:6px;
+  font-size:12px;
+}
+#tooltip .tt-label{
+  color:#D4A017;
+  font-weight:bold;
+}
+#tooltip .tt-quote{
+  margin-top:8px;
+  padding-top:6px;
+  border-top:1px solid rgba(212,160,23,0.3);
+  font-style:italic;
+  color:#b0b0c0;
+  font-size:11px;
+}
+@keyframes pulse-gold{
+  0%,100%{filter:drop-shadow(0 0 8px rgba(212,160,23,0.6));}
+  50%{filter:drop-shadow(0 0 20px rgba(212,160,23,1));}
+}
+@keyframes breathe{
+  0%,100%{opacity:0.3;}
+  50%{opacity:0.8;}
+}
+@keyframes rotate-slow{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+@keyframes dashFlow{
+  to{stroke-dashoffset:-20;}
+}
+.node-label{
+  pointer-events:none;
+  user-select:none;
+}
+</style>
+</head>
+<body>
+<div id="container">
+<div id="tooltip"></div>
+<svg id="canvas" viewBox="0 0 1600 900" width="1600" height="900"></svg>
+</div>
+<script>
+const W=1600,H=900;
+const svg=d3.select("#canvas");
+const tooltip=d3.select("#tooltip");
+
+// ========== DEFS ==========
+const defs=svg.append("defs");
+
+// Gold gradient
+const goldGrad=defs.append("radialGradient").attr("id","goldGrad");
+goldGrad.append("stop").attr("offset","0%").attr("stop-color","#FFE082");
+goldGrad.append("stop").attr("offset","60%").attr("stop-color","#D4A017");
+goldGrad.append("stop").attr("offset","100%").attr("stop-color","#8B6914");
+
+// Red gradient
+const redGrad=defs.append("radialGradient").attr("id","redGrad");
+redGrad.append("stop").attr("offset","0%").attr("stop-color","#EF5350");
+redGrad.append("stop").attr("offset","100%").attr("stop-color","#B71C1C");
+
+// Teal gradient
+const tealGrad=defs.append("radialGradient").attr("id","tealGrad");
+tealGrad.append("stop").attr("offset","0%").attr("stop-color","#4DB6AC");
+tealGrad.append("stop").attr("offset","100%").attr("stop-color","#00695C");
+
+// Purple gradient
+const purpleGrad=defs.append("radialGradient").attr("id","purpleGrad");
+purpleGrad.append("stop").attr("offset","0%").attr("stop-color","#BA68C8");
+purpleGrad.append("stop").attr("offset","100%").attr("stop-color","#4A148C");
+
+// Blue gradient
+const blueGrad=defs.append("radialGradient").attr("id","blueGrad");
+blueGrad.append("stop").attr("offset","0%").attr("stop-color","#64B5F6");
+blueGrad.append("stop").attr("offset","100%").attr("stop-color","#1565C0");
+
+// Green gradient
+const greenGrad=defs.append("radialGradient").attr("id","greenGrad");
+greenGrad.append("stop").attr("offset","0%").attr("stop-color","#81C784");
+greenGrad.append("stop").attr("offset","100%").attr("stop-color","#2E7D32");
+
+// Gray gradient
+const grayGrad=defs.append("radialGradient").attr("id","grayGrad");
+grayGrad.append("stop").attr("offset","0%").attr("stop-color","#9E9E9E");
+grayGrad.append("stop").attr("offset","100%").attr("stop-color","#424242");
+
+// Glow filter
+const glow=defs.append("filter").attr("id","glow").attr("x","-50%").attr("y","-50%").attr("width","200%").attr("height","200%");
+glow.append("feGaussianBlur").attr("stdDeviation","4").attr("result","blur");
+const merge=glow.append("feMerge");
+merge.append("feMergeNode").attr("in","blur");
+merge.append("feMergeNode").attr("in","SourceGraphic");
+
+// Soft glow
+const softGlow=defs.append("filter").attr("id","softGlow").attr("x","-50%").attr("y","-50%").attr("width","200%").attr("height","200%");
+softGlow.append("feGaussianBlur").attr("stdDeviation","2").attr("result","blur");
+const smerge=softGlow.append("feMerge");
+smerge.append("feMergeNode").attr("in","blur");
+smerge.append("feMergeNode").attr("in","SourceGraphic");
+
+// Arrow markers
+const arrowColors=[
+  {id:"arrow-gold",color:"#D4A017"},
+  {id:"arrow-red",color:"#EF5350"},
+  {id:"arrow-teal",color:"#4DB6AC"},
+  {id:"arrow-purple",color:"#BA68C8"},
+  {id:"arrow-blue",color:"#64B5F6"},
+  {id:"arrow-gray",color:"#9E9E9E"},
+  {id:"arrow-green",color:"#81C784"},
+  {id:"arrow-white",color:"#FFFFFF"},
+];
+arrowColors.forEach(a=>{
+  defs.append("marker")
+    .attr("id",a.id)
+    .attr("markerWidth","8").attr("markerHeight","6")
+    .attr("refX","7").attr("refY","3").attr("orient","auto")
+    .append("polygon").attr("points","0 0, 8 3, 0 6").attr("fill",a.color);
+});
+
+// ========== BACKGROUND ==========
+// Decorative mandala circles
+for(let i=0;i<5;i++){
+  const r=80+i*80;
+  svg.append("circle")
+    .attr("cx",800).attr("cy",400).attr("r",r)
+    .attr("fill","none")
+    .attr("stroke",i===2?"rgba(212,160,23,0.08)":"rgba(255,255,255,0.03)")
+    .attr("stroke-width",i===2?1:0.5)
+    .attr("stroke-dasharray",i%2===0?"none":"4,8");
+}
+
+// Lotus petals decorative
+const petalGroup=svg.append("g").attr("transform","translate(800,400)");
+for(let i=0;i<8;i++){
+  const angle=i*45;
+  petalGroup.append("path")
+    .attr("d","M0,-340 Q30,-300 0,-260 Q-30,-300 0,-340")
+    .attr("transform",`rotate(${angle})`)
+    .attr("fill","rgba(212,160,23,0.03)")
+    .attr("stroke","rgba(212,160,23,0.08)")
+    .attr("stroke-width",0.5);
+}
+
+// ========== TITLE ==========
+svg.append("text")
+  .attr("x",800).attr("y",35)
+  .attr("text-anchor","middle")
+  .attr("fill","#D4A017")
+  .attr("font-size","22")
+  .attr("font-weight","bold")
+  .attr("letter-spacing","4")
+  .text("金刚般若波罗蜜经 · SBR可视化导图");
+
+svg.append("text")
+  .attr("x",800).attr("y",55)
+  .attr("text-anchor","middle")
+  .attr("fill","rgba(255,255,255,0.4)")
+  .attr("font-size","12")
+  .text("Structure · Behavior · Relation 三维建模 | 核心-对象-行为-关系-动态逻辑");
+
+// ========== NODES DATA ==========
+const nodes=[
+  // === Center: Ultimate Wisdom ===
+  {id:"prajna",label:"金刚般若",label2:"波罗蜜",x:800,y:400,r:55,shape:"circle",grad:"url(#goldGrad)",color:"#D4A017",
+    info:{
+      title:"金刚般若波罗蜜",
+      structure:"如金刚般无坚不摧的大智慧，能断除一切烦恼执着",
+      behavior:"从文字般若→观照般若→实相般若，逐步通达",
+      relation:"三柱(空/无住/无相)的终极目标，六度的最终归宿",
+      quote:"凭借如金刚般无坚不摧的大智慧，超越生死的苦海，抵达究竟解脱的彼岸"
+    }
+  },
+  // === Three Pillars ===
+  {id:"emptiness",label:"空",x:800,y:265,r:38,shape:"hexagon",grad:"url(#redGrad)",color:"#EF5350",
+    info:{
+      title:"空 (Emptiness)",
+      structure:"万法因缘和合而生，无永恒不变的独立实体。本性是空，非一无所有",
+      behavior:"破除对实有的执着，认知缘起有、自性无",
+      relation:"无住与无相的根本理论基础，般若智慧的认知根基",
+      quote:"一切现象都是暂时的、变化的，其本性是空的。正因为通达了空的智慧，才能真正做到度生而无众生相"
+    }
+  },
+  {id:"nonAbiding",label:"无住",x:670,y:440,r:38,shape:"hexagon",grad:"url(#tealGrad)",color:"#4DB6AC",
+    info:{
+      title:"无住 (Non-abiding)",
+      structure:"心不执着于任何事物——不住色声香味触法",
+      behavior:"应无所住行于布施，三轮体空(施者/受者/施物皆空)",
+      relation:"由空性引出，是安住其心的不二法门；实践结果即无相",
+      quote:"菩萨于法，应无所住行于布施。心若有所住，便有了挂碍和烦恼；心若无所住，才能获得真正的安宁"
+    }
+  },
+  {id:"formless",label:"无相",x:930,y:440,r:38,shape:"hexagon",grad:"url(#purpleGrad)",color:"#BA68C8",
+    info:{
+      title:"无相 (Formlessness)",
+      structure:"破除我相、人相、众生相、寿者相四相执着",
+      behavior:"度化众生而不着相，做到'实无众生得灭度者'",
+      relation:"空与无住的实践结果，降伏妄心的关键",
+      quote:"凡所有相，皆是虚妄。若见诸相非相，即见如来"
+    }
+  },
+  // === Six Paramitas ===
+  {id:"dana",label:"布施",x:490,y:380,w:90,h:50,shape:"rect",grad:"url(#blueGrad)",color:"#64B5F6",
+    info:{
+      title:"布施 (Dana)",
+      structure:"六度之首。三轮体空：不执施者、受者、施物",
+      behavior:"财布施→身布施→法布施(福德最大)，有住→无住",
+      relation:"无所住布施是修行起点，法布施积累智慧资粮",
+      quote:"菩萨无住相布施，福德亦复如是，不可思量"
+    }
+  },
+  {id:"sila",label:"持戒",x:520,y:500,w:90,h:50,shape:"rect",grad:"url(#blueGrad)",color:"#64B5F6",
+    info:{
+      title:"持戒 (Sila)",
+      structure:"严格的自律、规律、节制、戒断。五戒十善",
+      behavior:"做事有规律→有节制→完全戒断，善护念",
+      relation:"持戒→减少外在依赖→消除执着→通往无所住",
+      quote:"持戒修福到一念生净信，持戒本身也是修行的基础，没有持戒谈不上修行"
+    }
+  },
+  {id:"ksanti",label:"忍辱",x:640,y:580,w:90,h:50,shape:"rect",grad:"url(#blueGrad)",color:"#64B5F6",
+    info:{
+      title:"忍辱 (Ksanti)",
+      structure:"六度的中心。感知痛苦并转化为慈悲，非压制",
+      behavior:"无我相而忍，歌利王割截身体不起嗔恨",
+      relation:"由戒到定的关键桥梁，大乘入世修行的核心",
+      quote:"忍辱的时候有痛的感觉，把痛苦拿掉转化成慈悲，这才是忍辱波罗蜜"
+    }
+  },
+  {id:"virya",label:"精进",x:960,y:580,w:90,h:50,shape:"rect",grad:"url(#blueGrad)",color:"#64B5F6",
+    info:{
+      title:"精进 (Virya)",
+      structure:"纯而不杂曰精，前而不退曰进。坚持+专注",
+      behavior:"闻思修悟持续迭代，未生善令速生，已生恶令速断",
+      relation:"贯穿六度的动力，从渐修到顿悟的必经过程",
+      quote:"所有的顿悟，看似顿悟，而实际上均是日常渐修，日积月累的结果"
+    }
+  },
+  {id:"dhyana",label:"禅定",x:1080,y:500,w:90,h:50,shape:"rect",grad:"url(#blueGrad)",color:"#64B5F6",
+    info:{
+      title:"禅定 (Dhyana)",
+      structure:"外禅内定，禅定一如。善护念——护彼意",
+      behavior:"心念不散乱，随时在禅定境界中，沉澈心境",
+      relation:"通达般若的状态节点，由戒生定、由定生慧的桥梁",
+      quote:"无所住而生其心是诠释禅定的最佳状态，外在无住，内心不动"
+    }
+  },
+  {id:"prajnaP",label:"般若(度)",x:1110,y:380,w:90,h:50,shape:"rect",grad:"url(#goldGrad)",color:"#D4A017",
+    info:{
+      title:"般若度 (Prajna Paramita)",
+      structure:"六度之根本。通达诸法体性本空之智，明心见性",
+      behavior:"前五度以般若摄持方称'波罗蜜'，否则不到彼岸",
+      relation:"前五度的归宿与统摄，般若如明眼人引导群盲",
+      quote:"六度中以般若为根本，前五度都是修行的方便法门，是方法和工具"
+    }
+  },
+  // === Dialogue ===
+  {id:"subhuti",label:"须菩提",x:230,y:115,w:100,h:50,shape:"cloud",grad:"url(#grayGrad)",color:"#9E9E9E",
+    info:{
+      title:"须菩提 (Subhuti)",
+      structure:"佛十大弟子之一，解空第一。金刚经的提问者",
+      behavior:"发问：'云何应住？云何降伏其心？'——心如何安住？妄念如何降伏？",
+      relation:"提问引出全经核心论述，贯穿32品的问答结构",
+      quote:"善男子善女人，发阿耨多罗三藐三菩提心，应云何住？云何降伏其心？"
+    }
+  },
+  {id:"buddha",label:"佛陀",x:1370,y:115,w:100,h:50,shape:"cloud",grad:"url(#goldGrad)",color:"#D4A017",
+    info:{
+      title:"佛陀 (Buddha)",
+      structure:"觉悟者，说法者。以空、无住、无相三柱为核心回答",
+      behavior:"旋立旋破，从各个角度打破执着心，阐明万法皆空",
+      relation:"开示须菩提及后世修行者，以方便法门引导至彼岸",
+      quote:"应如是住，如是降伏其心——度众生而不着相，无所住而行布施"
+    }
+  },
+  // === Raft: moved down to avoid overlap with title and question label ===
+  {id:"raft",label:"方便法门",label2:"(舟筏喻)",x:800,y:165,w:115,h:48,shape:"roundRect",grad:"url(#purpleGrad)",color:"#BA68C8",
+    info:{
+      title:"方便法门 (Expedient Means)",
+      structure:"舟筏之喻：佛法如渡河竹筏，到岸即舍。闻→修→悟",
+      behavior:"提供指引→渡达彼岸→舍弃工具(法尚应舍何况非法)",
+      relation:"工具→目标→舍弃工具的反馈回路，不执着于法本身",
+      quote:"知我说法，如筏喻者；法尚应舍，何况非法"
+    }
+  },
+  // === Attachments to Break: enlarged diamonds for text fit ===
+  {id:"fourMarks",label:"四相",label2:"我·人·众生·寿者",x:160,y:420,w:150,h:75,shape:"diamond",grad:"url(#grayGrad)",color:"#9E9E9E",
+    info:{
+      title:"四相 (Four Marks)",
+      structure:"我相(执自我)、人相(分别你我)、众生相(执生命)、寿者相(执时间生死)",
+      behavior:"破除四相→断我执→通达无我。空间(前三相)+时间(寿者相)二元对立",
+      relation:"四相是修行首要障碍，破四相才能度众生而不着相",
+      quote:"若菩萨有我相人相众生相寿者相，即非菩萨"
+    }
+  },
+  {id:"twoAttach",label:"二执",label2:"我执·法执",x:1440,y:420,w:150,h:75,shape:"diamond",grad:"url(#grayGrad)",color:"#9E9E9E",
+    info:{
+      title:"二执 (Two Attachments)",
+      structure:"我执(人无我)：执着自我实有；法执(法无我)：执着佛法实有",
+      behavior:"断我执→断法执→通达无我法。不执如来身相，不执如来说法",
+      relation:"二执是根本烦恼，需同时断除才能通达般若",
+      quote:"若菩萨通达无我法者，如来说名真是菩萨"
+    }
+  },
+  // === Practice & Outcome ===
+  {id:"practice",label:"闻思修悟",label2:"信解行证",x:350,y:730,w:130,h:55,shape:"roundRect",grad:"url(#greenGrad)",color:"#81C784",
+    info:{
+      title:"闻思修悟 (Practice Path)",
+      structure:"听闻→思考→实践→证悟。即信解行证的完整路径",
+      behavior:"先听闻生信→思考理解→亲身实践→证悟。理论无法转理论，证悟后方可形成理论",
+      relation:"持续迭代提升的过程，从渐修到顿悟的必经之路",
+      quote:"见解行证就是闻思修悟，最重要的就是行和证，即使开始没有理解也不要紧"
+    }
+  },
+  {id:"merit",label:"福德→功德",label2:"→智慧",x:1250,y:730,w:130,h:55,shape:"roundRect",grad:"url(#greenGrad)",color:"#81C784",
+    info:{
+      title:"福德→功德→智慧",
+      structure:"福德(外在利他)、功德(内心生慧)、智慧(般若证悟)",
+      behavior:"有为福德→无为福德(福德无故)→功德→智慧。利他是福德，无所住的利他积累功德",
+      relation:"福慧双修，功德积累是通达智慧的关键",
+      quote:"利他往往是福德，而无所住的利他就一定积累功德"
+    }
+  },
+  {id:"ultimate",label:"应无所住",label2:"而生其心",x:800,y:745,w:160,h:62,shape:"roundRect",grad:"url(#goldGrad)",color:"#D4A017",
+    info:{
+      title:"应无所住而生其心",
+      structure:"金刚经至高心法。六祖惠能闻此句而顿悟",
+      behavior:"不住色声香味触法生心，从无所住的空性中自然生起清净真心",
+      relation:"重构'安住'与'降伏'的问题——不是控制妄心，而是从根本上正确发心",
+      quote:"不应住色生心，不应住声香味触法生心，应无所住而生其心"
+    }
+  },
+];
+
+// ========== LINKS DATA ==========
+const links=[
+  // Dialogue
+  {source:"subhuti",target:"buddha",type:"question",color:"#FFFFFF",dash:"none",width:2.5,
+    label:"云何应住？云何降伏其心？",labelOffset:{x:800,y:102}},
+  // Buddha to three pillars
+  {source:"buddha",target:"emptiness",type:"teaching",color:"#D4A017",dash:"none",width:2},
+  {source:"buddha",target:"formless",type:"teaching",color:"#D4A017",dash:"none",width:2},
+  // Subhuti to non-abiding
+  {source:"subhuti",target:"nonAbiding",type:"teaching",color:"#D4A017",dash:"none",width:2},
+  // Three pillars internal
+  {source:"emptiness",target:"nonAbiding",type:"foundation",color:"#EF5350",dash:"5,3",width:1.5},
+  {source:"emptiness",target:"formless",type:"foundation",color:"#EF5350",dash:"5,3",width:1.5},
+  {source:"nonAbiding",target:"formless",type:"foundation",color:"#4DB6AC",dash:"5,3",width:1.5},
+  // Three pillars to prajna
+  {source:"emptiness",target:"prajna",type:"converge",color:"#EF5350",dash:"none",width:2},
+  {source:"nonAbiding",target:"prajna",type:"converge",color:"#4DB6AC",dash:"none",width:2},
+  {source:"formless",target:"prajna",type:"converge",color:"#BA68C8",dash:"none",width:2},
+  // Six paramitas ring
+  {source:"dana",target:"sila",type:"progress",color:"#64B5F6",dash:"none",width:1.5},
+  {source:"sila",target:"ksanti",type:"progress",color:"#64B5F6",dash:"none",width:1.5},
+  {source:"ksanti",target:"virya",type:"progress",color:"#64B5F6",dash:"none",width:1.5},
+  {source:"virya",target:"dhyana",type:"progress",color:"#64B5F6",dash:"none",width:1.5},
+  {source:"dhyana",target:"prajnaP",type:"progress",color:"#64B5F6",dash:"none",width:1.5},
+  // Prajna paramita to center
+  {source:"prajnaP",target:"prajna",type:"culmination",color:"#D4A017",dash:"none",width:2.5},
+  // Dana to nonAbiding (all paths lead to prajna)
+  {source:"dana",target:"nonAbiding",type:"practice",color:"#64B5F6",dash:"4,4",width:1},
+  // Four marks - to be broken
+  {source:"fourMarks",target:"emptiness",type:"break",color:"#9E9E9E",dash:"3,6",width:1.5,label:"破"},
+  {source:"fourMarks",target:"nonAbiding",type:"break",color:"#9E9E9E",dash:"3,6",width:1.5},
+  // Two attachments - to be broken
+  {source:"twoAttach",target:"formless",type:"break",color:"#9E9E9E",dash:"3,6",width:1.5,label:"断"},
+  {source:"twoAttach",target:"prajnaP",type:"break",color:"#9E9E9E",dash:"3,6",width:1.5},
+  // Raft to prajna - curve left to avoid passing through emptiness node
+  {source:"raft",target:"prajna",type:"tool",color:"#BA68C8",dash:"8,4",width:2,pathType:"curve-left"},
+  // Raft to buddha
+  {source:"raft",target:"buddha",type:"tool",color:"#BA68C8",dash:"8,4",width:1.5},
+  // Practice to six paramitas
+  {source:"practice",target:"dana",type:"flow",color:"#81C784",dash:"none",width:1.5},
+  {source:"practice",target:"sila",type:"flow",color:"#81C784",dash:"none",width:1.5},
+  // Merit to prajna
+  {source:"merit",target:"prajnaP",type:"flow",color:"#81C784",dash:"none",width:1.5},
+  {source:"merit",target:"dhyana",type:"flow",color:"#81C784",dash:"none",width:1.5},
+  // Ultimate teaching
+  {source:"nonAbiding",target:"ultimate",type:"teaching",color:"#D4A017",dash:"none",width:2.5},
+  {source:"ultimate",target:"practice",type:"daily",color:"#D4A017",dash:"4,4",width:1.5},
+  {source:"ultimate",target:"merit",type:"daily",color:"#D4A017",dash:"4,4",width:1.5},
+];
+
+// ========== HELPER: Get node by id ==========
+function getNode(id){return nodes.find(n=>n.id===id);}
+
+function getNodeCenter(n){
+  return{x:n.x,y:n.y};
+}
+
+function getNodeEdge(n,targetX,targetY){
+  const cx=n.x,cy=n.y;
+  if(n.shape==="circle"){
+    const dx=targetX-cx,dy=targetY-cy;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist===0)return{x:cx,y:cy};
+    return{x:cx+dx*n.r/dist,y:cy+dy*n.r/dist};
+  }
+  if(n.shape==="hexagon"){
+    const dx=targetX-cx,dy=targetY-cy;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist===0)return{x:cx,y:cy};
+    return{x:cx+dx*(n.r*0.9)/dist,y:cy+dy*(n.r*0.9)/dist};
+  }
+  // rect/roundRect/cloud/diamond - approximate with bounding box
+  const hw=(n.w||100)/2,hh=(n.h||50)/2;
+  const dx=targetX-cx,dy=targetY-cy;
+  if(Math.abs(dx)*hh>Math.abs(dy)*hw&&dx!==0){
+    return{x:cx+Math.sign(dx)*hw,y:cy+dy*hw/Math.abs(dx)};
+  }else if(dy!==0){
+    return{x:cx+dx*hh/Math.abs(dy),y:cy+Math.sign(dy)*hh};
+  }
+  return{x:cx,y:cy};
+}
+
+// ========== DRAW LINKS ==========
+const linkGroup=svg.append("g").attr("class","links");
+
+// Store link paths for particle animation
+const linkPathMap={};
+
+links.forEach((l,i)=>{
+  const s=getNode(l.source),t=getNode(l.target);
+  const sc=getNodeCenter(s),tc=getNodeCenter(t);
+  const se=getNodeEdge(s,tc.x,tc.y);
+  const te=getNodeEdge(t,sc.x,sc.y);
+
+  let pathD;
+  const dx=te.x-se.x,dy=te.y-se.y;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+
+  if(l.pathType==="curve-left"){
+    // Custom curve: arc left to avoid passing through emptiness node
+    const midX=se.x-130;
+    const midY=(se.y+te.y)/2;
+    pathD=`M${se.x},${se.y} Q${midX},${midY} ${te.x},${te.y}`;
+  }else if(l.type==="break"){
+    // Sharp zigzag for "break" connections
+    const mx=(se.x+te.x)/2,my=(se.y+te.y)/2;
+    const perpX=-dy/dist*15,perpY=dx/dist*15;
+    pathD=`M${se.x},${se.y} L${mx-perpX},${my-perpY} L${mx+perpX},${my+perpY} L${te.x},${te.y}`;
+  }else if(dist>250){
+    // Bezier curve
+    const cx1=se.x+(te.x-se.x)*0.3;
+    const cy1=se.y+(te.y-se.y)*0.1;
+    const cx2=se.x+(te.x-se.x)*0.7;
+    const cy2=se.y+(te.y-se.y)*0.9;
+    pathD=`M${se.x},${se.y} C${cx1},${cy1} ${cx2},${cy2} ${te.x},${te.y}`;
+  }else{
+    // Slight curve
+    const mx=(se.x+te.x)/2,my=(se.y+te.y)/2;
+    const perpX=-dy/dist*20,perpY=dx/dist*20;
+    pathD=`M${se.x},${se.y} Q${mx+perpX},${my+perpY} ${te.x},${te.y}`;
+  }
+
+  // Store path for particle animation
+  linkPathMap[`${l.source}-${l.target}`]=pathD;
+
+  let arrowRef="";
+  if(l.color==="#D4A017")arrowRef="url(#arrow-gold)";
+  else if(l.color==="#EF5350")arrowRef="url(#arrow-red)";
+  else if(l.color==="#4DB6AC")arrowRef="url(#arrow-teal)";
+  else if(l.color==="#BA68C8")arrowRef="url(#arrow-purple)";
+  else if(l.color==="#64B5F6")arrowRef="url(#arrow-blue)";
+  else if(l.color==="#9E9E9E")arrowRef="url(#arrow-gray)";
+  else if(l.color==="#81C784")arrowRef="url(#arrow-green)";
+  else arrowRef="url(#arrow-white)";
+
+  const path=linkGroup.append("path")
+    .attr("d",pathD)
+    .attr("fill","none")
+    .attr("stroke",l.color)
+    .attr("stroke-width",l.width)
+    .attr("opacity",l.type==="break"?0.4:0.6)
+    .attr("stroke-dasharray",l.dash==="none"?null:l.dash)
+    .attr("marker-end",arrowRef);
+
+  // Animate progress links with flowing dashes
+  if(l.type==="progress"){
+    path.attr("stroke-dasharray","6,4")
+      .style("animation",`dashFlow ${2+i*0.2}s linear infinite`);
+  }
+  if(l.type==="tool"){
+    path.attr("stroke-dasharray","8,4")
+      .style("animation",`dashFlow 3s linear infinite`);
+  }
+  if(l.type==="culmination"||l.type==="converge"){
+    path.attr("opacity",0.7)
+      .style("animation",`breathe 3s ease-in-out infinite`);
+  }
+
+  // Link label
+  if(l.label){
+    const mx=(se.x+te.x)/2,my=(se.y+te.y)/2;
+    if(l.labelOffset){
+      linkGroup.append("text")
+        .attr("x",l.labelOffset.x).attr("y",l.labelOffset.y)
+        .attr("text-anchor","middle")
+        .attr("fill","rgba(255,255,255,0.7)")
+        .attr("font-size","12")
+        .attr("font-style","italic")
+        .style("text-shadow","0 1px 3px rgba(0,0,0,0.8)")
+        .text(l.label);
+    }else{
+      linkGroup.append("text")
+        .attr("x",mx).attr("y",my-5)
+        .attr("text-anchor","middle")
+        .attr("fill",l.color)
+        .attr("font-size","14")
+        .attr("font-weight","bold")
+        .attr("opacity",0.8)
+        .style("text-shadow","0 1px 3px rgba(0,0,0,0.8)")
+        .text(l.label);
+    }
+  }
+});
+
+// ========== DRAW NODES ==========
+const nodeGroup=svg.append("g").attr("class","nodes");
+
+nodes.forEach((n,i)=>{
+  const g=nodeGroup.append("g")
+    .attr("class","node")
+    .attr("transform",`translate(${n.x},${n.y})`)
+    .style("cursor","pointer");
+
+  let shape;
+
+  // Draw shape based on type
+  if(n.shape==="circle"){
+    // Outer glow ring
+    g.append("circle")
+      .attr("r",n.r+8)
+      .attr("fill","none")
+      .attr("stroke",n.color)
+      .attr("stroke-width",1)
+      .attr("opacity",0.2)
+      .style("animation",`breathe 2s ease-in-out infinite`);
+
+    // Main circle
+    shape=g.append("circle")
+      .attr("r",n.r)
+      .attr("fill",n.grad)
+      .attr("stroke",n.color)
+      .attr("stroke-width",2)
+      .attr("filter","url(#glow)")
+      .style("animation",`pulse-gold 2s ease-in-out infinite`);
+
+    // Inner circle
+    g.append("circle")
+      .attr("r",n.r-12)
+      .attr("fill","none")
+      .attr("stroke","rgba(255,255,255,0.3)")
+      .attr("stroke-width",1);
+  }
+  else if(n.shape==="hexagon"){
+    const r=n.r;
+    const pts=[];
+    for(let j=0;j<6;j++){
+      const a=j*60-90;
+      pts.push(`${r*Math.cos(a*Math.PI/180)},${r*Math.sin(a*Math.PI/180)}`);
+    }
+    g.append("polygon")
+      .attr("points",pts.join(" "))
+      .attr("fill","none")
+      .attr("stroke",n.color)
+      .attr("stroke-width",1)
+      .attr("opacity",0.3)
+      .attr("transform","scale(1.15)")
+      .style("animation",`breathe 2.5s ease-in-out ${i*0.3}s infinite`);
+
+    shape=g.append("polygon")
+      .attr("points",pts.join(" "))
+      .attr("fill",n.grad)
+      .attr("stroke",n.color)
+      .attr("stroke-width",2)
+      .attr("filter","url(#softGlow)");
+  }
+  else if(n.shape==="diamond"){
+    const hw=n.w/2,hh=n.h/2;
+    // Crack effect for attachments
+    g.append("polygon")
+      .attr("points",`0,${-hh-5} ${hw+5},0 0,${hh+5} ${-hw-5},0`)
+      .attr("fill","none")
+      .attr("stroke",n.color)
+      .attr("stroke-width",1)
+      .attr("opacity",0.2)
+      .attr("stroke-dasharray","2,3")
+      .style("animation",`breathe 1.5s ease-in-out infinite`);
+
+    shape=g.append("polygon")
+      .attr("points",`0,${-hh} ${hw},0 0,${hh} ${-hw},0`)
+      .attr("fill",n.grad)
+      .attr("stroke",n.color)
+      .attr("stroke-width",2)
+      .attr("opacity",0.7);
+
+    // Crack lines
+    g.append("path")
+      .attr("d",`M${-hw*0.3},${-hh*0.2} L${-hw*0.1},${hh*0.1} L${hw*0.2},${-hh*0.3} L${hw*0.35},${hh*0.2}`)
+      .attr("fill","none")
+      .attr("stroke","#FF5252")
+      .attr("stroke-width",1)
+      .attr("opacity",0.5)
+      .style("animation",`breathe 2s ease-in-out infinite`);
+  }
+  else if(n.shape==="cloud"){
+    const hw=n.w/2,hh=n.h/2;
+    // Cloud shape using path
+    const cloudPath=`M${-hw+15},${hh} Q${-hw-5},${hh*0.3} ${-hw+10},${-hh*0.3} Q${-hw+5},${-hh} ${-hw+30},${-hh} Q${0},${-hh-8} ${hw-30},${-hh} Q${hw-5},${-hh} ${hw-10},${-hh*0.3} Q${hw+5},${hh*0.3} ${hw-15},${hh} Q${hw-30},${hh+5} ${0},${hh+5} Q${-hw+30},${hh+5} ${-hw+15},${hh} Z`;
+    shape=g.append("path")
+      .attr("d",cloudPath)
+      .attr("fill",n.grad)
+      .attr("stroke",n.color)
+      .attr("stroke-width",2)
+      .attr("filter","url(#softGlow)");
+  }
+  else{ // rect or roundRect
+    const hw=n.w/2,hh=n.h/2;
+    if(n.shape==="roundRect"){
+      shape=g.append("rect")
+        .attr("x",-hw).attr("y",-hh)
+        .attr("width",n.w).attr("height",n.h)
+        .attr("rx",12).attr("ry",12)
+        .attr("fill",n.grad)
+        .attr("stroke",n.color)
+        .attr("stroke-width",2)
+        .attr("filter","url(#softGlow)");
+    }else{
+      shape=g.append("rect")
+        .attr("x",-hw).attr("y",-hh)
+        .attr("width",n.w).attr("height",n.h)
+        .attr("rx",4).attr("ry",4)
+        .attr("fill",n.grad)
+        .attr("stroke",n.color)
+        .attr("stroke-width",2)
+        .attr("filter","url(#softGlow)");
+    }
+  }
+
+  // Node label - shape-specific font sizing
+  const labelG=g.append("g").attr("class","node-label");
+  if(n.label2){
+    const isDiamond=n.shape==="diamond";
+    const labelDy=isDiamond?"-6":"-4";
+    const label2Dy=isDiamond?"16":"14";
+    const labelSize=n.shape==="circle"?"16":isDiamond?"12":"13";
+    const label2Size=n.shape==="circle"?"13":isDiamond?"9":"10";
+
+    labelG.append("text")
+      .attr("text-anchor","middle")
+      .attr("dy",labelDy)
+      .attr("fill","white")
+      .attr("font-size",labelSize)
+      .attr("font-weight","bold")
+      .style("text-shadow","0 1px 3px rgba(0,0,0,0.8)")
+      .text(n.label);
+    labelG.append("text")
+      .attr("text-anchor","middle")
+      .attr("dy",label2Dy)
+      .attr("fill","rgba(255,255,255,0.85)")
+      .attr("font-size",label2Size)
+      .style("text-shadow","0 1px 2px rgba(0,0,0,0.6)")
+      .text(n.label2);
+  }else{
+    labelG.append("text")
+      .attr("text-anchor","middle")
+      .attr("dy","5")
+      .attr("fill","white")
+      .attr("font-size",n.shape==="circle"?"20":"14")
+      .attr("font-weight","bold")
+      .style("text-shadow","0 1px 3px rgba(0,0,0,0.8)")
+      .text(n.label);
+  }
+
+  // Hover interaction
+  g.on("mouseover",function(event){
+    shape.transition().duration(200)
+      .attr("transform","scale(1.1)");
+    tooltip.style("opacity",1)
+      .html(`
+        <div class="tt-title">${n.info.title}</div>
+        <div class="tt-section"><span class="tt-label">结构：</span>${n.info.structure}</div>
+        <div class="tt-section"><span class="tt-label">行为：</span>${n.info.behavior}</div>
+        <div class="tt-section"><span class="tt-label">关系：</span>${n.info.relation}</div>
+        <div class="tt-quote">"${n.info.quote}"</div>
+      `);
+  })
+  .on("mousemove",function(event){
+    const rect=document.getElementById("container").getBoundingClientRect();
+    let x=event.clientX-rect.left+15;
+    let y=event.clientY-rect.top+15;
+    if(x+360>1600)x=event.clientX-rect.left-375;
+    if(y+200>900)y=event.clientY-rect.top-215;
+    tooltip.style("left",x+"px").style("top",y+"px");
+  })
+  .on("mouseout",function(){
+    shape.transition().duration(200)
+      .attr("transform","scale(1)");
+    tooltip.style("opacity",0);
+  });
+});
+
+// ========== DYNAMIC EFFECTS ==========
+
+// 1. Flowing particles along six paramitas ring
+const paramitaOrder=["dana","sila","ksanti","virya","dhyana","prajnaP"];
+const particleGroup=svg.append("g").attr("class","particles");
+
+function createParticle(pathId,fromId,toId,color,delay){
+  const fromN=getNode(fromId),toN=getNode(toId);
+  const from=getNodeEdge(fromN,toN.x,toN.y);
+  const to=getNodeEdge(toN,fromN.x,fromN.y);
+
+  const particle=particleGroup.append("circle")
+    .attr("r",3)
+    .attr("fill",color)
+    .attr("opacity",0)
+    .attr("filter","url(#glow)");
+
+  function animateParticle(){
+    particle
+      .attr("cx",from.x).attr("cy",from.y)
+      .attr("opacity",0)
+      .transition().duration(300).attr("opacity",1)
+      .transition().duration(1200)
+      .attr("cx",to.x).attr("cy",to.y)
+      .ease(d3.easeLinear)
+      .transition().duration(300).attr("opacity",0)
+      .on("end",animateParticle);
+  }
+  setTimeout(animateParticle,delay);
+}
+
+// Create flowing particles for six paramitas
+paramitaOrder.forEach((id,i)=>{
+  const next=paramitaOrder[(i+1)%paramitaOrder.length];
+  createParticle(null,id,next,"#64B5F6",i*400);
+});
+
+// Particle from prajnaP to center
+createParticle(null,"prajnaP","prajna","#D4A017",200);
+
+// Particle from subhuti to buddha (question flow)
+createParticle(null,"subhuti","buddha","#FFFFFF",0);
+
+// Particle from raft to prajna - follows curved path
+const raftN=getNode("raft"),prajnaN=getNode("prajna");
+const raftFrom=getNodeEdge(raftN,prajnaN.x,prajnaN.y);
+const raftTo=getNodeEdge(prajnaN,raftN.x,raftN.y);
+const raftCurvePath=`M${raftFrom.x},${raftFrom.y} Q${raftFrom.x-130},${(raftFrom.y+raftTo.y)/2} ${raftTo.x},${raftTo.y}`;
+
+// Create invisible path for raft particle to follow
+const raftPathElem=svg.append("path")
+  .attr("d",raftCurvePath)
+  .attr("fill","none")
+  .attr("stroke","none")
+  .style("display","none");
+const raftPathNode=raftPathElem.node();
+
+const raftParticle=particleGroup.append("g");
+raftParticle.append("circle").attr("r",5).attr("fill","#BA68C8").attr("opacity",0).attr("filter","url(#glow)");
+raftParticle.append("text").attr("text-anchor","middle").attr("dy","-8").attr("fill","#BA68C8").attr("font-size","10").attr("opacity",0).text("筏");
+
+function animateRaft(){
+  raftParticle
+    .attr("transform",`translate(${raftFrom.x},${raftFrom.y})`)
+    .select("circle").attr("opacity",0);
+  raftParticle.select("text").attr("opacity",0);
+
+  raftParticle.select("circle").transition().delay(200).duration(300).attr("opacity",1);
+  raftParticle.select("text").transition().delay(200).duration(300).attr("opacity",0.8);
+
+  const totalLen=raftPathNode.getTotalLength();
+  raftParticle.transition().delay(500).duration(2000)
+    .attrTween("transform",function(){
+      return function(t){
+        const pt=raftPathNode.getPointAtLength(t*totalLen);
+        return `translate(${pt.x},${pt.y})`;
+      };
+    })
+    .ease(d3.easeCubicInOut)
+    .on("end",function(){
+      raftParticle.select("circle").transition().duration(500).attr("opacity",0);
+      raftParticle.select("text").transition().duration(500).attr("opacity",0)
+        .on("end",()=>setTimeout(animateRaft,1000));
+    });
+}
+setTimeout(animateRaft,1000);
+
+// 2. Particles from three pillars to center
+["emptiness","nonAbiding","formless"].forEach((id,i)=>{
+  createParticle(null,id,"prajna",i===0?"#EF5350":i===1?"#4DB6AC":"#BA68C8",i*500+300);
+});
+
+// 3. Breaking effect on four marks and two attachments
+["fourMarks","twoAttach"].forEach((id,i)=>{
+  const n=getNode(id);
+  const breakGroup=svg.append("g").attr("transform",`translate(${n.x},${n.y})`);
+
+  function createCrack(){
+    const angle=Math.random()*360;
+    const rad=angle*Math.PI/180;
+    const len=20+Math.random()*20;
+    breakGroup.append("line")
+      .attr("x1",0).attr("y1",0)
+      .attr("x2",Math.cos(rad)*len).attr("y2",Math.sin(rad)*len)
+      .attr("stroke","#FF5252")
+      .attr("stroke-width",1.5)
+      .attr("opacity",0)
+      .transition().duration(300).attr("opacity",0.8)
+      .transition().duration(700).attr("opacity",0)
+      .remove();
+  }
+  setInterval(createCrack,800+i*400);
+});
+
+// 4. Rotating triple formula text around outer edge
+const formulaGroup=svg.append("g")
+  .attr("transform","translate(800,400)")
+  .style("animation","rotate-slow 60s linear infinite");
+
+const formulaText="佛说A · 即非A · 是名A · 佛说A · 即非A · 是名A · ";
+const formulaRadius=360;
+const formulaChars=formulaText.split("");
+const charAngle=360/formulaChars.length;
+
+formulaChars.forEach((ch,i)=>{
+  const a=(i*charAngle-90)*Math.PI/180;
+  formulaGroup.append("text")
+    .attr("x",Math.cos(a)*formulaRadius)
+    .attr("y",Math.sin(a)*formulaRadius)
+    .attr("text-anchor","middle")
+    .attr("fill","rgba(212,160,23,0.2)")
+    .attr("font-size","12")
+    .attr("transform",`rotate(${i*charAngle} ${Math.cos(a)*formulaRadius} ${Math.sin(a)*formulaRadius})`)
+    .text(ch);
+});
+
+// 5. Pulsing rings emanating from center
+function createPulseRing(){
+  const ring=svg.append("circle")
+    .attr("cx",800).attr("cy",400)
+    .attr("r",55)
+    .attr("fill","none")
+    .attr("stroke","#D4A017")
+    .attr("stroke-width",2)
+    .attr("opacity",0.6);
+
+  ring.transition()
+    .duration(3000)
+    .ease(d3.easeCubicOut)
+    .attr("r",340)
+    .attr("opacity",0)
+    .attr("stroke-width",0.5)
+    .remove();
+}
+setInterval(createPulseRing,2500);
+
+// 6. Final verse at bottom - moved up to avoid overlap with legend
+const verseGroup=svg.append("g").attr("transform","translate(800,805)");
+verseGroup.append("text")
+  .attr("text-anchor","middle")
+  .attr("fill","rgba(212,160,23,0.6)")
+  .attr("font-size","14")
+  .attr("font-style","italic")
+  .style("animation","breathe 4s ease-in-out infinite")
+  .text("一切有为法  如梦幻泡影  如露亦如电  应作如是观");
+
+// ========== LEGEND ==========
+const legendGroup=svg.append("g").attr("transform","translate(40,832)");
+
+const legendItems=[
+  {label:"核心智慧",color:"#D4A017",shape:"circle"},
+  {label:"三柱(空/无住/无相)",color:"#EF5350",shape:"hex"},
+  {label:"六度修行",color:"#64B5F6",shape:"rect"},
+  {label:"需断除(四相/二执)",color:"#9E9E9E",shape:"diamond"},
+  {label:"实践/积累",color:"#81C784",shape:"roundRect"},
+  {label:"方便法门",color:"#BA68C8",shape:"roundRect"},
+];
+
+legendItems.forEach((item,i)=>{
+  const lx=i*130;
+  const lg=legendGroup.append("g").attr("transform",`translate(${lx},0)`);
+
+  if(item.shape==="circle"){
+    lg.append("circle").attr("cx",8).attr("cy",0).attr("r",6).attr("fill",item.color).attr("opacity",0.8);
+  }else if(item.shape==="hex"){
+    const pts="8,-6 14,0 8,6 2,0";
+    lg.append("polygon").attr("points",pts).attr("fill",item.color).attr("opacity",0.8);
+  }else if(item.shape==="diamond"){
+    lg.append("polygon").attr("points","8,-6 14,0 8,6 2,0").attr("fill",item.color).attr("opacity",0.8);
+  }else if(item.shape==="roundRect"){
+    lg.append("rect").attr("x",2).attr("y",-5).attr("width",12).attr("height",10).attr("rx",3).attr("fill",item.color).attr("opacity",0.8);
+  }else{
+    lg.append("rect").attr("x",2).attr("y",-5).attr("width",12).attr("height",10).attr("fill",item.color).attr("opacity",0.8);
+  }
+
+  lg.append("text")
+    .attr("x",20).attr("y",4)
+    .attr("fill","rgba(255,255,255,0.6)")
+    .attr("font-size","10")
+    .text(item.label);
+});
+
+// Arrow legend - moved up to avoid overlap with verse
+const arrowLegend=svg.append("g").attr("transform","translate(40,857)");
+const arrowTypes=[
+  {label:"数据流/教学",color:"#D4A017",dash:"none"},
+  {label:"递进/修行",color:"#64B5F6",dash:"6,4"},
+  {label:"破除/断除",color:"#9E9E9E",dash:"3,6"},
+  {label:"方便法门",color:"#BA68C8",dash:"8,4"},
+];
+arrowTypes.forEach((item,i)=>{
+  const lx=i*160;
+  const lg=arrowLegend.append("g").attr("transform",`translate(${lx},0)`);
+  lg.append("line")
+    .attr("x1",0).attr("y1",0).attr("x2",20).attr("y2",0)
+    .attr("stroke",item.color)
+    .attr("stroke-width",2)
+    .attr("stroke-dasharray",item.dash==="none"?null:item.dash);
+  lg.append("text")
+    .attr("x",25).attr("y",4)
+    .attr("fill","rgba(255,255,255,0.5)")
+    .attr("font-size","10")
+    .text(item.label);
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>金融知识体系顶层思维导图</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#f7f8fa;font-family:"Microsoft YaHei",Arial,sans-serif;color:#1a1a2e;}
+#bar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;padding:10px 16px;background:#fff;border-bottom:1px solid #e6e8f0;box-shadow:0 1px 4px #0001;flex-wrap:wrap;}
+#bar button{padding:5px 14px;font-size:13px;border:1px solid #3f51b5;background:#3f51b5;color:#fff;border-radius:5px;cursor:pointer;}
+#bar .tip{color:#666;font-size:12px;margin-left:auto;}
+#wrap{width:100%;overflow:auto;} svg{display:block;}
+.link{fill:none;stroke-linecap:round;}
+.node text{dominant-baseline:central;text-anchor:middle;pointer-events:none;}
+.leaf rect{stroke:#e3e6f0;stroke-width:1;} .node{cursor:pointer;} .node:hover rect{filter:brightness(0.96);}
+</style>
+</head>
+<body>
+<div id="bar">
+  <b>金融知识体系 · 顶层三级思维导图</b>
+  <button onclick="expandAll()">展开全部</button>
+  <button onclick="expandToThird()">展开到三级</button>
+  <button onclick="collapseAll()">折叠到主干</button>
+  <button onclick="resetZoom()">重置视图</button>
+  <span class="tip">默认展开到三级 ｜ 点击主干/子主题折叠展开 ｜ 滚轮缩放 ｜ 拖拽平移</span>
+</div>
+<div id="wrap"><svg id="chart"></svg></div>
+<script>
+const KSB_PALETTE={branches:['#3f51b5','#009688','#ff9800','#e91e63','#4caf50','#00bcd4','#9c27b0','#ff5722']};
+const PALETTE=KSB_PALETTE.branches;
+const raw={name:'金融',children:[
+  {name:'金融体系与市场',ci:0,children:[
+    {name:'市场结构',children:[{name:'货币市场'},{name:'资本市场'},{name:'外汇市场'}]},
+    {name:'交易机制',children:[{name:'一级市场'},{name:'二级市场'},{name:'清算结算'}]},
+    {name:'市场功能',children:[{name:'价格发现'},{name:'流动性'},{name:'资源配置'}]}
+  ]},
+  {name:'货币银行与中央银行',ci:1,children:[
+    {name:'货币基础',children:[{name:'货币职能'},{name:'货币供给'},{name:'利率'}]},
+    {name:'商业银行',children:[{name:'存款创造'},{name:'贷款'},{name:'资产负债管理'}]},
+    {name:'中央银行',children:[{name:'政策利率'},{name:'公开市场操作'},{name:'金融稳定'}]}
+  ]},
+  {name:'公司金融',ci:2,children:[
+    {name:'投资决策',children:[{name:'现金流'},{name:'净现值'},{name:'内部收益率'}]},
+    {name:'融资决策',children:[{name:'股权融资'},{name:'债务融资'},{name:'资本结构'}]},
+    {name:'价值管理',children:[{name:'WACC'},{name:'股利政策'},{name:'并购估值'}]}
+  ]},
+  {name:'投资与资产定价',ci:3,children:[
+    {name:'收益与风险',children:[{name:'风险收益权衡'},{name:'波动率'},{name:'系统性风险'}]},
+    {name:'组合理论',children:[{name:'投资组合'},{name:'分散化'},{name:'资产配置'}]},
+    {name:'定价模型',children:[{name:'CAPM'},{name:'因子模型'},{name:'有效市场'}]}
+  ]},
+  {name:'金融工具与资产类别',ci:4,children:[
+    {name:'基础资产',children:[{name:'股票'},{name:'债券'},{name:'现金'}]},
+    {name:'集合投资',children:[{name:'基金'},{name:'ETF'},{name:'指数产品'}]},
+    {name:'衍生与另类',children:[{name:'期货'},{name:'期权'},{name:'房地产'}]}
+  ]},
+  {name:'风险管理',ci:5,children:[
+    {name:'风险类型',children:[{name:'市场风险'},{name:'信用风险'},{name:'流动性风险'}]},
+    {name:'风险度量',children:[{name:'VaR'},{name:'压力测试'},{name:'久期'}]},
+    {name:'风险缓释',children:[{name:'对冲'},{name:'限额管理'},{name:'保险'}]}
+  ]},
+  {name:'金融科技与数据',ci:6,children:[
+    {name:'数字金融',children:[{name:'电子支付'},{name:'数字银行'},{name:'智能投顾'}]},
+    {name:'数据模型',children:[{name:'信用评分'},{name:'量化交易'},{name:'模型风险'}]},
+    {name:'基础设施',children:[{name:'区块链'},{name:'数据治理'},{name:'网络安全'}]}
+  ]},
+  {name:'监管伦理与个人财务',ci:7,children:[
+    {name:'监管框架',children:[{name:'投资者保护'},{name:'信息披露'},{name:'反洗钱'}]},
+    {name:'伦理适当性',children:[{name:'利益冲突'},{name:'适当性原则'},{name:'受托责任'}]},
+    {name:'个人财务',children:[{name:'预算管理'},{name:'应急金'},{name:'退休规划'}]}
+  ]}
+]};
+
+function foldAfterDepth(n,maxDepth,depth=0){
+  if(depth>=maxDepth && n.children){n._children=n.children;n.children=null;n._folded=true;return;}
+  if(n.children)n.children.forEach(c=>foldAfterDepth(c,maxDepth,depth+1));
+}
+foldAfterDepth(raw,3);
+
+const VGAP=28,HSTEP=168,PAD=76;
+const svg=d3.select('#chart');
+const gZoom=svg.append('g').attr('class','zoom');
+const g=gZoom.append('g');
+const linkG=g.append('g'),nodeG=g.append('g');
+
+function colorOf(d){
+  if(d.depth===0)return '#1a237e';
+  if(d.depth===1)return PALETTE[d.data.ci??0];
+  let p=d.parent; while(p&&p.depth>1)p=p.parent;
+  return p?PALETTE[p.data.ci??0]:'#888';
+}
+function nodeWidth(d){return d.depth===0?78:Math.max(74,d.data.name.length*12+24);}
+function nodeHeight(d){return d.depth===0?42:(d.depth===1?30:25);}
+
+function buildSide(branches,side){
+  if(!branches.length)return [];
+  const h=d3.hierarchy({name:'_',children:branches});
+  d3.tree()
+    .nodeSize([VGAP,HSTEP])
+    .separation((a,b)=>a.parent===b.parent?1:1.25)(h);
+  const nodes=h.descendants().filter(d=>d.depth>0);
+  nodes.forEach(n=>{n.xx=side*n.y;n.yy=n.x;n.side=side;});
+  const ys=nodes.map(n=>n.yy);
+  const mid=(Math.min(...ys)+Math.max(...ys))/2;
+  nodes.forEach(n=>n.yy-=mid);
+  return nodes;
+}
+
+function linkPath(s,t){
+  const sw=nodeWidth(s),tw=nodeWidth(t),dir=t.side>=0?1:-1;
+  const x1=s.xx+dir*sw/2,x2=t.xx-dir*tw/2;
+  const dx=Math.abs(x2-x1),c=Math.max(28,dx*0.45);
+  return `M${x1},${s.yy} C${x1+dir*c},${s.yy} ${x2-dir*c},${t.yy} ${x2},${t.yy}`;
+}
+
+function render(){
+  const right=buildSide(raw.children.filter((_,i)=>i%2===0),+1);
+  const left=buildSide(raw.children.filter((_,i)=>i%2===1),-1);
+  const sideNodes=right.concat(left);
+  const rootNode={depth:0,data:raw,xx:0,yy:0,side:0,parent:null};
+  const allNodes=sideNodes.concat([rootNode]);
+  const links=[];
+  sideNodes.forEach(n=>links.push({source:n.depth===1?rootNode:n.parent,target:n}));
+
+  const minX=Math.min(...allNodes.map(n=>n.xx-nodeWidth(n)/2))-PAD;
+  const maxX=Math.max(...allNodes.map(n=>n.xx+nodeWidth(n)/2))+PAD;
+  const minY=Math.min(...allNodes.map(n=>n.yy-nodeHeight(n)/2))-PAD/2;
+  const maxY=Math.max(...allNodes.map(n=>n.yy+nodeHeight(n)/2))+PAD/2;
+  const W=maxX-minX,H=maxY-minY;
+  svg.attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  g.attr('transform',`translate(${-minX},${-minY})`);
+
+  const link=linkG.selectAll('path').data(links,d=>d.target.data.name+d.target.depth);
+  link.exit().remove();
+  link.enter().append('path').attr('class','link').merge(link)
+    .attr('d',d=>linkPath(d.source,d.target))
+    .attr('stroke',d=>colorOf(d.target))
+    .attr('stroke-width',d=>d.target.depth===1?2.25:1.35)
+    .attr('opacity',d=>d.target.depth===1?0.9:0.58);
+
+  const node=nodeG.selectAll('g.node').data(allNodes,d=>(d.depth===0?'__root__':d.data.name)+d.depth);
+  node.exit().remove();
+  const ne=node.enter().append('g').attr('class','node').on('click',(ev,d)=>{
+    if(d.depth<1)return;
+    if(d.data._children&&!d.data.children){d.data.children=d.data._children;d.data._children=null;d.data._folded=false;}
+    else if(d.data.children){d.data._children=d.data.children;d.data.children=null;d.data._folded=true;}
+    render();
+  });
+  ne.append('rect'); ne.append('text');
+
+  nodeG.selectAll('g.node').attr('transform',d=>`translate(${d.xx-nodeWidth(d)/2},${d.yy-nodeHeight(d)/2})`).each(function(d){
+    const sel=d3.select(this),w=nodeWidth(d),h=nodeHeight(d),c=colorOf(d),arrow=d.data._folded?(d.side<0?'  ◂':'  ▸'):'';
+    if(d.depth===0){
+      sel.select('rect').attr('width',w).attr('height',h).attr('rx',10).attr('fill',c).attr('filter','drop-shadow(0 3px 8px #1a237e66)');
+      sel.select('text').text(d.data.name).attr('x',w/2).attr('y',h/2).attr('fill','#fff').attr('font-size',18).attr('font-weight',700);
+    }else if(d.depth===1){
+      sel.select('rect').attr('width',w).attr('height',h).attr('rx',7).attr('fill',c).attr('filter','drop-shadow(0 2px 4px #0002)');
+      sel.select('text').text(d.data.name+arrow).attr('x',w/2).attr('y',h/2).attr('fill','#fff').attr('font-size',13).attr('font-weight',600);
+    }else{
+      sel.attr('class','node leaf');
+      sel.select('rect').attr('width',w).attr('height',h).attr('rx',6).attr('fill','#fff').attr('filter','drop-shadow(0 1px 2px #0001)');
+      let bar=sel.select('.bar'); if(bar.empty())bar=sel.insert('rect','text').attr('class','bar');
+      bar.attr('width',4).attr('height',h).attr('rx',2).attr('x',d.side<0?w-4:0).attr('y',0).attr('fill',c);
+      sel.select('text').text(d.data.name+arrow).attr('x',w/2+(d.side<0?0:2)).attr('y',h/2).attr('fill','#263238').attr('font-size',12.3).attr('font-weight',500);
+    }
+  });
+}
+
+function expandAll(){const w=n=>{if(n._children){n.children=n._children;n._children=null;n._folded=false;}if(n.children)n.children.forEach(w);};w(raw);render();}
+function expandToThird(){expandAll();foldAfterDepth(raw,3);render();}
+function collapseAll(){raw.children.forEach(b=>{if(b.children){b._children=b.children;b.children=null;b._folded=true;}});render();}
+const zoom=d3.zoom().scaleExtent([0.35,2.7]).on('zoom',ev=>gZoom.attr('transform',ev.transform));
+svg.call(zoom);
+function resetZoom(){svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity);}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# --- Dependency directories ---
+node_modules/
+.pnpm-store/
+**/node_modules/
+
+# --- Build outputs ---
+dist/
+build/
+out/
+lib/
+types/
+*.tsbuildinfo
+**/dist/
+**/build/
+**/out/
+**/renderer-dist/
+**/owb-dist/
+# Bundled/packaged engine artifacts (source lives in src/ as .ts)
+**/engine/engine.cjs
+
+# --- Runtime databases & logs (any tool/project) ---
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.err
+**/workflows/traces/
+
+# --- Generated visual-check / screenshot artifacts ---
+*.visual-check.*
+**/visual-check.*
+
+# --- AutoClaw runtime: generated orchestration state (keep READMEs/config) ---
+.autoclaw/orchestrator/comms/
+.autoclaw/orchestrator/audit/
+.autoclaw/orchestrator/board.json
+.autoclaw/orchestrator/reconcile-report.json
+.autoclaw/orchestrator/sprints/
+.autoclaw/autobuild/
+.autoclaw/spine/
+.autoclaw/vector/db.sqlite
+.autoclaw/kg/*.db
+.autoclaw/kg/*.db-shm
+.autoclaw/kg/*.db-wal
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+**/__pycache__/
+
+# --- Logs & OS junk ---
+*.log
+.DS_Store
+Thumbs.db
+
+# --- Editor / IDE ---
+.idea/
+.vscode/
+
+# --- Harness / tool session data ---
+.sessions/
+.workbuddy/
+

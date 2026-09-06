@@ -1,0 +1,53 @@
+# DeepSeek runtime config template
+# Copy this file to deepseek.config.yaml and fill in your real values.
+
+app:
+  name: "contract-ai-native-app"
+  env: "dev"
+  host: "127.0.0.1"
+  port: 5000
+  debug: true
+  secret_key: "replace-with-a-random-secret-key"
+
+database:
+  sqlite_path: "./data/contract.db"
+  timeout_seconds: 10
+
+auth:
+  enabled: true
+  default_admin_username: "admin"
+  default_admin_password: "ChangeMe123!"
+  session_expire_minutes: 480
+
+ai:
+  provider: "deepseek"
+  base_url: "https://api.deepseek.com"
+  api_key: "YOUR_DEEPSEEK_API_KEY"
+  model: "deepseek-chat"
+  enable_function_calling: true
+  request_timeout_seconds: 120
+  max_context_messages: 20
+  temperature: 0.1
+
+sse:
+  enabled: true
+  heartbeat_seconds: 15
+
+ontology:
+  model_root: "./models/contract"
+  enable_runtime_registry: true
+  fail_fast_on_invalid_model: true
+
+readonly_sql:
+  enabled: true
+  select_only: true
+  max_rows: 200
+  default_limit: 50
+  timeout_seconds: 8
+  forbid_multi_statement: true
+  audit_log_enabled: true
+
+ui:
+  chart_library: "echarts"
+  icon_library: "lucide"
+  hybrid_mode: true

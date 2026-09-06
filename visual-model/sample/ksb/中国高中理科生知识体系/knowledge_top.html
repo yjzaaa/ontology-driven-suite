@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>中国高中理科生知识体系 - 顶层思维导图</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#f7f8fa;font-family:"Microsoft YaHei",Arial,sans-serif;color:#1a1a2e}
+.bar{height:56px;background:#fff;border-bottom:1px solid #dde3ef;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+h1{font-size:18px;margin:0}.tools{display:flex;gap:8px}.tools button{border:1px solid #cfd6e6;background:#fff;border-radius:6px;padding:6px 10px;cursor:pointer}
+svg{width:100%;height:calc(100vh - 56px);display:block}.link{fill:none}.node text{dominant-baseline:middle;text-anchor:middle;pointer-events:none}.node{cursor:pointer}
+</style>
+</head>
+<body>
+<div class="bar"><h1>中国高中理科生知识体系 · 顶层三级思维导图</h1><div class="tools"><button onclick="expandAll()">展开全部</button><button onclick="expandToThird()">展开到三级</button><button onclick="collapseAll()">折叠到主干</button><button onclick="resetZoom()">重置视图</button></div></div>
+<svg id="chart"></svg>
+<script>
+const PALETTE=['#2f6fed','#15a36d','#e4572e','#8f5bd6','#d99a00','#0f8b8d','#c23b73','#506176'];
+const raw={name:'中国高中理科生',children:[
+{name:'数学',ci:0,children:[{name:'函数代数',children:[{name:'函数与映射'},{name:'不等式'},{name:'导数'}]},{name:'几何与图形',children:[{name:'解析几何'},{name:'立体几何'},{name:'三角函数'}]},{name:'统计与离散',children:[{name:'数列'},{name:'概率统计'}]}]},
+{name:'物理',ci:1,children:[{name:'力学主线',children:[{name:'受力分析'},{name:'牛顿定律'},{name:'运动学'}]},{name:'能量与动量',children:[{name:'功和能'},{name:'动量'}]},{name:'电磁主线',children:[{name:'电场'},{name:'电路'},{name:'电磁感应'}]}]},
+{name:'化学',ci:2,children:[{name:'反应基础',children:[{name:'物质的量'},{name:'离子反应'},{name:'氧化还原'}]},{name:'平衡与结构',children:[{name:'化学平衡'},{name:'元素周期律'},{name:'有机结构'}]},{name:'实验与应用',children:[{name:'电化学'},{name:'化学实验操作'}]}]},
+{name:'生物',ci:3,children:[{name:'细胞与代谢',children:[{name:'细胞结构'},{name:'物质运输'},{name:'酶与代谢'}]},{name:'遗传与调节',children:[{name:'遗传规律'},{name:'DNA表达'},{name:'生命活动调节'}]},{name:'生态与实验',children:[{name:'生态系统'},{name:'生物实验设计'}]}]},
+{name:'语文',ci:4,children:[{name:'阅读理解',children:[{name:'现代文阅读'},{name:'文言文'},{name:'古诗鉴赏'}]},{name:'表达写作',children:[{name:'作文立意'},{name:'论证结构'},{name:'语言表达'}]},{name:'任务能力',children:[{name:'材料整合'},{name:'审题'}]}]},
+{name:'英语',ci:5,children:[{name:'语言基础',children:[{name:'词汇语法'},{name:'长难句'},{name:'翻译表达'}]},{name:'篇章理解',children:[{name:'阅读理解'},{name:'完形填空'},{name:'七选五'}]},{name:'输出能力',children:[{name:'英语写作'},{name:'听说能力'}]}]},
+{name:'信息与通用能力',ci:6,children:[{name:'数据与模型',children:[{name:'数据处理'},{name:'图表解读'},{name:'模型意识'}]},{name:'工具与信息',children:[{name:'算法思维'},{name:'计算工具'},{name:'信息检索'}]},{name:'管理系统',children:[{name:'错题系统'},{name:'时间管理'}]}]},
+{name:'学习与考试策略',ci:7,children:[{name:'学习闭环',children:[{name:'目标拆解'},{name:'预习听课'},{name:'复盘总结'}]},{name:'训练与考试',children:[{name:'刷题策略'},{name:'考试节奏'},{name:'心理调节'}]},{name:'实验素养',children:[{name:'实验安全'},{name:'变量控制'}]}]}
+]};
+function walk(n,fn,d=0){fn(n,d);(n.children||n._children||[]).forEach(c=>walk(c,fn,d+1))}
+function foldAfterDepth(n,max,d=0){if(d>=max&&n.children){n._children=n.children;n.children=null;return}(n.children||[]).forEach(c=>foldAfterDepth(c,max,d+1))}
+const VGAP=30,HSTEP=200,PAD=80,svg=d3.select('#chart'),gZoom=svg.append('g'),g=gZoom.append('g'),linkG=g.append('g'),nodeG=g.append('g');
+function colorOf(d){if(d.depth===0)return'#1a237e';if(d.depth===1)return PALETTE[d.data.ci||0];let p=d.parent;while(p&&p.depth>1)p=p.parent;return p?PALETTE[p.data.ci||0]:'#888'}
+function nw(d){return d.depth===0?170:Math.max(76,d.data.name.length*13+26)} function nh(d){return d.depth===0?40:(d.depth===1?32:27)}
+function sideLayout(branches,side){const h=d3.hierarchy({name:'_',children:branches});d3.tree().nodeSize([VGAP,HSTEP]).separation((a,b)=>a.parent===b.parent?1:1.35)(h);const ns=h.descendants().filter(d=>d.depth>0);ns.forEach(n=>{n.xx=side*n.y;n.yy=n.x;n.side=side});const ys=ns.map(n=>n.yy),mid=(Math.min(...ys)+Math.max(...ys))/2;ns.forEach(n=>n.yy-=mid);return ns}
+function path(s,t){const dir=t.side>=0?1:-1,x1=s.xx+dir*nw(s)/2,x2=t.xx-dir*nw(t)/2,c=Math.max(34,Math.abs(x2-x1)*.42);return`M${x1},${s.yy} C${x1+dir*c},${s.yy} ${x2-dir*c},${t.yy} ${x2},${t.yy}`}
+function render(){const r=sideLayout(raw.children.filter((_,i)=>i%2===0),1),l=sideLayout(raw.children.filter((_,i)=>i%2===1),-1),sideNodes=r.concat(l),root={depth:0,data:raw,xx:0,yy:0,side:0,parent:null},all=sideNodes.concat(root),links=[];sideNodes.forEach(n=>links.push({source:n.depth===1?root:n.parent,target:n}));const minX=Math.min(...all.map(n=>n.xx))-PAD,maxX=Math.max(...all.map(n=>n.xx))+PAD,minY=Math.min(...all.map(n=>n.yy))-40,maxY=Math.max(...all.map(n=>n.yy))+60;svg.attr('viewBox',`0 0 ${maxX-minX} ${maxY-minY}`);g.attr('transform',`translate(${-minX},${-minY})`);
+linkG.selectAll('path').data(links,d=>d.target.data.name+d.target.depth).join('path').attr('class','link').attr('d',d=>path(d.source,d.target)).attr('stroke',d=>colorOf(d.target)).attr('stroke-width',d=>d.target.depth===1?2.2:1.35).attr('opacity',d=>d.target.depth===1 ? .9 : .58);
+const node=nodeG.selectAll('g.node').data(all,d=>(d.depth===0?'root':d.data.name)+d.depth).join(enter=>{const n=enter.append('g').attr('class','node').on('click',(ev,d)=>{if(d.depth<1)return;if(d.data._children){d.data.children=d.data._children;d.data._children=null}else if(d.data.children){d.data._children=d.data.children;d.data.children=null}render()});n.append('rect');n.append('text');return n});
+node.attr('transform',d=>`translate(${d.xx-nw(d)/2},${d.yy-nh(d)/2})`).each(function(d){const s=d3.select(this),w=nw(d),h=nh(d),c=colorOf(d);s.select('rect').attr('width',w).attr('height',h).attr('rx',d.depth===0?10:7).attr('fill',d.depth<=1?c:'#fff').attr('stroke',d.depth<=1?'none':c).attr('stroke-width',1.3).attr('filter','drop-shadow(0 2px 5px #0002)');s.select('text').text(d.data.name+(d.data._children?(d.side<0?' ◂':' ▸'):'')).attr('x',w/2).attr('y',h/2).attr('fill',d.depth<=1?'#fff':'#263238').attr('font-size',d.depth===0?18:(d.depth===1?13:12.5)).attr('font-weight',d.depth<=1?700:500)})}
+function expandAll(){walk(raw,n=>{if(n._children){n.children=n._children;n._children=null}});render()} function expandToThird(){expandAll();foldAfterDepth(raw,3);render()} function collapseAll(){raw.children.forEach(b=>{if(b.children){b._children=b.children;b.children=null}});render()}
+const zoom=d3.zoom().scaleExtent([.45,2.6]).on('zoom',ev=>gZoom.attr('transform',ev.transform));svg.call(zoom);function resetZoom(){svg.transition().duration(300).call(zoom.transform,d3.zoomIdentity)}
+expandToThird();
+</script>
+</body>
+</html>

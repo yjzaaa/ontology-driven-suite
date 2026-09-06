@@ -1,0 +1,84 @@
+﻿source,target,type,weight
+Ontology 思想,Operational Layer,contains,0.9
+Ontology 思想,语义层优先,contains,0.8
+业务对象化,Ontology 思想,depends,0.8
+决策闭环,Operational Layer,evolved,0.75
+数据模型边界,Ontology 思想,contrast,0.65
+Object Type,业务对象化,depends,0.9
+Object Instance,Object Type,contains,0.8
+Property,Object Type,contains,0.82
+Primary Key,Object Type,depends,0.76
+Derived Property,Property,evolved,0.65
+Object Set,Object Type,depends,0.8
+Link Type,Object Type,depends,0.86
+Relation Cardinality,Link Type,contains,0.64
+Ontology Manager,Object Type,contains,0.58
+Ontology Manager,Link Type,contains,0.58
+Dataset Mapping,Source System,depends,0.7
+Dataset Mapping,Property,contains,0.74
+Pipeline,Dataset Mapping,evolved,0.68
+Entity Resolution,Primary Key,depends,0.76
+Master Data Alignment,Entity Resolution,contains,0.68
+Incremental Sync,Pipeline,contains,0.55
+Data Lineage,Pipeline,contains,0.7
+Data Quality Rule,Property,depends,0.62
+Action Type,Object Type,depends,0.88
+Action Type,Property,depends,0.72
+Action Form,Action Type,contains,0.62
+Writeback,Action Type,contains,0.75
+Validation Rule,Action Type,contains,0.7
+Function,Object Set,contains,0.72
+Function,Property,contains,0.66
+Aggregation,Function,contains,0.58
+Workflow State,Action Type,evolved,0.62
+Human-in-the-loop,Workflow State,contains,0.64
+Object Permission,Object Type,depends,0.78
+Property Permission,Property,depends,0.7
+Dynamic Policy,Object Permission,evolved,0.78
+Audit Log,Action Type,depends,0.7
+Lineage Governance,Data Lineage,evolved,0.66
+Lineage Governance,Audit Log,contains,0.64
+Ontology Versioning,Ontology Manager,contains,0.52
+Simulation,Action Type,depends,0.64
+AIP Evals,Simulation,evolved,0.64
+AIP Grounding,Object Set,contains,0.82
+AIP Grounding,Object Permission,contains,0.76
+LLM Tool,Function,depends,0.78
+LLM Tool,Action Type,depends,0.68
+AIP Logic Block,LLM Tool,contains,0.72
+Prompt Template,AIP Grounding,contains,0.58
+Agent Plan,AIP Logic Block,evolved,0.7
+Tool Authorization,Dynamic Policy,depends,0.74
+Tool Authorization,LLM Tool,contains,0.7
+AIP Analyst,AIP Grounding,evolved,0.62
+AI Action Review,Human-in-the-loop,evolved,0.6
+AI Action Review,Tool Authorization,depends,0.64
+Workshop,Object Type,contains,0.7
+Object View,Workshop,contains,0.68
+Dashboard,Object Set,evolved,0.48
+OSDK,Object Type,depends,0.76
+OSDK,Action Type,depends,0.62
+TypeScript SDK,OSDK,contains,0.52
+Python SDK,OSDK,contains,0.52
+Java SDK,OSDK,contains,0.45
+Application Permission,Object Permission,evolved,0.56
+Supply Chain Ontology,Ontology Blueprint,contains,0.62
+Supply Chain Ontology,Object Type,depends,0.62
+Manufacturing Ontology,Ontology Blueprint,contains,0.62
+Defense Intelligence Ontology,Ontology Blueprint,contains,0.58
+Healthcare Operations Ontology,Ontology Blueprint,contains,0.52
+Financial Risk Ontology,Ontology Blueprint,contains,0.54
+Ontology Blueprint,Ontology 思想,depends,0.7
+Ontology Blueprint,Link Type,depends,0.66
+Ontology Blueprint,Action Type,depends,0.64
+Deployment Pattern,Workshop,evolved,0.52
+Deployment Pattern,OSDK,evolved,0.5
+Value Loop,决策闭环,evolved,0.62
+Value Loop,Audit Log,depends,0.52
+Value Loop,AIP Evals,depends,0.52
+AIP Analyst,Dashboard,contrast,0.42
+OSDK,Workshop,contrast,0.46
+Function,Derived Property,analogy,0.44
+Dynamic Policy,Tool Authorization,analogy,0.5
+Lineage Governance,Value Loop,analogy,0.42
+Simulation,Deployment Pattern,analogy,0.38

@@ -1,0 +1,101 @@
+[
+  {
+    "id": "Schema_Generate",
+    "name": "LLM 生成 App Schema",
+    "ownerEntity": "AppSchema",
+    "preconditions": [
+      "sourceProject.isNotEmpty()",
+      "model.m1.exists()"
+    ],
+    "postconditions": [
+      {
+        "field": "schema.lifecycle",
+        "setValue": "草稿"
+      }
+    ]
+  },
+  {
+    "id": "Schema_Validate",
+    "name": "校验 App Schema",
+    "ownerEntity": "AppSchema",
+    "preconditions": [
+      "schema.pages.count() > 0",
+      "forall(p in schema.pages): p.id.isNotEmpty()"
+    ],
+    "postconditions": [
+      {
+        "field": "schema.lifecycle",
+        "setValue": "已校验"
+      }
+    ]
+  },
+  {
+    "id": "Schema_Reject",
+    "name": "打回重生成",
+    "ownerEntity": "AppSchema",
+    "preconditions": [
+      "validation.failed == true"
+    ],
+    "postconditions": [
+      {
+        "field": "schema.lifecycle",
+        "setValue": "草稿"
+      }
+    ]
+  },
+  {
+    "id": "API_GenerateCRUD",
+    "name": "生成 CRUD API",
+    "ownerEntity": "Block",
+    "preconditions": [
+      "block.entity.exists()"
+    ],
+    "postconditions": []
+  },
+  {
+    "id": "API_GenerateBehavior",
+    "name": "生成行为 API",
+    "ownerEntity": "Block",
+    "preconditions": [
+      "block.behavior.exists()"
+    ],
+    "postconditions": []
+  },
+  {
+    "id": "App_Generate",
+    "name": "生成应用",
+    "ownerEntity": "AppSchema",
+    "preconditions": [
+      "schema.lifecycle == '已校验'"
+    ],
+    "postconditions": [
+      {
+        "field": "schema.lifecycle",
+        "setValue": "已生成"
+      }
+    ]
+  },
+  {
+    "id": "App_Run",
+    "name": "启动应用",
+    "ownerEntity": "AppSchema",
+    "preconditions": [],
+    "postconditions": []
+  },
+  {
+    "id": "Renderer_Render",
+    "name": "渲染页面",
+    "ownerEntity": "Block",
+    "preconditions": [
+      "block.type in ['form','table','stat','detail']"
+    ],
+    "postconditions": []
+  },
+  {
+    "id": "Schema_Report",
+    "name": "Schema 校验报告",
+    "ownerEntity": "AppSchema",
+    "preconditions": [],
+    "postconditions": []
+  }
+]

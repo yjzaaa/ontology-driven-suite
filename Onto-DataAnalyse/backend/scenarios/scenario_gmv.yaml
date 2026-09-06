@@ -1,0 +1,120 @@
+id: SCN-GMV-001
+name: GMV 分析
+icon: 📈
+description: 分析 GMV 月度趋势、类目结构、渠道贡献与量价拆解
+intent: 用户希望了解 GMV 的走势、结构以及背后的驱动因素
+
+key_metrics:
+  - MTR-TXN-001   # GMV
+  - MTR-TXN-002   # 订单数
+  - MTR-TXN-003   # 客单价
+
+triggers:                                 # 自然语言触发词
+  - GMV
+  - 销售额
+  - 营业额
+  - 收入分析
+  - 成交总额
+
+steps:
+  - id: S1
+    type: SQL
+    description: 采集近 12 个月 GMV 月度趋势
+    sql_intent: |
+      按月统计有效订单（status NOT IN (5,6)）的 GMV 和订单数，覆盖最近 12 个月。
+      要求列：period (YYYY-MM), gmv, order_count
+    fallback_sql: |
+      SELECT
+        strftime('%Y-%m', gmt_create) AS period,
+        ROUND(SUM(CASE WHEN status NOT IN (5,6) THEN payment_amount ELSE 0 END), 2) AS gmv,
+        SUM(CASE WHEN status NOT IN (5,6) THEN 1 ELSE 0 END) AS order_count
+      FROM t_order
+      WHERE gmt_create >= date('2025-05-17')
+      GROUP BY period
+      ORDER BY period
+
+  - id: S2
+    type: STAT
+    description: 计算 GMV 同环比与趋势
+    algorithm: mom_yoy
+    input_step: S1
+    params:
+      period_key: period
+      value_key: gmv
+
+  - id: S3
+    type: SQL
+    description: GMV 按类目结构拆解（一级类目）
+    sql_intent: |
+      统计近 3 个月（2026-03 / 04 / 05）按一级类目的 GMV 分布。
+      需要 JOIN t_order_item → t_category 找到一级父类目（注意有 3 级结构）。
+      列：period, l1_category_name, gmv
+    fallback_sql: |
+      WITH RECURSIVE cat_path AS (
+        SELECT category_id AS leaf_id, category_id AS cur_id, parent_id, level, category_name
+        FROM t_category WHERE level = 3
+        UNION ALL
+        SELECT cp.leaf_id, c.category_id, c.parent_id, c.level, c.category_name
+        FROM cat_path cp JOIN t_category c ON cp.parent_id = c.category_id
+      ),
+      cat_to_l1 AS (
+        SELECT leaf_id, category_name AS l1_name FROM cat_path WHERE level = 1
+      )
+      SELECT
+        strftime('%Y-%m', o.gmt_create) AS period,
+        COALESCE(c1.l1_name, c.category_name) AS l1_category_name,
+        ROUND(SUM(oi.pay_price * oi.quantity), 2) AS gmv
+      FROM t_order o
+      JOIN t_order_item oi ON o.order_id = oi.order_id
+      JOIN t_category c ON oi.category_id = c.category_id
+      LEFT JOIN cat_to_l1 c1 ON oi.category_id = c1.leaf_id
+      WHERE o.status NOT IN (5,6)
+        AND strftime('%Y-%m', o.gmt_create) >= '2026-03'
+      GROUP BY period, l1_category_name
+      ORDER BY period, gmv DESC
+
+  - id: S4
+    type: SQL
+    description: GMV 按下单渠道拆解（近 3 个月）
+    sql_intent: |
+      按渠道（APP/PC/MINI/H5）统计近 3 个月各月 GMV。
+      列：period, channel, gmv, order_count
+    fallback_sql: |
+      SELECT
+        strftime('%Y-%m', gmt_create) AS period,
+        channel,
+        ROUND(SUM(payment_amount), 2) AS gmv,
+        COUNT(*) AS order_count
+      FROM t_order
+      WHERE status NOT IN (5,6)
+        AND strftime('%Y-%m', gmt_create) >= '2026-03'
+      GROUP BY period, channel
+      ORDER BY period, gmv DESC
+
+  - id: S5
+    type: SQL
+    description: 量价拆解（订单数 vs 客单价）月度趋势
+    sql_intent: |
+      按月统计有效订单数和客单价（GMV / 订单数），覆盖近 12 个月。
+      列：period, order_count, avg_order_value
+    fallback_sql: |
+      SELECT
+        strftime('%Y-%m', gmt_create) AS period,
+        COUNT(*) AS order_count,
+        ROUND(AVG(payment_amount), 2) AS avg_order_value
+      FROM t_order
+      WHERE status NOT IN (5,6)
+        AND gmt_create >= date('2025-05-17')
+      GROUP BY period
+      ORDER BY period
+
+  - id: S6
+    type: AI_REASONING
+    description: AI 推理 GMV 变化的驱动因素与建议
+    task: |
+      基于以上 SQL 结果和统计分析：
+      1) 总结 GMV 的趋势（近 12 月走势 + 近 3 月环比）
+      2) 拆解结构：哪些类目/渠道贡献了 GMV 主体？哪些发生了显著变化？
+      3) 量价归因：GMV 变化主要由订单量驱动还是客单价驱动？
+      4) 给出 2-3 条具体可执行的行动建议（含优先级 P0/P1/P2 + 责任团队 + 预期效果）
+    input_steps: [S1, S2, S3, S4, S5]

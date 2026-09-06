@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>中国高中理科（数学·物理·化学·生物）知识体系门户</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+body{margin:0;background:#f7f8fa;color:#1a1a2e;font-family:"Microsoft YaHei",Arial,sans-serif;}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e3e7f0;z-index:5;padding:14px 24px;box-shadow:0 2px 10px #0000000d;}
+h1{font-size:22px;margin:0 0 10px;}nav{display:flex;gap:8px;flex-wrap:wrap;}
+a.btn{text-decoration:none;color:#263238;border:1px solid #cfd6e6;background:#fff;border-radius:6px;padding:6px 10px;font-size:13px;}
+a.btn.primary{background:#3f51b5;color:white;border-color:#3f51b5;}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 22px 34px;}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;}
+.card{background:#fff;border:1px solid #e0e5ef;border-radius:8px;padding:16px;box-shadow:0 2px 8px #0000000a;}
+.span4{grid-column:span 4;}.span6{grid-column:span 6;}.span8{grid-column:span 8;}.span12{grid-column:span 12;}
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.kpi{border:1px solid #e3e7f0;border-radius:6px;padding:12px;background:#fbfcff;}.kpi b{font-size:24px;color:#3f51b5;display:block;}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}.entry h3{margin:0 0 8px;font-size:16px;}.entry p{margin:0 0 12px;color:#5b6475;line-height:1.5;font-size:13px;}
+.chart{height:300px;}table{width:100%;border-collapse:collapse;font-size:13px;}td,th{border-bottom:1px solid #edf0f6;padding:8px;text-align:left;}
+.muted{color:#667085;font-size:13px;line-height:1.7;}footer{margin-top:16px;color:#667085;font-size:13px;}
+@media(max-width:900px){.span4,.span6,.span8{grid-column:span 12;}.cards,.stat{grid-template-columns:1fr 1fr;}}
+</style></head><body>
+<header><h1>中国高中理科（数学·物理·化学·生物）知识体系门户</h1><nav>
+<a class="btn primary" href="知识体系_高中理科.md">Markdown文档</a>
+<a class="btn" href="knowledge_top.html">顶层思维导图</a>
+<a class="btn" href="knowledge_middle.html">中间矩阵</a>
+<a class="btn" href="knowledge_bottom.html">底层网络</a>
+<a class="btn" href="knowledge_learning_path.html">学习路线</a>
+<a class="btn" href="knowledge_bottom_dependency.html">依赖DAG</a>
+<a class="btn" href="knowledge_dependency_metro.html">地铁路线</a>
+</nav></header>
+<main class="wrap">
+<section class="grid">
+<div class="card span4"><h2>领域概览</h2><p class="muted"><b>定义：</b>以高中数学、物理、化学、生物四大学科为核心，强调学科间数学工具、模型与方法的交叉依赖，服务高考理科学习与综合应用的完整知识网络。<br><b>受众：</b>高中理科生系统学习、教师课程设计、家长辅导、阶段复习与查漏补缺<br><b>来源：</b>普通高中数学/物理/化学/生物课程标准与主流教材综合抽象<br><b>depends占比：</b>71.3%，已生成依赖 DAG 与地铁线路图。</p></div>
+<div class="card span8"><h2>核心统计仪表盘</h2><div class="stat">
+<div class="kpi"><b>11</b><span>L1</span></div><div class="kpi"><b>45</b><span>L2</span></div><div class="kpi"><b>93</b><span>L3</span></div><div class="kpi"><b>250</b><span>L4</span></div><div class="kpi"><b>250</b><span>节点</span></div><div class="kpi"><b>359</b><span>边数</span></div><div class="kpi"><b>2.87</b><span>均度</span></div><div class="kpi"><b>0</b><span>孤岛</span></div>
+</div></div>
+<div class="card span12"><h2>图表入口</h2><div class="cards">
+<div class="entry card"><h3>01 顶层思维导图</h3><p>展示 L1-L3 知识树，左右双侧平衡。</p><a class="btn primary" href="knowledge_top.html">打开</a></div>
+<div class="entry card"><h3>02 中间知识矩阵</h3><p>三维矩阵定位全部 L3。</p><a class="btn primary" href="knowledge_middle.html">打开</a></div>
+<div class="entry card"><h3>03 底层知识网络</h3><p>展示全部 L4 和关系边。</p><a class="btn primary" href="knowledge_bottom.html">打开</a></div>
+<div class="entry card"><h3>04 学习路线图</h3><p>以 L3 构建左到右学习路径。</p><a class="btn primary" href="knowledge_learning_path.html">打开</a></div>
+<div class="entry card"><h3>05 依赖路径 DAG</h3><p>depends 占比超过 35%，已生成。</p><a class="btn" href="knowledge_bottom_dependency.html">打开</a></div>
+<div class="entry card"><h3>06 地铁线路式路径</h3><p>多条学习线路和换乘节点。</p><a class="btn" href="knowledge_dependency_metro.html">打开</a></div>
+</div></div>
+<div class="card span6"><h2>层级规模分布</h2><div id="levelChart" class="chart"></div></div>
+<div class="card span6"><h2>覆盖完整性图</h2><div id="coverageChart" class="chart"></div></div>
+<div class="card span6"><h2>主干知识量分布</h2><div id="branchChart" class="chart"></div></div>
+<div class="card span6"><h2>关系类型分布</h2><div id="relationChart" class="chart"></div></div>
+<div class="card span6"><h2>Top 10 枢纽知识点</h2><table><thead><tr><th>知识点</th><th>主干</th><th>连接数</th></tr></thead><tbody>
+<tr><td>指数函数图像</td><td>数学·函数·代数·三角</td><td>6</td></tr><tr><td>放射性衰变</td><td>物理·热·光·原子·振动波</td><td>6</td></tr><tr><td>周期表与性质</td><td>化学·物质结构与反应原理</td><td>6</td></tr><tr><td>基本求导公式</td><td>数学·数列·概率·统计·微积分</td><td>5</td></tr><tr><td>功的计算</td><td>物理·力学</td><td>5</td></tr><tr><td>晶体类型</td><td>化学·物质结构与反应原理</td><td>5</td></tr><tr><td>速率表示</td><td>化学·物质结构与反应原理</td><td>5</td></tr><tr><td>强弱电解质</td><td>化学·物质结构与反应原理</td><td>5</td></tr><tr><td>烷烯炔</td><td>化学·元素化合物与有机</td><td>5</td></tr><tr><td>一对相对性状</td><td>生物·生理·生态·进化</td><td>5</td></tr>
+</tbody></table><p><a class="btn" href="knowledge_bottom.html">跳转到底层知识网络</a></p></div>
+<div class="card span6"><h2>学习路线摘要</h2><table><thead><tr><th>路线</th><th>L3覆盖</th><th>自动前导</th></tr></thead><tbody>
+<tr><td>全景路线</td><td>93</td><td>16</td></tr><tr><td>数学基础路线</td><td>24</td><td>4</td></tr><tr><td>物理建模路线</td><td>27</td><td>4</td></tr><tr><td>化学原理路线</td><td>16</td><td>2</td></tr><tr><td>生物系统路线</td><td>18</td><td>3</td></tr><tr><td>跨学科综合路线</td><td>93</td><td>16</td></tr>
+</tbody></table><p><a class="btn" href="knowledge_learning_path.html">跳转到学习路线图</a></p></div>
+</section>
+<footer class="card">Markdown：<a href="知识体系_高中理科.md">知识体系_高中理科.md</a> ｜ 数据：<a href="knowledge_graph.json">knowledge_graph.json</a> / <a href="knowledge_graph.csv">knowledge_graph.csv</a> ｜ 创建日期：2026-07-16 ｜ 下次复审：2027-07-16 ｜ 版本：v1.0</footer>
+</main>
+<script>
+const stats={"domain": "中国高中理科（数学·物理·化学·生物）", "definition": "以高中数学、物理、化学、生物四大学科为核心，强调学科间数学工具、模型与方法的交叉依赖，服务高考理科学习与综合应用的完整知识网络。", "audience": "高中理科生系统学习、教师课程设计、家长辅导、阶段复习与查漏补缺", "source": "普通高中数学/物理/化学/生物课程标准与主流教材综合抽象", "reviewDate": "2027-07-16", "counts": {"l1": 11, "l2": 45, "l3": 93, "l4": 250, "nodes": 250, "edges": 359, "avgDegree": 2.87, "isolated": 0}, "coverage": {"matrixL3": 100, "graphL4": 100, "routeL3": 100}, "branchDist": [{"id": "B01", "name": "数学·函数·代数·三角", "l2": 4, "l3": 8, "l4": 16}, {"id": "B02", "name": "数学·几何·向量·解析几何", "l2": 4, "l3": 8, "l4": 16}, {"id": "B03", "name": "数学·数列·概率·统计·微积分", "l2": 4, "l3": 8, "l4": 16}, {"id": "B04", "name": "物理·力学", "l2": 5, "l3": 11, "l4": 28}, {"id": "B05", "name": "物理·电磁学", "l2": 4, "l3": 8, "l4": 24}, {"id": "B06", "name": "物理·热·光·原子·振动波", "l2": 4, "l3": 8, "l4": 24}, {"id": "B07", "name": "化学·物质结构与反应原理", "l2": 4, "l3": 8, "l4": 24}, {"id": "B08", "name": "化学·元素化合物与有机", "l2": 4, "l3": 8, "l4": 24}, {"id": "B09", "name": "生物·分子·细胞·遗传", "l2": 4, "l3": 9, "l4": 27}, {"id": "B10", "name": "生物·生理·生态·进化", "l2": 4, "l3": 9, "l4": 27}, {"id": "B11", "name": "跨学科·数学工具与建模", "l2": 4, "l3": 8, "l4": 24}], "relationDist": {"contains": 89, "depends": 256, "causes": 0, "analogy": 9, "contrast": 2, "evolved": 3}, "topHubs": [{"id": "B01-S03-K05-A02", "name": "指数函数图像", "branch": "数学·函数·代数·三角", "degree": 6}, {"id": "B06-S04-K08-A01", "name": "放射性衰变", "branch": "物理·热·光·原子·振动波", "degree": 6}, {"id": "B07-S01-K01-A03", "name": "周期表与性质", "branch": "化学·物质结构与反应原理", "degree": 6}, {"id": "B03-S04-K07-A02", "name": "基本求导公式", "branch": "数学·数列·概率·统计·微积分", "degree": 5}, {"id": "B04-S05-K09-A01", "name": "功的计算", "branch": "物理·力学", "degree": 5}, {"id": "B07-S01-K02-A03", "name": "晶体类型", "branch": "化学·物质结构与反应原理", "degree": 5}, {"id": "B07-S02-K03-A01", "name": "速率表示", "branch": "化学·物质结构与反应原理", "degree": 5}, {"id": "B07-S03-K05-A01", "name": "强弱电解质", "branch": "化学·物质结构与反应原理", "degree": 5}, {"id": "B08-S03-K05-A01", "name": "烷烯炔", "branch": "化学·元素化合物与有机", "degree": 5}, {"id": "B10-S01-K01-A01", "name": "一对相对性状", "branch": "生物·生理·生态·进化", "degree": 5}], "routes": [{"name": "全景路线", "l3": 93, "autoPrereq": 16}, {"name": "数学基础路线", "l3": 24, "autoPrereq": 4}, {"name": "物理建模路线", "l3": 27, "autoPrereq": 4}, {"name": "化学原理路线", "l3": 16, "autoPrereq": 2}, {"name": "生物系统路线", "l3": 18, "autoPrereq": 3}, {"name": "跨学科综合路线", "l3": 93, "autoPrereq": 16}], "dependsRatio": 71.3};
+function chart(id,opt){echarts.init(document.getElementById(id)).setOption(opt);}
+chart('levelChart',{color:['#3f51b5'],xAxis:{type:'category',data:['L1','L2','L3','L4']},yAxis:{type:'value'},tooltip:{},series:[{type:'bar',data:[stats.counts.l1,stats.counts.l2,stats.counts.l3,stats.counts.l4],label:{show:true,position:'top'}}]});
+chart('coverageChart',{color:['#009688'],xAxis:{type:'value',max:100},yAxis:{type:'category',data:['L3矩阵覆盖','L4图谱覆盖','L3路线覆盖']},tooltip:{formatter:p=>p.name+': '+p.value+'%'},series:[{type:'bar',data:[stats.coverage.matrixL3,stats.coverage.graphL4,stats.coverage.routeL3],label:{show:true,formatter:'{c}%'}}]});
+chart('branchChart',{color:['#ff9800'],xAxis:{type:'value'},yAxis:{type:'category',data:stats.branchDist.map(x=>x.id),axisLabel:{formatter:v=>v}},tooltip:{formatter:p=>{let x=stats.branchDist[p.dataIndex];return x.id+' '+x.name+'<br>L2:'+x.l2+' L3:'+x.l3+' L4:'+x.l4;}},series:[{type:'bar',data:stats.branchDist.map(x=>x.l4),label:{show:true}}]});
+chart('relationChart',{tooltip:{trigger:'item'},legend:{bottom:0},series:[{type:'pie',radius:['35%','65%'],data:Object.entries(stats.relationDist).map(([name,value])=>({name,value}))}]});
+window.addEventListener('resize',()=>document.querySelectorAll('.chart').forEach(el=>echarts.getInstanceByDom(el)?.resize()));
+</script></body></html>

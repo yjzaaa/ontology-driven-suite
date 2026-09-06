@@ -1,0 +1,129 @@
+id: SCN-ANOMALY-001
+name: 经营异常分析
+icon: 🚨
+description: 识别近期经营指标的异常波动并 AI 归因
+intent: 用户希望快速发现"哪里有问题"
+
+key_metrics:
+  - MTR-TXN-001   # GMV
+  - MTR-TXN-005   # 订单取消率
+  - MTR-TXN-006   # 退款率
+  - MTR-USR-004   # 复购率
+
+triggers:
+  - 异常
+  - 异常分析
+  - 哪里有问题
+  - 经营异常
+  - 异常波动
+
+steps:
+  - id: S1
+    type: SQL
+    description: 采集核心指标月度数据（GMV / 订单数 / 退款 / 取消）
+    sql_intent: |
+      按月输出 GMV、有效订单数、退款订单数、取消订单数、退款金额合计。覆盖近 12 个月。
+      列：period, gmv, order_count, cancel_count, refund_order_count, refund_amount, refund_rate
+    fallback_sql: |
+      SELECT
+        strftime('%Y-%m', o.gmt_create) AS period,
+        ROUND(SUM(CASE WHEN o.status NOT IN (5,6) THEN o.payment_amount ELSE 0 END), 2) AS gmv,
+        SUM(CASE WHEN o.status NOT IN (5,6) THEN 1 ELSE 0 END) AS order_count,
+        SUM(CASE WHEN o.status = 5 THEN 1 ELSE 0 END) AS cancel_count,
+        (SELECT COUNT(*) FROM t_refund r2
+         WHERE strftime('%Y-%m', r2.apply_time) = strftime('%Y-%m', o.gmt_create)) AS refund_order_count,
+        (SELECT ROUND(COALESCE(SUM(r2.refund_amount), 0), 2) FROM t_refund r2
+         WHERE strftime('%Y-%m', r2.apply_time) = strftime('%Y-%m', o.gmt_create)) AS refund_amount,
+        ROUND(
+          100.0 *
+          (SELECT COUNT(*) FROM t_refund r2
+           WHERE strftime('%Y-%m', r2.apply_time) = strftime('%Y-%m', o.gmt_create))
+          / NULLIF(SUM(CASE WHEN o.status NOT IN (5) THEN 1 ELSE 0 END), 0),
+          2) AS refund_rate
+      FROM t_order o
+      WHERE o.gmt_create >= date('2025-05-17')
+      GROUP BY period
+      ORDER BY period
+
+  - id: S2
+    type: STAT
+    description: GMV 同环比 + 3σ 异常检测
+    algorithm: mom_yoy
+    input_step: S1
+    params:
+      period_key: period
+      value_key: gmv
+
+  - id: S3
+    type: STAT
+    description: 退款率 3σ 异常检测
+    algorithm: anomaly_3sigma
+    input_step: S1
+    params:
+      period_key: period
+      value_key: refund_rate
+
+  - id: S4
+    type: SQL
+    description: 服装类目 (CAT-001) 退款率月度趋势（聚焦异常类目）
+    sql_intent: |
+      统计服装一级类目 (CAT-001) 及其所有子类目，按月的有效订单数、退款数和退款率。
+      使用 WITH RECURSIVE 找到 CAT-001 的所有后代类目。
+      列：period, apparel_orders, apparel_refunds, apparel_refund_rate
+    fallback_sql: |
+      WITH RECURSIVE cat_desc AS (
+        SELECT category_id FROM t_category WHERE category_id = 'CAT-001'
+        UNION ALL
+        SELECT c.category_id FROM t_category c
+        JOIN cat_desc d ON c.parent_id = d.category_id
+      ),
+      apparel_orders AS (
+        SELECT DISTINCT o.order_id, strftime('%Y-%m', o.gmt_create) AS period
+        FROM t_order o
+        JOIN t_order_item oi ON o.order_id = oi.order_id
+        WHERE o.status NOT IN (5)
+          AND oi.category_id IN (SELECT category_id FROM cat_desc)
+      )
+      SELECT
+        ao.period,
+        COUNT(*) AS apparel_orders,
+        SUM(CASE WHEN r.refund_id IS NOT NULL THEN 1 ELSE 0 END) AS apparel_refunds,
+        ROUND(100.0 * SUM(CASE WHEN r.refund_id IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 2)
+          AS apparel_refund_rate
+      FROM apparel_orders ao
+      LEFT JOIN t_refund r ON ao.order_id = r.order_id
+      GROUP BY ao.period
+      ORDER BY ao.period
+
+  - id: S5
+    type: SQL
+    description: 近 30 天退款原因分布
+    sql_intent: |
+      统计近 30 天（2026-04-17 ~ 2026-05-17）t_refund 表中退款原因的占比与金额。
+      列：reason, refund_count, refund_amount, pct
+    fallback_sql: |
+      WITH recent AS (
+        SELECT reason, refund_amount FROM t_refund
+        WHERE apply_time >= '2026-04-17' AND apply_time < '2026-05-18'
+      ),
+      tot AS (SELECT COUNT(*) AS n FROM recent)
+      SELECT
+        r.reason,
+        COUNT(*) AS refund_count,
+        ROUND(SUM(r.refund_amount), 2) AS refund_amount,
+        ROUND(100.0 * COUNT(*) / (SELECT n FROM tot), 2) AS pct
+      FROM recent r
+      GROUP BY r.reason
+      ORDER BY refund_count DESC
+
+  - id: S6
+    type: AI_REASONING
+    description: AI 推理：识别异常根因、量化影响、给出行动建议
+    task: |
+      综合 SQL/统计结果回答：
+      1) 近 3 个月最显著的异常是什么？（GMV / 退款率 / 取消率 三个指标至少各覆盖一次）
+      2) 服装类目的异常表现是否在主导整体退款率上升？提供量化证据。
+      3) 近 30 天退款原因分布有没有提示具体业务问题？
+      4) 输出 3-5 条行动建议，每条含优先级 (P0/P1/P2)、责任团队、预期效果。
+      要求展示推理思维链（先观察、再假设、最后结论）。
+    input_steps: [S1, S2, S3, S4, S5]

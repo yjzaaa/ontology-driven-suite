@@ -1,0 +1,242 @@
+[
+  {
+    "table": "AppSchema",
+    "pk": "AppSchema_id",
+    "columns": [
+      {
+        "name": "AppSchema_id",
+        "type": "TEXT",
+        "required": true,
+        "unique": true
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "version",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "sourceProject",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "pages",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      }
+    ],
+    "pkPrefix": "AppSchema-",
+    "pkPad": 4
+  },
+  {
+    "table": "Page",
+    "pk": "Page_id",
+    "columns": [
+      {
+        "name": "Page_id",
+        "type": "TEXT",
+        "required": true,
+        "unique": true
+      },
+      {
+        "name": "id",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "icon",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      }
+    ],
+    "pkPrefix": "Page-",
+    "pkPad": 4
+  },
+  {
+    "table": "Block",
+    "pk": "Block_id",
+    "columns": [
+      {
+        "name": "Block_id",
+        "type": "TEXT",
+        "required": true,
+        "unique": true
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "title",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "entity",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "behavior",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      }
+    ],
+    "pkPrefix": "Block-",
+    "pkPad": 4
+  },
+  {
+    "table": "Field",
+    "pk": "Field_id",
+    "columns": [
+      {
+        "name": "Field_id",
+        "type": "TEXT",
+        "required": true,
+        "unique": true
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "label",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "control",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "required",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      },
+      {
+        "name": "refTable",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      },
+      {
+        "name": "refValue",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      },
+      {
+        "name": "refLabel",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      }
+    ],
+    "pkPrefix": "Field-",
+    "pkPad": 4
+  },
+  {
+    "table": "Column",
+    "pk": "Column_id",
+    "columns": [
+      {
+        "name": "Column_id",
+        "type": "TEXT",
+        "required": true,
+        "unique": true
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "label",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "render",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      },
+      {
+        "name": "tagMap",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      }
+    ],
+    "pkPrefix": "Column-",
+    "pkPad": 4
+  },
+  {
+    "table": "Action",
+    "pk": "Action_id",
+    "columns": [
+      {
+        "name": "Action_id",
+        "type": "TEXT",
+        "required": true,
+        "unique": true
+      },
+      {
+        "name": "label",
+        "type": "TEXT",
+        "required": true,
+        "unique": false
+      },
+      {
+        "name": "behavior",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      },
+      {
+        "name": "confirm",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      },
+      {
+        "name": "visibleWhen",
+        "type": "TEXT",
+        "required": false,
+        "unique": false
+      }
+    ],
+    "pkPrefix": "Action-",
+    "pkPad": 4
+  }
+]

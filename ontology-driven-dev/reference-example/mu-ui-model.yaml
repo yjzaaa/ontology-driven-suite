@@ -1,0 +1,1085 @@
+application:
+  menus:
+  - children:
+    - menuId: menu-contract-maintain
+      name: 合同维护
+      screenRef: frmContractMaintain
+    - menuId: menu-contract-query
+      name: 合同查询
+      screenRef: frmContractQuery
+    menuId: menu-contract
+    name: 合同管理
+  - children:
+    - menuId: menu-invoice-maintain
+      name: 开票录入
+      screenRef: frmInvoiceMaintain
+    - menuId: menu-invoice-query
+      name: 开票查询
+      screenRef: frmInvoiceQuery
+    menuId: menu-invoice
+    name: 开票管理
+  - children:
+    - menuId: menu-receipt-maintain
+      name: 收款录入
+      screenRef: frmReceiptMaintain
+    - menuId: menu-receipt-query
+      name: 收款查询
+      screenRef: frmReceiptQuery
+    menuId: menu-receipt
+    name: 收款管理
+  - children:
+    - menuId: menu-approval-contract
+      name: 合同审批
+      screenRef: frmContractApproval
+    - menuId: menu-approval-invoice
+      name: 开票审批
+      screenRef: frmInvoiceApproval
+    menuId: menu-approval
+    name: 审批中心
+  - children:
+    - menuId: menu-report-execution
+      name: 合同执行情况分析
+      screenRef: frmContractExecutionReport
+    - menuId: menu-report-dept
+      name: 部门合同统计分析
+      screenRef: frmDeptReport
+    - menuId: menu-report-unreceived
+      name: 已开票未收款分析
+      screenRef: frmUnreceivedReport
+    menuId: menu-report
+    name: 报表中心
+  - children:
+    - menuId: menu-masterdata-product
+      name: 产品信息维护
+      screenRef: frmProductMaintain
+    - menuId: menu-masterdata-customer
+      name: 客户信息维护
+      screenRef: frmCustomerMaintain
+    - menuId: menu-masterdata-department
+      name: 部门信息维护
+      screenRef: frmDepartmentMaintain
+    - menuId: menu-masterdata-employee
+      name: 人员信息维护
+      screenRef: frmEmployeeMaintain
+    menuId: menu-masterdata
+    name: 基础数据
+  name: 销售合同执行管理系统
+domain: 销售合同执行管理
+model_type: UI
+screens:
+- actions:
+  - actionId: actSaveDraft
+    actionType: DRAFT
+    behaviorRef: Contract_SaveAsDraft
+    name: 保存草稿
+    permissionRef:
+    - PERM-CONTRACT-SAVE-DRAFT
+  - actionId: actSubmit
+    actionType: SUBMIT
+    behaviorRef: Contract_Submit
+    name: 提交
+    permissionRef:
+    - PERM-CONTRACT-SUBMIT
+  - actionId: actCancel
+    actionType: BUTTON
+    behaviorRef: Contract_SaveAsDraft
+    name: 取消
+  elements:
+  - dataBinding: Contract.contractNo
+    id: txtContractNo
+    io: I
+    label: 合同编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Contract.contractName
+    id: txtContractName
+    io: I
+    label: 合同名称
+    required: true
+    type: TEXTBOX
+  - dataBinding: Contract.contractType
+    id: cboContractType
+    io: I
+    label: 合同类型
+    required: true
+    type: COMBO
+  - dataBinding: Contract.productId
+    id: pslProduct
+    io: I
+    label: 所属产品
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Contract.customerId
+    id: pslCustomer
+    io: I
+    label: 所属客户
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Contract.departmentId
+    id: pslDepartment
+    io: I
+    label: 所属部门
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Contract.ownerId
+    id: pslOwner
+    io: I
+    label: 责任人
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Contract.signDate
+    id: dtpSignDate
+    io: I
+    label: 签订时间
+    required: true
+    type: DATEPICKER
+  - dataBinding: Contract.taxRate
+    id: txtTaxRate
+    io: I
+    label: 合同税率
+    required: true
+    type: TEXTBOX
+  - dataBinding: Contract.totalAmount
+    id: txtTotalAmount
+    io: I
+    label: 合同总金额
+    required: true
+    type: NUMBER
+  - dataBinding: Contract.purchaseAmount
+    id: txtPurchaseAmount
+    io: I
+    label: 采购金额
+    required: true
+    type: NUMBER
+  - id: txtaRemark
+    io: I
+    label: 备注
+    type: TEXTAREA
+  - dataBinding: Contract.stages
+    id: grdPaymentStage
+    io: I_O
+    label: 付款阶段
+    type: GRID
+  - id: btnAddRow
+    label: 新增行
+    type: BUTTON
+  - id: btnLogout
+    label: 退出
+    type: BUTTON
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 合同录入（主从表）                                            │
+
+    │ 合同编号:[txtContractNo]  合同名称:[txtContractName]  合同类型:(cboContractType) │
+
+    │ 所属产品:[pslProduct]     所属客户:[pslCustomer]      签订时间:{dtpSignDate}     │
+
+    │ 所属部门:[pslDepartment]  责任人:[pslOwner]           合同税率:[txtTaxRate]      │
+
+    │ 合同总金额:[txtTotalAmount] 采购金额:[txtPurchaseAmount] 备注:[txtaRemark]       │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 付款阶段（从表，表格内动态维护）                              │
+
+    │ @grdPaymentStage                                              │
+
+    │  阶段编号 | 阶段名称 | 付款比例 | 阶段应付金额 | 开票状态       │
+
+    │  [btnAddRow]                                                  │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnSaveDraft 保存草稿] [btnSubmit 提交] [btnCancel 取消]      │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 合同维护
+  screenId: frmContractMaintain
+  screenType: MASTER_DETAIL_FORM
+- actions:
+  - actionId: actQuery
+    actionType: BUTTON
+    behaviorRef: Contract_QueryList
+    name: 查询
+    permissionRef:
+    - PERM-CONTRACT-QUERY-LIST
+    - PERM-CONTRACT-QUERY-LIST-OWN-DEPT
+  - actionId: actDetail
+    actionType: BUTTON
+    behaviorRef: Contract_QueryDetail
+    name: 查看详情
+    permissionRef:
+    - PERM-CONTRACT-QUERY-DETAIL
+    - PERM-CONTRACT-QUERY-DETAIL-OWN-DEPT
+  elements:
+  - dataBinding: Contract.contractNo
+    id: txtContractNo
+    io: I
+    label: 合同编号
+    type: TEXTBOX
+  - dataBinding: Contract.contractName
+    id: txtContractName
+    io: I
+    label: 合同名称
+    type: TEXTBOX
+  - dataBinding: Contract.contractType
+    id: cboContractType
+    io: I
+    label: 合同类型
+    type: COMBO
+  - dataBinding: Contract.departmentId
+    id: pslDepartment
+    io: I
+    label: 所属部门
+    type: POPUP_SELECT
+  - id: dtpFrom
+    io: I
+    label: 签订日期从
+    type: DATEPICKER
+  - id: dtpTo
+    io: I
+    label: 到
+    type: DATEPICKER
+  - dataSource: REP-CONTRACT-LIST
+    id: grdResult
+    io: O
+    label: 查询结果
+    type: GRID
+  - id: btnQuery
+    label: 查询
+    type: BUTTON
+  - id: btnReset
+    label: 重置
+    type: BUTTON
+  - id: btnExport
+    label: 导出
+    type: BUTTON
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 合同信息查询                                                  │
+
+    │ 合同编号:[txtContractNo]  合同名称:[txtContractName]  合同类型:(cboContractType) │
+
+    │ 所属部门:[pslDepartment]  签订日期从:{dtpFrom}  到:{dtpTo}     │
+
+    │ [btnQuery 查询] [btnReset 重置] [btnExport 导出]               │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdResult                                                    │
+
+    │  合同编号 | 合同名称 | 产品 | 客户 | 部门 | 责任人 | 金额 | 状态 │
+
+    │ 分页: [lblPaging 共N条] [cboPageSize 每页20条] [btnPrev] [btnNext] │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 合同查询
+  screenId: frmContractQuery
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actSaveDraft
+    actionType: DRAFT
+    behaviorRef: Invoice_SaveAsDraft
+    name: 保存草稿
+    permissionRef:
+    - PERM-INVOICE-SAVE-DRAFT
+  - actionId: actSubmit
+    actionType: SUBMIT
+    behaviorRef: Invoice_Submit
+    name: 提交
+    permissionRef:
+    - PERM-INVOICE-SUBMIT
+  - actionId: actCancel
+    actionType: BUTTON
+    behaviorRef: Invoice_SaveAsDraft
+    name: 取消
+  elements:
+  - dataBinding: Invoice.invoiceNo
+    id: txtInvoiceNo
+    io: I
+    label: 开票编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Invoice.contractId
+    id: pslContract
+    io: I
+    label: 对应合同
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Invoice.invoiceDate
+    id: dtpInvoiceDate
+    io: I
+    label: 开票时间
+    required: true
+    type: DATEPICKER
+  - dataBinding: Invoice.invoiceAmount
+    id: txtInvoiceAmount
+    io: I
+    label: 开票金额
+    required: true
+    type: NUMBER
+  - dataBinding: Invoice.invoiceTaxRate
+    id: txtTaxRate
+    io: I
+    label: 开票税率
+    required: true
+    type: TEXTBOX
+  - dataBinding: Invoice.receivedFlag
+    id: chkIsPaid
+    io: I
+    label: 是否收款
+    type: CHECKBOX
+  - dataBinding: Invoice.allocations
+    id: grdAllocation
+    io: I_O
+    label: 付款阶段分摊
+    type: GRID
+  - id: btnAddRow
+    label: 新增行
+    type: BUTTON
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 开票录入（主从表）                                            │
+
+    │ 开票编号:[txtInvoiceNo]  对应合同:[pslContract]    开票时间:{dtpInvoiceDate} │
+
+    │ 开票金额:[txtInvoiceAmount] 开票税率:[txtTaxRate]  是否收款:[chkIsPaid]      │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 付款阶段分摊（从表，表格内动态维护）                          │
+
+    │ @grdAllocation                                                │
+
+    │  付款阶段 | 阶段应付金额 | 已分摊金额 | 本次分摊金额            │
+
+    │  [btnAddRow]                                                  │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnSaveDraft 保存草稿] [btnSubmit 提交] [btnCancel 取消]      │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 开票录入
+  screenId: frmInvoiceMaintain
+  screenType: MASTER_DETAIL_FORM
+- actions:
+  - actionId: actQuery
+    actionType: BUTTON
+    behaviorRef: Contract_QueryInvoicedUnreceived
+    name: 查询
+    permissionRef:
+    - PERM-CONTRACT-QUERY-UNRECEIVED
+    - PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT
+  elements:
+  - dataBinding: Invoice.invoiceNo
+    id: txtInvoiceNo
+    io: I
+    label: 开票编号
+    type: TEXTBOX
+  - dataBinding: Invoice.contractId
+    id: pslContract
+    io: I
+    label: 对应合同
+    type: POPUP_SELECT
+  - dataBinding: Invoice.approvalStatus
+    id: cboApprovalStatus
+    io: I
+    label: 开票状态
+    type: COMBO
+  - id: dtpFrom
+    io: I
+    label: 开票日期从
+    type: DATEPICKER
+  - id: dtpTo
+    io: I
+    label: 到
+    type: DATEPICKER
+  - dataSource: REP-INVOICED-UNRECEIVED
+    id: grdResult
+    io: O
+    label: 查询结果
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 开票信息查询                                                  │
+
+    │ 开票编号:[txtInvoiceNo]  对应合同:[pslContract]    开票状态:(cboApprovalStatus) │
+
+    │ 开票日期从:{dtpFrom}  到:{dtpTo}                               │
+
+    │ [btnQuery 查询] [btnReset 重置]                               │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdResult                                                    │
+
+    │  开票编号 | 合同 | 开票金额 | 税率 | 开票日期 | 是否收款 | 状态 │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 开票查询
+  screenId: frmInvoiceQuery
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actSave
+    actionType: BUTTON
+    behaviorRef: Receipt_Record
+    name: 保存
+    permissionRef:
+    - PERM-RECEIPT-RECORD
+  - actionId: actCancel
+    actionType: BUTTON
+    behaviorRef: Receipt_Record
+    name: 取消
+  elements:
+  - dataBinding: Receipt.receiptNo
+    id: txtReceiptNo
+    io: I
+    label: 收款编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Receipt.contractId
+    id: pslContract
+    io: I
+    label: 对应合同
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Receipt.invoiceId
+    id: pslInvoice
+    io: I
+    label: 对应开票
+    required: true
+    type: POPUP_SELECT
+  - dataBinding: Receipt.receiptAmount
+    id: txtAmount
+    io: I
+    label: 收款金额
+    required: true
+    type: NUMBER
+  - dataBinding: Receipt.receiptTime
+    id: dtpReceiptTime
+    io: I
+    label: 收款时间
+    required: true
+    type: DATEPICKER
+  - dataBinding: Receipt.receiptMethod
+    id: cboMethod
+    io: I
+    label: 收款方式
+    type: COMBO
+  - id: txtaRemark
+    io: I
+    label: 备注
+    type: TEXTAREA
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 收款录入                                                      │
+
+    │ 收款编号:[txtReceiptNo]   对应合同:[pslContract]              │
+
+    │ 对应开票:[pslInvoice]     收款金额:[txtAmount]                │
+
+    │ 收款时间:{dtpReceiptTime} 收款方式:(cboMethod)                │
+
+    │ 备注:[txtaRemark]                                             │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnSave 保存] [btnCancel 取消]                               │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 收款录入
+  screenId: frmReceiptMaintain
+  screenType: SINGLE_FORM
+- actions:
+  - actionId: actQuery
+    actionType: BUTTON
+    behaviorRef: Receipt_Record
+    name: 查询
+    permissionRef:
+    - PERM-RECEIPT-RECORD
+  - actionId: actReverse
+    actionType: BUTTON
+    behaviorRef: Receipt_Reverse
+    name: 冲销
+    permissionRef:
+    - PERM-RECEIPT-REVERSE
+  elements:
+  - dataBinding: Receipt.receiptNo
+    id: txtReceiptNo
+    io: I
+    label: 收款编号
+    type: TEXTBOX
+  - dataBinding: Receipt.contractId
+    id: pslContract
+    io: I
+    label: 对应合同
+    type: POPUP_SELECT
+  - dataBinding: Receipt.invoiceId
+    id: pslInvoice
+    io: I
+    label: 对应开票
+    type: POPUP_SELECT
+  - id: dtpFrom
+    io: I
+    label: 收款时间从
+    type: DATEPICKER
+  - id: dtpTo
+    io: I
+    label: 到
+    type: DATEPICKER
+  - id: grdResult
+    io: O
+    label: 查询结果
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 收款信息查询                                                  │
+
+    │ 收款编号:[txtReceiptNo]  对应合同:[pslContract]    对应开票:[pslInvoice] │
+
+    │ 收款时间从:{dtpFrom}  到:{dtpTo}                               │
+
+    │ [btnQuery 查询] [btnReset 重置]                               │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdResult                                                    │
+
+    │  收款编号 | 合同 | 开票 | 收款金额 | 收款时间 | 方式 | 状态     │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 收款查询
+  screenId: frmReceiptQuery
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actApprove
+    actionType: APPROVE
+    behaviorRef: Contract_ApproveFinance
+    name: 通过
+    permissionRef:
+    - PERM-CONTRACT-APPROVE-FINANCE
+  - actionId: actReject
+    actionType: REJECT
+    behaviorRef: Contract_ApproveFinance
+    name: 驳回
+    permissionRef:
+    - PERM-CONTRACT-APPROVE-FINANCE
+  elements:
+  - id: grdApprovalList
+    io: O
+    label: 待审批合同列表
+    type: GRID
+  - id: txtaComment
+    io: I
+    label: 审批意见
+    type: TEXTAREA
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 待审批合同列表                                                │
+
+    │ @grdApprovalList                                              │
+
+    │  合同编号 | 名称 | 金额 | 提交人 | 提交时间 | 状态             │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 审批意见: [txtaComment]                                       │
+
+    │ [btnApprove 通过] [btnReject 驳回] [btnCancel 取消]            │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 合同审批
+  screenId: frmContractApproval
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actApprove
+    actionType: APPROVE
+    behaviorRef: Invoice_ApproveFinance
+    name: 通过
+    permissionRef:
+    - PERM-INVOICE-APPROVE
+  - actionId: actReject
+    actionType: REJECT
+    behaviorRef: Invoice_ApproveFinance
+    name: 驳回
+    permissionRef:
+    - PERM-INVOICE-APPROVE
+  elements:
+  - id: grdApprovalList
+    io: O
+    label: 待审批开票列表
+    type: GRID
+  - id: txtaComment
+    io: I
+    label: 审批意见
+    type: TEXTAREA
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 待审批开票列表                                                │
+
+    │ @grdApprovalList                                              │
+
+    │  开票编号 | 合同 | 金额 | 提交人 | 提交时间 | 状态             │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 审批意见: [txtaComment]                                       │
+
+    │ [btnApprove 通过] [btnReject 驳回] [btnCancel 取消]            │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 开票审批
+  screenId: frmInvoiceApproval
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actQuery
+    actionType: BUTTON
+    behaviorRef: Contract_QueryExecutionAnalysis
+    name: 查询
+    permissionRef:
+    - PERM-CONTRACT-QUERY-EXECUTION
+    - PERM-CONTRACT-QUERY-EXECUTION-OWN-DEPT
+  elements:
+  - id: pslDepartment
+    io: I
+    label: 所属部门
+    type: POPUP_SELECT
+  - id: dtpFrom
+    io: I
+    label: 签订日期从
+    type: DATEPICKER
+  - id: dtpTo
+    io: I
+    label: 到
+    type: DATEPICKER
+  - id: pslOwner
+    io: I
+    label: 责任人
+    type: POPUP_SELECT
+  - dataSource: REP-CONTRACT-EXECUTION
+    id: grdResult
+    io: O
+    label: 分析结果
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 合同执行情况分析                                              │
+
+    │ 所属部门:[pslDepartment]  签订日期从:{dtpFrom}  到:{dtpTo}     │
+
+    │ 责任人:[pslOwner]                                            │
+
+    │ [btnQuery 查询] [btnExport 导出]                               │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdResult                                                    │
+
+    │  合同编号 | 名称 | 合同金额 | 累计开票 | 累计收款 | 未收款 | 收款完成率 │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 合同执行情况分析
+  screenId: frmContractExecutionReport
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actQuery
+    actionType: BUTTON
+    behaviorRef: Contract_QueryDepartmentSummary
+    name: 查询
+    permissionRef:
+    - PERM-CONTRACT-QUERY-DEPT-SUMMARY
+    - PERM-CONTRACT-QUERY-DEPT-SUMMARY-OWN-DEPT
+  elements:
+  - id: dtpFrom
+    io: I
+    label: 签订日期从
+    type: DATEPICKER
+  - id: dtpTo
+    io: I
+    label: 到
+    type: DATEPICKER
+  - id: pslDepartment
+    io: I
+    label: 部门
+    type: POPUP_SELECT
+  - dataSource: REP-DEPT-CONTRACT-SUMMARY
+    id: grdResult
+    io: O
+    label: 统计结果
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 部门合同统计分析                                              │
+
+    │ 签订日期从:{dtpFrom}  到:{dtpTo}    部门:[pslDepartment]      │
+
+    │ [btnQuery 查询] [btnExport 导出]                               │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdResult                                                    │
+
+    │  部门 | 合同数量 | 合同金额 | 开票金额 | 收款金额 | 未收款 | 结清数 │
+
+    │ 分页: [lblPaging 共N条]                                        │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 部门合同统计分析
+  screenId: frmDeptReport
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actQuery
+    actionType: BUTTON
+    behaviorRef: Contract_QueryInvoicedUnreceived
+    name: 查询
+    permissionRef:
+    - PERM-CONTRACT-QUERY-UNRECEIVED
+    - PERM-CONTRACT-QUERY-UNRECEIVED-OWN-DEPT
+  elements:
+  - id: pslDepartment
+    io: I
+    label: 所属部门
+    type: POPUP_SELECT
+  - id: dtpFrom
+    io: I
+    label: 开票日期从
+    type: DATEPICKER
+  - id: dtpTo
+    io: I
+    label: 到
+    type: DATEPICKER
+  - dataSource: REP-INVOICED-UNRECEIVED
+    id: grdResult
+    io: O
+    label: 分析结果
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 已开票未收款分析                                              │
+
+    │ 所属部门:[pslDepartment]  开票日期从:{dtpFrom}  到:{dtpTo}     │
+
+    │ [btnQuery 查询] [btnExport 导出]                               │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdResult                                                    │
+
+    │  合同编号 | 开票编号 | 开票金额 | 已收款 | 未收款 | 最近收款时间 │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 已开票未收款分析
+  screenId: frmUnreceivedReport
+  screenType: QUERY_LIST
+- actions:
+  - actionId: actSave
+    actionType: BUTTON
+    behaviorRef: Product_Maintain
+    name: 保存
+    permissionRef:
+    - PERM-PRODUCT-MAINTAIN
+  elements:
+  - dataBinding: Product.productId
+    id: txtNo
+    io: I
+    label: 产品编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Product.productName
+    id: txtName
+    io: I
+    label: 产品名称
+    required: true
+    type: TEXTBOX
+  - dataBinding: Product.productType
+    id: cboType
+    io: I
+    label: 产品类型
+    required: true
+    type: COMBO
+  - id: grdList
+    io: O
+    label: 产品列表
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 产品信息维护                                                  │
+
+    │ 产品编号:[txtNo]    产品名称:[txtName]                        │
+
+    │ 产品类型:(cboType)                                            │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdList                                                      │
+
+    │  编号 | 名称 | 类型 | 状态                                     │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 产品信息维护
+  screenId: frmProductMaintain
+  screenType: SINGLE_FORM
+- actions:
+  - actionId: actSave
+    actionType: BUTTON
+    behaviorRef: Customer_Maintain
+    name: 保存
+    permissionRef:
+    - PERM-CUSTOMER-MAINTAIN
+  elements:
+  - dataBinding: Customer.customerId
+    id: txtNo
+    io: I
+    label: 客户编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Customer.customerName
+    id: txtName
+    io: I
+    label: 客户名称
+    required: true
+    type: TEXTBOX
+  - dataBinding: Customer.customerType
+    id: cboType
+    io: I
+    label: 客户类型
+    required: true
+    type: COMBO
+  - id: grdList
+    io: O
+    label: 客户列表
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 客户信息维护                                                  │
+
+    │ 客户编号:[txtNo]    客户名称:[txtName]                        │
+
+    │ 客户类型:(cboType)                                            │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdList                                                      │
+
+    │  编号 | 名称 | 类型 | 状态                                     │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 客户信息维护
+  screenId: frmCustomerMaintain
+  screenType: SINGLE_FORM
+- actions:
+  - actionId: actSave
+    actionType: BUTTON
+    behaviorRef: Department_Maintain
+    name: 保存
+    permissionRef:
+    - PERM-DEPARTMENT-MAINTAIN
+  elements:
+  - dataBinding: Department.departmentId
+    id: txtNo
+    io: I
+    label: 部门编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Department.departmentName
+    id: txtName
+    io: I
+    label: 部门名称
+    required: true
+    type: TEXTBOX
+  - id: grdList
+    io: O
+    label: 部门列表
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 部门信息维护                                                  │
+
+    │ 部门编号:[txtNo]    部门名称:[txtName]                        │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdList                                                      │
+
+    │  编号 | 名称 | 状态                                           │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 部门信息维护
+  screenId: frmDepartmentMaintain
+  screenType: SINGLE_FORM
+- actions:
+  - actionId: actSave
+    actionType: BUTTON
+    behaviorRef: Employee_Maintain
+    name: 保存
+    permissionRef:
+    - PERM-EMPLOYEE-MAINTAIN
+  elements:
+  - dataBinding: Employee.employeeId
+    id: txtNo
+    io: I
+    label: 人员编号
+    required: true
+    type: TEXTBOX
+  - dataBinding: Employee.employeeName
+    id: txtName
+    io: I
+    label: 人员名称
+    required: true
+    type: TEXTBOX
+  - dataBinding: Employee.departmentId
+    id: pslDepartment
+    io: I
+    label: 所属部门
+    required: true
+    type: POPUP_SELECT
+  - id: grdList
+    io: O
+    label: 人员列表
+    type: GRID
+  layout: '┌──────────────────────────────────────────────────────────────┐
+
+    │ 销售合同执行管理系统                               [btnLogout] │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ 人员信息维护                                                  │
+
+    │ 人员编号:[txtNo]    人员名称:[txtName]                        │
+
+    │ 所属部门:[pslDepartment]                                      │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ @grdList                                                      │
+
+    │  编号 | 名称 | 部门 | 状态                                     │
+
+    │ 分页: [lblPaging 共N条] [btnPrev] [btnNext]                    │
+
+    ├──────────────────────────────────────────────────────────────┤
+
+    │ [btnAdd 新增] [btnSave 保存] [btnDisable 停用] [btnCancel 取消] │
+
+    └──────────────────────────────────────────────────────────────┘
+
+    '
+  name: 人员信息维护
+  screenId: frmEmployeeMaintain
+  screenType: SINGLE_FORM
+version: '1.0'

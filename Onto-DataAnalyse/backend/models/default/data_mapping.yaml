@@ -1,0 +1,684 @@
+version: '1.0'
+source_db:
+  type: SQLite
+  schema: ecommerce
+  timezone: Asia/Shanghai
+entity_mappings:
+  - entity_id: ENT-USR-001
+    entity_name: 用户
+    confidence: 0.98
+    tables:
+      - table: t_user
+        alias: u
+        primary: true
+    field_mappings:
+      - ontology_field: userId
+        ontology_label: 用户ID
+        db_table: t_user
+        db_column: user_id
+        confidence: 1.0
+      - ontology_field: nickname
+        ontology_label: 昵称
+        db_table: t_user
+        db_column: nickname
+        confidence: 1.0
+      - ontology_field: gender
+        ontology_label: 性别
+        db_table: t_user
+        db_column: gender
+        confidence: 1.0
+      - ontology_field: ageRange
+        ontology_label: 年龄段
+        db_table: t_user
+        db_column: age_range
+        confidence: 1.0
+      - ontology_field: province
+        ontology_label: 省份
+        db_table: t_user
+        db_column: province
+        confidence: 1.0
+      - ontology_field: city
+        ontology_label: 城市
+        db_table: t_user
+        db_column: city
+        confidence: 1.0
+      - ontology_field: registerChannel
+        ontology_label: 注册渠道
+        db_table: t_user
+        db_column: register_channel
+        confidence: 1.0
+      - ontology_field: userLevel
+        ontology_label: 用户等级
+        db_table: t_user
+        db_column: user_level
+        confidence: 1.0
+      - ontology_field: registerDate
+        ontology_label: 注册时间
+        db_table: t_user
+        db_column: register_date
+        confidence: 1.0
+      - ontology_field: lastLoginDate
+        ontology_label: 最后登录时间
+        db_table: t_user
+        db_column: last_login_date
+        confidence: 1.0
+  - entity_id: ENT-USR-002
+    entity_name: 用户行为
+    confidence: 0.97
+    tables:
+      - table: t_user_behavior
+        alias: ub
+        primary: true
+    field_mappings:
+      - ontology_field: behaviorId
+        ontology_label: 行为ID
+        db_table: t_user_behavior
+        db_column: behavior_id
+        confidence: 1.0
+      - ontology_field: userId
+        ontology_label: 用户ID
+        db_table: t_user_behavior
+        db_column: user_id
+        confidence: 1.0
+      - ontology_field: behaviorType
+        ontology_label: 行为类型
+        db_table: t_user_behavior
+        db_column: behavior_type
+        confidence: 1.0
+      - ontology_field: targetType
+        ontology_label: 对象类型
+        db_table: t_user_behavior
+        db_column: target_type
+        confidence: 1.0
+      - ontology_field: targetId
+        ontology_label: 对象ID
+        db_table: t_user_behavior
+        db_column: target_id
+        confidence: 1.0
+      - ontology_field: sessionId
+        ontology_label: 会话ID
+        db_table: t_user_behavior
+        db_column: session_id
+        confidence: 1.0
+      - ontology_field: channel
+        ontology_label: 渠道
+        db_table: t_user_behavior
+        db_column: channel
+        confidence: 1.0
+      - ontology_field: deviceType
+        ontology_label: 设备类型
+        db_table: t_user_behavior
+        db_column: device_type
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 行为时间
+        db_table: t_user_behavior
+        db_column: gmt_create
+        confidence: 1.0
+  - entity_id: ENT-ORD-001
+    entity_name: 订单
+    confidence: 0.95
+    tables:
+      - table: t_order
+        alias: ord
+        primary: true
+    field_mappings:
+      - ontology_field: orderId
+        ontology_label: 订单号
+        db_table: t_order
+        db_column: order_id
+        confidence: 1.0
+      - ontology_field: buyerId
+        ontology_label: 买家ID
+        db_table: t_order
+        db_column: buyer_id
+        confidence: 1.0
+      - ontology_field: sellerId
+        ontology_label: 卖家店铺ID
+        db_table: t_order
+        db_column: seller_id
+        confidence: 1.0
+      - ontology_field: status
+        ontology_label: 订单状态
+        db_table: t_order
+        db_column: status
+        confidence: 0.95
+        value_mapping:
+          '1': 待付款
+          '2': 已付款
+          '3': 已发货
+          '4': 已签收
+          '5': 已取消
+          '6': 退款完成
+      - ontology_field: paymentAmount
+        ontology_label: 实付金额
+        db_table: t_order
+        db_column: payment_amount
+        confidence: 1.0
+      - ontology_field: originalAmount
+        ontology_label: 原始金额
+        db_table: t_order
+        db_column: original_amount
+        confidence: 1.0
+      - ontology_field: discountAmount
+        ontology_label: 优惠金额
+        db_table: t_order
+        db_column: discount_amount
+        confidence: 1.0
+      - ontology_field: refundAmount
+        ontology_label: 已退款金额
+        db_table: t_order
+        db_column: refund_amount
+        confidence: 1.0
+      - ontology_field: channel
+        ontology_label: 下单渠道
+        db_table: t_order
+        db_column: channel
+        confidence: 1.0
+      - ontology_field: deviceType
+        ontology_label: 设备类型
+        db_table: t_order
+        db_column: device_type
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 下单时间
+        db_table: t_order
+        db_column: gmt_create
+        confidence: 1.0
+      - ontology_field: gmtPayment
+        ontology_label: 支付完成时间
+        db_table: t_order
+        db_column: gmt_payment
+        confidence: 1.0
+      - ontology_field: gmtModified
+        ontology_label: 最后修改时间
+        db_table: t_order
+        db_column: gmt_modified
+        confidence: 1.0
+    default_filter: ord.status NOT IN (5, 6)
+  - entity_id: ENT-ORD-002
+    entity_name: 订单明细
+    confidence: 0.95
+    tables:
+      - table: t_order_item
+        alias: item
+        primary: true
+    field_mappings:
+      - ontology_field: itemId
+        ontology_label: 明细ID
+        db_table: t_order_item
+        db_column: item_id
+        confidence: 1.0
+      - ontology_field: orderId
+        ontology_label: 所属订单ID
+        db_table: t_order_item
+        db_column: order_id
+        confidence: 1.0
+      - ontology_field: productId
+        ontology_label: 商品SPU ID
+        db_table: t_order_item
+        db_column: product_id
+        confidence: 1.0
+      - ontology_field: skuId
+        ontology_label: 商品SKU ID
+        db_table: t_order_item
+        db_column: sku_id
+        confidence: 1.0
+      - ontology_field: quantity
+        ontology_label: 购买数量
+        db_table: t_order_item
+        db_column: quantity
+        confidence: 1.0
+      - ontology_field: unitPrice
+        ontology_label: 标准单价
+        db_table: t_order_item
+        db_column: unit_price
+        confidence: 1.0
+      - ontology_field: payPrice
+        ontology_label: 实付单价
+        db_table: t_order_item
+        db_column: pay_price
+        confidence: 1.0
+      - ontology_field: categoryId
+        ontology_label: 类目ID
+        db_table: t_order_item
+        db_column: category_id
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 创建时间
+        db_table: t_order_item
+        db_column: gmt_create
+        confidence: 1.0
+  - entity_id: ENT-ORD-003
+    entity_name: 物流记录
+    confidence: 0.95
+    tables:
+      - table: t_logistics
+        alias: log
+        primary: true
+    field_mappings:
+      - ontology_field: logisticsId
+        ontology_label: 物流ID
+        db_table: t_logistics
+        db_column: logistics_id
+        confidence: 1.0
+      - ontology_field: orderId
+        ontology_label: 关联订单ID
+        db_table: t_logistics
+        db_column: order_id
+        confidence: 1.0
+      - ontology_field: carrier
+        ontology_label: 承运商
+        db_table: t_logistics
+        db_column: carrier
+        confidence: 1.0
+      - ontology_field: trackingNo
+        ontology_label: 运单号
+        db_table: t_logistics
+        db_column: tracking_no
+        confidence: 1.0
+      - ontology_field: shipTime
+        ontology_label: 发货时间
+        db_table: t_logistics
+        db_column: ship_time
+        confidence: 1.0
+      - ontology_field: deliveryTime
+        ontology_label: 签收时间
+        db_table: t_logistics
+        db_column: delivery_time
+        confidence: 1.0
+      - ontology_field: province
+        ontology_label: 收货省
+        db_table: t_logistics
+        db_column: province
+        confidence: 1.0
+      - ontology_field: city
+        ontology_label: 收货市
+        db_table: t_logistics
+        db_column: city
+        confidence: 1.0
+      - ontology_field: status
+        ontology_label: 物流状态
+        db_table: t_logistics
+        db_column: status
+        confidence: 1.0
+  - entity_id: ENT-ORD-004
+    entity_name: 退款记录
+    confidence: 0.95
+    tables:
+      - table: t_refund
+        alias: ref
+        primary: true
+    field_mappings:
+      - ontology_field: refundId
+        ontology_label: 退款ID
+        db_table: t_refund
+        db_column: refund_id
+        confidence: 1.0
+      - ontology_field: orderId
+        ontology_label: 关联订单ID
+        db_table: t_refund
+        db_column: order_id
+        confidence: 1.0
+      - ontology_field: userId
+        ontology_label: 用户ID
+        db_table: t_refund
+        db_column: user_id
+        confidence: 1.0
+      - ontology_field: refundType
+        ontology_label: 退款类型
+        db_table: t_refund
+        db_column: refund_type
+        confidence: 1.0
+      - ontology_field: refundAmount
+        ontology_label: 退款金额
+        db_table: t_refund
+        db_column: refund_amount
+        confidence: 1.0
+      - ontology_field: reason
+        ontology_label: 退款原因
+        db_table: t_refund
+        db_column: reason
+        confidence: 1.0
+      - ontology_field: status
+        ontology_label: 处理状态
+        db_table: t_refund
+        db_column: status
+        confidence: 1.0
+      - ontology_field: applyTime
+        ontology_label: 申请时间
+        db_table: t_refund
+        db_column: apply_time
+        confidence: 1.0
+      - ontology_field: completeTime
+        ontology_label: 完成时间
+        db_table: t_refund
+        db_column: complete_time
+        confidence: 1.0
+  - entity_id: ENT-PRD-001
+    entity_name: 商品SPU
+    confidence: 0.98
+    tables:
+      - table: t_product
+        alias: p
+        primary: true
+    field_mappings:
+      - ontology_field: productId
+        ontology_label: 商品SPU ID
+        db_table: t_product
+        db_column: product_id
+        confidence: 1.0
+      - ontology_field: productName
+        ontology_label: 商品名
+        db_table: t_product
+        db_column: product_name
+        confidence: 1.0
+      - ontology_field: categoryId
+        ontology_label: 所属类目ID
+        db_table: t_product
+        db_column: category_id
+        confidence: 1.0
+      - ontology_field: shopId
+        ontology_label: 所属店铺ID
+        db_table: t_product
+        db_column: shop_id
+        confidence: 1.0
+      - ontology_field: brand
+        ontology_label: 品牌
+        db_table: t_product
+        db_column: brand
+        confidence: 1.0
+      - ontology_field: status
+        ontology_label: 上下架状态
+        db_table: t_product
+        db_column: status
+        confidence: 1.0
+        value_mapping:
+          '1': 上架
+          '2': 下架
+          '3': 删除
+      - ontology_field: listPrice
+        ontology_label: 标准售价
+        db_table: t_product
+        db_column: list_price
+        confidence: 1.0
+      - ontology_field: avgRating
+        ontology_label: 平均评分
+        db_table: t_product
+        db_column: avg_rating
+        confidence: 1.0
+      - ontology_field: reviewCount
+        ontology_label: 评价数
+        db_table: t_product
+        db_column: review_count
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 上架时间
+        db_table: t_product
+        db_column: gmt_create
+        confidence: 1.0
+      - ontology_field: gmtModified
+        ontology_label: 最后修改时间
+        db_table: t_product
+        db_column: gmt_modified
+        confidence: 1.0
+  - entity_id: ENT-PRD-002
+    entity_name: 商品SKU
+    confidence: 0.98
+    tables:
+      - table: t_sku
+        alias: s
+        primary: true
+    field_mappings:
+      - ontology_field: skuId
+        ontology_label: SKU ID
+        db_table: t_sku
+        db_column: sku_id
+        confidence: 1.0
+      - ontology_field: productId
+        ontology_label: 所属SPU ID
+        db_table: t_sku
+        db_column: product_id
+        confidence: 1.0
+      - ontology_field: skuName
+        ontology_label: SKU名称
+        db_table: t_sku
+        db_column: sku_name
+        confidence: 1.0
+      - ontology_field: color
+        ontology_label: 颜色
+        db_table: t_sku
+        db_column: color
+        confidence: 1.0
+      - ontology_field: size
+        ontology_label: 尺寸
+        db_table: t_sku
+        db_column: size
+        confidence: 1.0
+        value_mapping:
+          S: S
+          M: M
+          L: L
+          XL: XL
+          XXL: XXL
+          均码: 均码
+      - ontology_field: stock
+        ontology_label: 当前库存
+        db_table: t_sku
+        db_column: stock
+        confidence: 1.0
+      - ontology_field: salePrice
+        ontology_label: 销售价
+        db_table: t_sku
+        db_column: sale_price
+        confidence: 1.0
+      - ontology_field: costPrice
+        ontology_label: 成本价
+        db_table: t_sku
+        db_column: cost_price
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 创建时间
+        db_table: t_sku
+        db_column: gmt_create
+        confidence: 1.0
+  - entity_id: ENT-PRD-003
+    entity_name: 商品类目
+    confidence: 0.98
+    tables:
+      - table: t_category
+        alias: c
+        primary: true
+    field_mappings:
+      - ontology_field: categoryId
+        ontology_label: 类目ID
+        db_table: t_category
+        db_column: category_id
+        confidence: 1.0
+      - ontology_field: categoryName
+        ontology_label: 类目名称
+        db_table: t_category
+        db_column: category_name
+        confidence: 1.0
+      - ontology_field: parentId
+        ontology_label: 上级类目ID
+        db_table: t_category
+        db_column: parent_id
+        confidence: 1.0
+      - ontology_field: level
+        ontology_label: 层级
+        db_table: t_category
+        db_column: level
+        confidence: 1.0
+      - ontology_field: sortOrder
+        ontology_label: 排序
+        db_table: t_category
+        db_column: sort_order
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 创建时间
+        db_table: t_category
+        db_column: gmt_create
+        confidence: 1.0
+  - entity_id: ENT-SHP-001
+    entity_name: 店铺
+    confidence: 0.95
+    tables:
+      - table: t_shop
+        alias: s
+        primary: true
+    field_mappings:
+      - ontology_field: shopId
+        ontology_label: 店铺ID
+        db_table: t_shop
+        db_column: shop_id
+        confidence: 1.0
+      - ontology_field: shopName
+        ontology_label: 店铺名
+        db_table: t_shop
+        db_column: shop_name
+        confidence: 1.0
+      - ontology_field: shopLevel
+        ontology_label: 店铺评级
+        db_table: t_shop
+        db_column: shop_level
+        confidence: 1.0
+      - ontology_field: mainCategory
+        ontology_label: 主营类目ID
+        db_table: t_shop
+        db_column: main_category
+        confidence: 1.0
+      - ontology_field: province
+        ontology_label: 店铺所在省
+        db_table: t_shop
+        db_column: province
+        confidence: 1.0
+      - ontology_field: deposit
+        ontology_label: 保证金
+        db_table: t_shop
+        db_column: deposit
+        confidence: 1.0
+      - ontology_field: status
+        ontology_label: 状态
+        db_table: t_shop
+        db_column: status
+        confidence: 1.0
+        value_mapping:
+          '1': 营业
+          '0': 暂停
+      - ontology_field: gmtCreate
+        ontology_label: 创建时间
+        db_table: t_shop
+        db_column: gmt_create
+        confidence: 1.0
+  - entity_id: ENT-MKT-001
+    entity_name: 营销活动
+    confidence: 0.95
+    tables:
+      - table: t_campaign
+        alias: cmp
+        primary: true
+    field_mappings:
+      - ontology_field: campaignId
+        ontology_label: 活动ID
+        db_table: t_campaign
+        db_column: campaign_id
+        confidence: 1.0
+      - ontology_field: campaignName
+        ontology_label: 活动名
+        db_table: t_campaign
+        db_column: campaign_name
+        confidence: 1.0
+      - ontology_field: campaignType
+        ontology_label: 活动类型
+        db_table: t_campaign
+        db_column: campaign_type
+        confidence: 1.0
+        value_mapping:
+          满减: 满减
+          折扣: 折扣
+          秒杀: 秒杀
+          拼团: 拼团
+          大促: 大促
+      - ontology_field: startTime
+        ontology_label: 活动开始时间
+        db_table: t_campaign
+        db_column: start_time
+        confidence: 1.0
+      - ontology_field: endTime
+        ontology_label: 活动结束时间
+        db_table: t_campaign
+        db_column: end_time
+        confidence: 1.0
+      - ontology_field: budget
+        ontology_label: 预算
+        db_table: t_campaign
+        db_column: budget
+        confidence: 1.0
+      - ontology_field: targetCategory
+        ontology_label: 主要面向类目ID
+        db_table: t_campaign
+        db_column: target_category
+        confidence: 1.0
+      - ontology_field: gmtCreate
+        ontology_label: 创建时间
+        db_table: t_campaign
+        db_column: gmt_create
+        confidence: 1.0
+  - entity_id: ENT-MKT-002
+    entity_name: 优惠券使用记录
+    confidence: 0.95
+    tables:
+      - table: t_coupon_usage
+        alias: cu
+        primary: true
+    field_mappings:
+      - ontology_field: usageId
+        ontology_label: 记录ID
+        db_table: t_coupon_usage
+        db_column: usage_id
+        confidence: 1.0
+      - ontology_field: couponCode
+        ontology_label: 券码
+        db_table: t_coupon_usage
+        db_column: coupon_code
+        confidence: 1.0
+      - ontology_field: campaignId
+        ontology_label: 关联活动ID
+        db_table: t_coupon_usage
+        db_column: campaign_id
+        confidence: 1.0
+      - ontology_field: userId
+        ontology_label: 领取用户ID
+        db_table: t_coupon_usage
+        db_column: user_id
+        confidence: 1.0
+      - ontology_field: orderId
+        ontology_label: 使用订单ID
+        db_table: t_coupon_usage
+        db_column: order_id
+        confidence: 1.0
+      - ontology_field: couponAmount
+        ontology_label: 券面额
+        db_table: t_coupon_usage
+        db_column: coupon_amount
+        confidence: 1.0
+      - ontology_field: status
+        ontology_label: 状态
+        db_table: t_coupon_usage
+        db_column: status
+        confidence: 1.0
+        value_mapping:
+          ISSUED: 已领取
+          USED: 已使用
+          EXPIRED: 已过期
+      - ontology_field: issuedAt
+        ontology_label: 领取时间
+        db_table: t_coupon_usage
+        db_column: issued_at
+        confidence: 1.0
+      - ontology_field: usedAt
+        ontology_label: 使用时间
+        db_table: t_coupon_usage
+        db_column: used_at
+        confidence: 1.0

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>人工智能知识路径 · 地铁线路图</title>
+<style>
+html,body{margin:0;height:100%;background:#f7f8fa;font-family:"Microsoft YaHei",Arial,sans-serif;color:#1a1a2e;}
+#bar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #e3e7f2;padding:12px 18px;box-shadow:0 1px 5px #0001;}
+#bar b{font-size:16px;} #bar span{color:#667085;font-size:12px;margin-left:12px;}
+#wrap{padding:24px;overflow:auto;}
+svg{background:#fff;border:1px solid #e1e6f2;border-radius:10px;box-shadow:0 3px 14px #0001;}
+.line{fill:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;opacity:.82}
+.dep{fill:none;stroke:#64748b;stroke-width:2;stroke-dasharray:5 5;opacity:.42;marker-end:url(#arrow)}
+.dep:hover{stroke:#1d4ed8;stroke-width:3;opacity:.9;stroke-dasharray:none}
+.dep-label{font-size:11px;fill:#475569;opacity:.75;pointer-events:none}
+.station circle{stroke:#fff;stroke-width:3;cursor:pointer}
+.station text{font-size:13px;dominant-baseline:middle;cursor:pointer}
+.hub circle{r:9}
+.label-bg{fill:#fff;opacity:.86}
+#panel{position:fixed;right:20px;top:78px;width:310px;background:#fff;border:1px solid #d7dbe8;border-radius:8px;box-shadow:0 4px 18px #0002;padding:14px;display:none;font-size:13px;line-height:1.6}
+#panel h3{margin:0 0 8px;color:#1a237e}
+</style>
+</head>
+<body>
+<div id="bar"><b>人工智能知识路径 · 地铁线路图</b><span>粗线=学习路线；虚线贝塞尔箭头=跨路线核心依赖。</span></div>
+<div id="wrap"><svg id="metro" width="1500" height="850"></svg></div>
+<div id="panel"><h3 id="pt"></h3><div id="pd"></div></div>
+<script>
+const lines=[
+  {name:'大模型路线',color:'#e91e63',y:130,stations:['AI任务','监督学习','神经网络','Transformer','LLM','预训练','指令微调','对齐训练','RAG','Agent']},
+  {name:'AI工程路线',color:'#4caf50',y:300,stations:['数据治理','数据管道','训练流水线','模型注册','推理服务','模型监控','漂移检测','LLMOps','代码助手']},
+  {name:'算法基础路线',color:'#009688',y:470,stations:['概率统计','优化','损失函数','监督学习','特征工程','线性模型','决策树','集成学习','交叉验证']},
+  {name:'安全评估路线',color:'#00bcd4',y:640,stations:['数据治理','标注质量','基准测试','红队测试','幻觉','隐私保护','AI安全','行业AI应用']},
+  {name:'边界支线',color:'#ff5722',y:760,stations:['GPU/TPU/NPU','量化','推理加速','边缘AI','机器人','仿真环境']}
+];
+const dependencies=[
+  {from:'监督学习',to:'神经网络',label:'算法基础'},
+  {from:'优化',to:'梯度下降',label:'优化基础'},
+  {from:'损失函数',to:'神经网络',label:'训练目标'},
+  {from:'Transformer',to:'LLM',label:'架构基础'},
+  {from:'LLM',to:'RAG',label:'生成能力'},
+  {from:'RAG',to:'客服机器人',label:'知识问答'},
+  {from:'RAG',to:'文档助手',label:'知识增强'},
+  {from:'Agent',to:'代码助手',label:'工具执行'},
+  {from:'数据治理',to:'数据管道',label:'数据基础'},
+  {from:'数据管道',to:'训练流水线',label:'工程输入'},
+  {from:'训练流水线',to:'推理服务',label:'部署前置'},
+  {from:'推理服务',to:'模型监控',label:'上线监控'},
+  {from:'模型监控',to:'LLMOps',label:'反馈闭环'},
+  {from:'红队测试',to:'AI安全',label:'风险发现'},
+  {from:'幻觉',to:'AI安全',label:'生成风险'},
+  {from:'隐私保护',to:'AI安全',label:'合规安全'},
+  {from:'量化',to:'推理加速',label:'性能优化'},
+  {from:'推理加速',to:'推理服务',label:'服务优化'}
+];
+const desc={
+  'Transformer':'现代大模型的核心架构，是理解 LLM、RAG、Agent 的关键换乘站。',
+  'RAG':'检索增强生成，把模型与外部知识库连接起来。',
+  'Agent':'能规划、调用工具并执行多步任务的大模型系统。',
+  'LLMOps':'围绕大模型应用的提示、上下文、评估、反馈和部署工程。',
+  '数据治理':'数据质量、权限、血缘和合规使用的基础。',
+  'AI安全':'覆盖越狱、滥用、隐私泄露、偏见和高风险损害控制。',
+  '推理服务':'把模型封装为在线 API 或服务，是产品化的关键。',
+  'GPU/TPU/NPU':'算力平台，本文只作为边界提及。'
+};
+const svg=document.getElementById('metro');
+const x0=120,gap=135;
+function el(name,attrs,parent=svg){const e=document.createElementNS('http://www.w3.org/2000/svg',name);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;}
+const defs=el('defs',{});
+const marker=el('marker',{id:'arrow',viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'},defs);
+el('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:'#64748b'},marker);
+const depLayer=el('g',{id:'dependencies'});
+const lineLayer=el('g',{id:'lines'});
+const stationLayer=el('g',{id:'stations'});
+const pos={};
+lines.forEach((line,li)=>{
+  const pts=line.stations.map((s,i)=>[x0+i*gap,line.y]);
+  el('path',{class:'line',d:'M'+pts.map(p=>p.join(',')).join(' L'),stroke:line.color},lineLayer);
+  el('text',{x:24,y:line.y,fill:line.color,'font-size':15,'font-weight':700},lineLayer).textContent=line.name;
+  line.stations.forEach((s,i)=>{
+    const x=x0+i*gap,y=line.y;
+    if(!pos[s])pos[s]=[];
+    pos[s].push({x,y,line:line.name,color:line.color});
+    const g=el('g',{class:'station '+(['Transformer','RAG','Agent','数据治理','推理服务','LLMOps','AI安全'].includes(s)?'hub':'')},stationLayer);
+    el('circle',{cx:x,cy:y,r:['Transformer','RAG','Agent','数据治理','推理服务','LLMOps','AI安全'].includes(s)?9:7,fill:line.color},g);
+    const t=el('text',{x:x+12,y:y+(i%2?22:-22),fill:'#1a1a2e'},g);t.textContent=s;
+    g.onclick=()=>{document.getElementById('pt').textContent=s;document.getElementById('pd').innerHTML=(desc[s]||'该节点属于 '+line.name+'。')+'<br><br><b>路线：</b>'+line.name;document.getElementById('panel').style.display='block';};
+  });
+});
+function pickPos(name,preferY){
+  const arr=pos[name]||[];
+  if(!arr.length)return null;
+  if(preferY==null)return arr[0];
+  return arr.slice().sort((a,b)=>Math.abs(a.y-preferY)-Math.abs(b.y-preferY))[0];
+}
+function curvePath(a,b){
+  const dx=Math.max(80,Math.abs(b.x-a.x)*0.45);
+  const sweep=a.y===b.y?70:0;
+  const c1x=a.x+dx,c2x=b.x-dx,c1y=a.y+sweep,c2y=b.y-sweep;
+  return `M${a.x},${a.y} C${c1x},${c1y} ${c2x},${c2y} ${b.x},${b.y}`;
+}
+dependencies.forEach(dep=>{
+  const a=pickPos(dep.from),b=pickPos(dep.to,a?a.y:null);
+  if(!a||!b)return;
+  const p=el('path',{class:'dep',d:curvePath(a,b)},depLayer);
+  p.onmouseenter=()=>{document.getElementById('pt').textContent=dep.from+' → '+dep.to;document.getElementById('pd').innerHTML='<b>依赖：</b>'+dep.label+'<br><br>'+dep.from+' 是理解或实现 '+dep.to+' 的前置知识。';document.getElementById('panel').style.display='block';};
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  const label=el('text',{class:'dep-label',x:mx,y:my-8},depLayer);label.textContent=dep.label;
+});
+</script>
+</body>
+</html>

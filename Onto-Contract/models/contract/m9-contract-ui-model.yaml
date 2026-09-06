@@ -1,0 +1,154 @@
+version: "1.0.0"
+model_type: "UI-Model"
+domain: "合同管理"
+base_model: "m9-ui-model.yaml"
+description: "合同管理专属 UI 模型，覆盖合同录入、合同开票录入、合同收款录入、合同信息查询四个业务功能点"
+
+layout_specification:
+  shell_type: "triple-column-resizable"
+  header:
+    fixed: true
+    height: "60px"
+    components: ["logo", "title", "user_profile", "sidebar_toggle", "ai_toggle", "logout"]
+    background: "#0F172A"
+  sidebar:
+    default_width: "250px"
+    min_width: "160px"
+    max_width: "420px"
+    background: "#ffffff"
+    navigation_style: "expandable-tree"
+  main_area:
+    style: "multi-tab"
+    content_padding: "20px 20px 0 20px"
+    background: "#F5F7FA"
+    elevation: "flat"
+    border_radius: "0px"
+  ai_panel:
+    default_width: "400px"
+    min_width: "320px"
+    max_width: "760px"
+    role: "AI-Assistant-Copilot"
+    header_label: "合同智能助理"
+    assistant_label: "合同助手"
+
+navigation_model:
+  node_structure:
+    properties:
+      id: "unique_id"
+      label: "string"
+      icon: "lucide_icon_name"
+      type: "category | leaf"
+      action: "open_tab | link"
+      payload: "functional_page_id"
+  nodes:
+    - id: "contract_management"
+      label: "合同管理"
+      icon: "FileText"
+      type: "category"
+      children:
+        - id: "contract_entry"
+          label: "合同录入"
+          icon: "FilePlus2"
+          type: "leaf"
+          action: "open_tab"
+          payload: "ContractEntryPage"
+        - id: "invoice_entry"
+          label: "合同开票录入"
+          icon: "ReceiptText"
+          type: "leaf"
+          action: "open_tab"
+          payload: "InvoiceEntryPage"
+        - id: "payment_receive"
+          label: "合同收款录入"
+          icon: "BadgeDollarSign"
+          type: "leaf"
+          action: "open_tab"
+          payload: "PaymentReceivePage"
+        - id: "contract_search"
+          label: "合同信息查询"
+          icon: "Search"
+          type: "leaf"
+          action: "open_tab"
+          payload: "ContractSearchPage"
+
+page_registry:
+  - pageId: "ContractEntryPage"
+    title: "合同录入"
+    pageType: "entry_form"
+    template: "master_detail"
+    useCaseRef: "UC-CONTRACT-ENTRY"
+    binds:
+      aggregate: "Contract"
+      behavior: "Contract_Create"
+  - pageId: "InvoiceEntryPage"
+    title: "合同开票录入"
+    pageType: "entry_form"
+    template: "master_detail"
+    useCaseRef: "UC-INVOICE-PROCESS"
+    binds:
+      aggregate: "Invoice"
+      behavior: "Invoice_Create"
+  - pageId: "PaymentReceivePage"
+    title: "合同收款录入"
+    pageType: "context_selector_form"
+    template: "context_selector_form_template"
+    useCaseRef: "UC-PAYMENT-PROCESS"
+    binds:
+      aggregate: "Invoice"
+      behavior: "Payment_Receive"
+  - pageId: "ContractSearchPage"
+    title: "合同信息查询"
+    pageType: "search_table"
+    template: "search_table_template"
+    useCaseRef: "UC-CONTRACT-QUERY"
+    binds:
+      aggregate: "Contract"
+      searchBehavior: "Contract_Query"
+      detailBehavior: "Contract_GetDetail"
+
+use_case_bindings:
+  ContractEntryPage: "UC-CONTRACT-ENTRY"
+  InvoiceEntryPage: "UC-INVOICE-PROCESS"
+  PaymentReceivePage: "UC-PAYMENT-PROCESS"
+  ContractSearchPage: "UC-CONTRACT-QUERY"
+
+ai_interaction_protocol:
+  message_renders:
+    text: "markdown-rich-text"
+    table:
+      style: "responsive-mini-table"
+      theme: "match-system-ui"
+    chart:
+      engine: "echarts"
+      style: "auto-fit-container"
+  intent_to_ui_mapping:
+    - intent_pattern: "(录入|新增|创建).*合同"
+      action: "OPEN_TAB"
+      payload: "ContractEntryPage"
+    - intent_pattern: "(开票|录入开票|合同开票)"
+      action: "OPEN_TAB"
+      payload: "InvoiceEntryPage"
+    - intent_pattern: "(收款|确认收款|合同收款)"
+      action: "OPEN_TAB"
+      payload: "PaymentReceivePage"
+    - intent_pattern: "(查询合同|搜索合同|合同台账)"
+      action: "OPEN_TAB"
+      payload: "ContractSearchPage"
+    - intent_pattern: "查看合同详情 (.*)"
+      action: "EXECUTE_BEHAVIOR"
+      behavior: "Contract_GetDetail"
+
+visual_identity:
+  colors:
+    primary: "#155EEF"
+    nav_bg: "#0F172A"
+    border: "#D5DCE6"
+    background: "#F5F7FA"
+    success: "#157F3D"
+    warning: "#C97A10"
+    danger: "#C4320A"
+  shorthands:
+    flat_style:
+      shadow: "none"
+      radius: "0px"
+      border: "1px solid var(--border-muted)"

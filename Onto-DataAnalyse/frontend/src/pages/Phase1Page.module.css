@@ -1,0 +1,157 @@
+.layout {
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  gap: 20px;
+  height: calc(100vh - 110px);
+  min-height: 0;
+}
+
+.left, .right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+/* 预览卡 */
+.previewCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 280px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  font-weight: 500;
+}
+
+.tab:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-page);
+}
+
+.tabActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-accent);
+  font-weight: 600;
+}
+
+.previewBody {
+  padding: 12px 20px;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* 操作栏 */
+.actionsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.statusInfo {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.actionsBtns {
+  display: flex;
+  gap: 8px;
+}
+
+/* 流式卡片 */
+.streamCard {
+  background: #1E293B;
+  color: #E2E8F0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.streamHead {
+  background: #0F172A;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #94A3B8;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.streamBody {
+  margin: 0;
+  padding: 16px;
+  max-height: 360px;
+  overflow: auto;
+  font-family: 'Cascadia Code', Consolas, Monaco, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 错误卡 */
+.errorCard {
+  background: #FEF2F2;
+  border-left: 4px solid var(--chart-red);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  color: #991B1B;
+}
+.errorTitle {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.errorDetails { margin-top: 8px; font-size: 12px; }
+.errorDetails pre {
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+/* 占位 */
+.placeholder {
+  text-align: center;
+  padding: 48px 32px;
+  background: var(--bg-card);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+}
+.placeholderIcon { font-size: 48px; margin-bottom: 16px; }
+.placeholderTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.placeholderText {
+  font-size: 13px;
+  line-height: 1.8;
+}

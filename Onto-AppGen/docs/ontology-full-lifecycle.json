@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "本体驱动 Agentic 体系：开发态 → 运行态 + 异构系统联邦接入",
+    "output": "ontology-full-lifecycle.html",
+    "quality_profile": "showcase",
+    "viewBox": [1760, 940]
+  },
+  "components": [
+    { "id": "dev-human", "type": "external", "label": "业务专家", "sublabel": "开发态 · 提出需求", "pos": [80, 40], "size": [240, 64] },
+    { "id": "dev-agent", "type": "external", "label": "开发 Agent", "sublabel": "ontology-driven-dev skill", "pos": [80, 190], "size": [240, 66], "tag": "需求探索→建模→构建" },
+    { "id": "model", "type": "database", "label": "本体模型", "sublabel": "M1~M7 + MM + MI（YAML）", "pos": [640, 40], "size": [240, 68], "tag": "唯一真相源" },
+    { "id": "run-human", "type": "external", "label": "业务人员", "sublabel": "运行态 · 操作 + 审批", "pos": [80, 360], "size": [240, 62] },
+    { "id": "webui", "type": "frontend", "label": "工作台前端", "sublabel": "人操作 · Agent 对话 · 审批中心", "pos": [80, 510], "size": [240, 70] },
+    { "id": "runtime", "type": "backend", "label": "本体运行时", "sublabel": "对象 · 行为 · 规则 · 权限 引擎", "pos": [640, 360], "size": [240, 74] },
+    { "id": "state", "type": "database", "label": "业务数据", "sublabel": "本体自管状态（受控写回）", "pos": [220, 590], "size": [240, 62] },
+    { "id": "connector", "type": "backend", "label": "Connector 适配层", "sublabel": "MI/MM 的运行时实现", "pos": [640, 700], "size": [240, 62], "tag": "异构隔离" },
+    { "id": "enterprise", "type": "cloud", "label": "企业系统群", "sublabel": "微服务 · 关系库 · 消息队列 · 遗留系统", "pos": [1180, 700], "size": [240, 64], "tag": "联邦接入，不迁移" },
+    { "id": "run-agent", "type": "external", "label": "运行 Agent 底座", "sublabel": "DSH / LangChain / AutoGen / AgentScope", "pos": [1420, 40], "size": [240, 64], "tag": "MCP client" },
+    { "id": "mcp", "type": "messagebus", "label": "MCP Server", "sublabel": "本体工具协议（标准）", "pos": [1420, 190], "size": [240, 66] },
+    { "id": "gate", "type": "security", "label": "HITL 审批网关", "sublabel": "风险分级 · 高风险挂起", "pos": [1420, 360], "size": [240, 66], "tag": "B 方案" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "开发态（Build）", "wraps": ["dev-human", "dev-agent", "model"] },
+    { "kind": "region", "label": "运行态核心（Runtime）", "wraps": ["run-human", "webui", "runtime", "state"] },
+    { "kind": "region", "label": "企业既有系统（异构）", "wraps": ["connector", "enterprise"] }
+  ],
+  "connections": [
+    { "id": "devhuman-devagent", "from": "dev-human", "to": "dev-agent", "label": "对话需求", "variant": "emphasis", "labelDy": 24 },
+    { "id": "devagent-model", "from": "dev-agent", "to": "model", "label": "产出本体模型", "variant": "emphasis", "via": [[440, 223], [440, 74]] },
+    { "id": "model-runtime", "from": "model", "to": "runtime", "label": "运行态加载", "variant": "emphasis", "labelDy": 24 },
+    { "id": "runhuman-webui", "from": "run-human", "to": "webui", "label": "手动操作", "variant": "emphasis", "labelDy": 24 },
+    { "id": "webui-runtime", "from": "webui", "to": "runtime", "label": "人通道 · 行为 API", "variant": "emphasis", "via": [[480, 545], [480, 397]] },
+    { "id": "runagent-mcp", "from": "run-agent", "to": "mcp", "label": "MCP 调用", "labelDy": 24 },
+    { "id": "mcp-gate", "from": "mcp", "to": "gate", "label": "工具调用", "labelDy": 24 },
+    { "id": "gate-runtime", "from": "gate", "to": "runtime", "label": "放行 / 审批后执行", "variant": "security" },
+    { "id": "gate-webui", "from": "gate", "to": "webui", "label": "高风险挂起审批", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "via": [[1540, 870], [200, 870]] },
+    { "id": "runtime-state", "from": "runtime", "to": "state", "label": "受控写回", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" },
+    { "id": "runtime-connector", "from": "runtime", "to": "connector", "label": "联邦查询 / 写回", "variant": "emphasis", "labelAt": [760, 660] },
+    { "id": "connector-enterprise", "from": "connector", "to": "enterprise", "label": "协议适配", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "开发态 → 运行态", "items": ["开发态用 skill 协同构建本体模型", "本体模型（含 MM 映射 + MI 接口）衔接两阶段", "运行态加载模型驱动人机双通道"] },
+    { "dot": "rose", "title": "异构系统如何表达", "items": ["MI 接口模型表达「对接什么、输入输出」", "MM 映射模型表达「对象↔外部数据」", "Connector 是 MI/MM 的运行时实现，物理协议在此"] },
+    { "dot": "emerald", "title": "底座可插拔 + 人在环路", "items": ["MCP 标准协议，Agent 框架可换", "高风险动作挂起 → 人审批 → 才执行", "联邦接入不迁移老系统"] }
+  ]
+}

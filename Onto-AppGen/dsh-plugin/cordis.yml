@@ -1,0 +1,8 @@
+# Onto-AppGen DSH 插件覆盖层
+# 用法：从 DSH 仓库根目录运行
+#   pnpm dsh web --patch D:/sharptoolbox/Onto-AppGen/dsh-plugin/cordis.yml
+# 插件以本地绝对路径加载，不修改 DSH 源码、不改动 packages/。
+# 注意：Windows 上 ESM loader 要求插件路径为 file:// URL（盘符 D: 否则被误当协议）。
+- insert:
+    - id: onto-appgen
+      name: 'file:///D:/sharptoolbox/Onto-AppGen/dsh-plugin/index.ts'

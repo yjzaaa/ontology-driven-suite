@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>大学理工科数学知识体系 - DAG 依赖路径图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    *{box-sizing:border-box} body{margin:0;background:#f6f8fb;color:#172033;font-family:"Microsoft YaHei",Arial,sans-serif}
+    header{height:70px;background:#fff;border-bottom:1px solid #dde3ec;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+    h1{font-size:20px;margin:0}.sub{font-size:13px;color:#667386;margin-top:5px}
+    #chart{width:100vw;height:calc(100vh - 70px)}
+  </style>
+</head>
+<body>
+<header>
+  <div><h1>数学知识依赖路径 DAG</h1><div class="sub">从先修概念到应用边界的有向依赖图；粗线表示更强先修关系</div></div>
+</header>
+<div id="chart"></div>
+<script>
+const colors=["#2f6fed","#15a36d","#e4572e","#8f5bd6","#d99a00","#0f8b8d","#c23b73","#506176"];
+const nodesCSV=`N01,集合,数学基础与证明语言,50
+N02,映射,数学基础与证明语言,47
+N03,逻辑,数学基础与证明语言,46
+N04,量词,数学基础与证明语言,42
+N05,函数,数学基础与证明语言,59
+N06,证明方法,数学基础与证明语言,44
+N07,归纳法,数学基础与证明语言,40
+N08,数学符号,数学基础与证明语言,41
+N09,极限,微积分与数学分析,58
+N10,连续,微积分与数学分析,51
+N11,导数,微积分与数学分析,59
+N12,积分,微积分与数学分析,57
+N13,泰勒公式,微积分与数学分析,46
+N14,级数,微积分与数学分析,45
+N15,偏导数,微积分与数学分析,51
+N16,梯度,微积分与数学分析,56
+N17,向量,线性代数与矩阵计算,52
+N18,矩阵,线性代数与矩阵计算,59
+N19,线性方程组,线性代数与矩阵计算,54
+N20,向量空间,线性代数与矩阵计算,53
+N21,秩,线性代数与矩阵计算,48
+N22,特征值,线性代数与矩阵计算,52
+N23,正交性,线性代数与矩阵计算,47
+N24,SVD,线性代数与矩阵计算,51
+N25,样本空间,概率论与数理统计,45
+N26,条件概率,概率论与数理统计,49
+N27,随机变量,概率论与数理统计,56
+N28,分布,概率论与数理统计,56
+N29,期望方差,概率论与数理统计,51
+N30,大数定律,概率论与数理统计,47
+N31,中心极限定理,概率论与数理统计,52
+N32,估计检验,概率论与数理统计,53
+N33,命题逻辑,离散数学与计算结构,41
+N34,集合关系,离散数学与计算结构,42
+N35,组合计数,离散数学与计算结构,47
+N36,递推,离散数学与计算结构,43
+N37,图,离散数学与计算结构,50
+N38,树,离散数学与计算结构,45
+N39,最短路,离散数学与计算结构,46
+N40,复杂度,离散数学与计算结构,47
+N41,一阶ODE,微分方程与动力系统,46
+N42,线性ODE,微分方程与动力系统,49
+N43,方程组,微分方程与动力系统,48
+N44,拉普拉斯变换,微分方程与动力系统,45
+N45,稳定性,微分方程与动力系统,49
+N46,相图,微分方程与动力系统,42
+N47,数值ODE,微分方程与动力系统,47
+N48,动力系统,微分方程与动力系统,46
+N49,误差分析,数值计算与优化,50
+N50,浮点数,数值计算与优化,43
+N51,插值拟合,数值计算与优化,45
+N52,数值积分,数值计算与优化,45
+N53,线性系统数值解,数值计算与优化,52
+N54,牛顿法,数值计算与优化,51
+N55,梯度下降,数值计算与优化,57
+N56,凸优化,数值计算与优化,54
+N57,建模流程,工程建模与进阶边界,50
+N58,量纲分析,工程建模与进阶边界,41
+N59,傅里叶分析,工程建模与进阶边界,52
+N60,复变函数,工程建模与进阶边界,43
+N61,PDE,工程建模与进阶边界,50
+N62,控制基础,工程建模与进阶边界,47
+N63,信息论,工程建模与进阶边界,45
+N64,测度论边界,工程建模与进阶边界,34`;
+const edgesCSV=`N01,N05,0.9
+N02,N05,0.7
+N03,N06,0.7
+N04,N07,0.8
+N05,N09,0.85
+N06,N14,0.7
+N07,N10,0.75
+N08,N25,0.7
+N09,N10,0.95
+N10,N11,0.9
+N11,N12,0.92
+N12,N13,0.88
+N13,N14,0.75
+N14,N15,0.8
+N15,N16,0.82
+N12,N21,0.75
+N16,N56,0.8
+N17,N18,0.82
+N18,N19,0.86
+N19,N20,0.82
+N20,N21,0.8
+N21,N22,0.82
+N22,N23,0.84
+N23,N24,0.78
+N18,N44,0.78
+N24,N48,0.78
+N25,N26,0.9
+N26,N27,0.86
+N27,N28,0.82
+N28,N29,0.8
+N29,N30,0.84
+N30,N31,0.8
+N31,N32,0.76
+N26,N59,0.72
+N32,N56,0.76
+N33,N34,0.75
+N34,N35,0.78
+N35,N36,0.75
+N36,N37,0.7
+N37,N38,0.74
+N38,N39,0.76
+N39,N40,0.7
+N35,N49,0.68
+N40,N63,0.62
+N41,N42,0.82
+N42,N43,0.82
+N43,N44,0.78
+N44,N45,0.82
+N45,N46,0.72
+N46,N47,0.72
+N47,N48,0.7
+N43,N62,0.76
+N49,N50,0.78
+N50,N51,0.8
+N51,N52,0.75
+N52,N53,0.78
+N53,N54,0.74
+N54,N55,0.78
+N55,N56,0.82
+N56,N57,0.86
+N57,N58,0.8
+N58,N59,0.82
+N59,N60,0.7
+N60,N61,0.66
+N61,N62,0.68
+N62,N63,0.72
+N63,N64,0.55
+N21,N57,0.72
+N10,N57,0.7
+N18,N56,0.74
+N30,N58,0.76`;
+const layerOrder=["数学基础与证明语言","微积分与数学分析","线性代数与矩阵计算","概率论与数理统计","离散数学与计算结构","微分方程与动力系统","数值计算与优化","工程建模与进阶边界"];
+const rows=Object.fromEntries(layerOrder.map(k=>[k,[]]));
+nodesCSV.split("\n").forEach(r=>{const [id,name,cat,size]=r.split(",");rows[cat].push({id,name,cat,size:+size})});
+const nodes=[];layerOrder.forEach((cat,ci)=>{rows[cat].forEach((n,ri)=>nodes.push({
+  id:n.id,name:n.name,symbolSize:n.size*.78,category:ci,x:90+ci*185,y:60+ri*58,
+  label:{show:true,position:"right",fontSize:11,color:"#243449"}
+}))});
+const byId=Object.fromEntries(nodes.map(n=>[n.id,n]));
+const links=edgesCSV.split("\n").map(r=>{const [source,target,w]=r.split(",");return {source,target,value:+w,lineStyle:{width:1+(+w)*3,curveness:byId[source].x===byId[target].x ? .18 : .12,opacity:.55},tooltip:{formatter:`${byId[source].name} -> ${byId[target].name}<br/>依赖强度：${w}`}}});
+const chart=echarts.init(document.getElementById("chart"));
+chart.setOption({
+  color:colors,
+  grid:{left:20,right:20,top:20,bottom:20},
+  tooltip:{trigger:"item"},
+  legend:{top:12,left:24,data:layerOrder,textStyle:{fontSize:12,color:"#4b586b"}},
+  graphic:layerOrder.map((cat,i)=>({type:"text",left:90+i*185,top:36,style:{text:cat.replace("与","\n与"),fill:"#657287",font:"12px Microsoft YaHei",align:"center"}})),
+  series:[{type:"graph",layout:"none",roam:true,categories:layerOrder.map(name=>({name})),data:nodes,links,
+    edgeSymbol:["none","arrow"],edgeSymbolSize:9,
+    lineStyle:{color:"#7d8da7"},emphasis:{focus:"adjacency",lineStyle:{opacity:1,width:4}},
+    itemStyle:{borderColor:"#fff",borderWidth:2,shadowBlur:6,shadowColor:"rgba(30,42,70,.18)"}
+  }]
+});
+window.addEventListener("resize",()=>chart.resize());
+</script>
+</body>
+</html>

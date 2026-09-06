@@ -1,0 +1,51 @@
+# M6 异常补偿模型 - 合同管理
+model_type: COMPENSATION
+version: "1.1"
+domain: "合同管理"
+
+compensations:
+  - compensationId: COMP-Contract_Create
+    targetBehavior: Contract_Create
+    compensationBehavior: Contract_Void
+    exceptionTypes: [TechnicalException]
+    retryPolicy:
+      maxRetries: 2
+      backoffType: FIXED
+      initialDelayMs: 500
+    fallback: MANUAL_PROCESS
+    idempotencyKey: "contractNo"
+
+  - compensationId: COMP-Invoice_Create
+    targetBehavior: Invoice_Create
+    compensationBehavior: Invoice_Delete
+    exceptionTypes: [TechnicalException, CompensationFailure]
+    retryPolicy:
+      maxRetries: 3
+      backoffType: EXPONENTIAL
+      initialDelayMs: 500
+    fallback: DEAD_LETTER
+    idempotencyKey: "contractId + '_' + invoiceNo"
+
+  - compensationId: COMP-Payment_Receive
+    targetBehavior: Payment_Receive
+    compensationBehavior: Payment_Receive_Rollback
+    exceptionTypes: [TechnicalException]
+    retryPolicy:
+      maxRetries: 3
+      backoffType: EXPONENTIAL
+      initialDelayMs: 200
+    fallback: MANUAL_PROCESS
+    idempotencyKey: "invoiceNo + '_' + receivedDate"
+
+sagas:
+  - sagaId: SAGA-CONTRACT-SETTLEMENT
+    name: 合同结算Saga
+    steps:
+      - stepOrder: 1
+        behavior: Invoice_Create
+        compensation: COMP-Invoice_Create
+      - stepOrder: 2
+        behavior: Payment_Receive
+        compensation: COMP-Payment_Receive
+    compensationOrder: LIFO
+    onCompensationFailure: MANUAL_PROCESS

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>人工智能知识路径 · 可折叠依赖树</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#f7f8fa;font-family:"Microsoft YaHei",Arial,sans-serif;color:#1a1a2e;}
+#bar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #e3e7f2;padding:10px 16px;display:flex;gap:10px;align-items:center;box-shadow:0 1px 5px #0001}
+#bar select,#bar button{padding:5px 9px;border:1px solid #b8c2dd;border-radius:4px;background:#fff}
+#wrap{overflow:auto;height:calc(100vh - 52px)}svg{display:block}.link{fill:none;stroke:#91a4d4;stroke-width:1.5}.node rect{stroke:#d7dbe8;stroke-width:1;filter:drop-shadow(0 1px 2px #0001)}.node text{font-size:13px;dominant-baseline:middle;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="bar"><b>可折叠前置依赖树</b><label>目标：<select id="target" onchange="build(this.value)"></select></label><button onclick="expandAll()">展开全部</button><button onclick="collapseToFirst()">折叠一级</button><span style="color:#667085;font-size:12px">从目标节点向左展开它的递归前置知识。</span></div>
+<div id="wrap"><svg id="svg"></svg></div>
+<script>
+const nameById={N32:'RAG',N33:'Agent',N42:'LLMOps',N38:'推理服务',N40:'模型监控',N51:'AI安全',N54:'代码助手',N56:'文档助手',N58:'行业AI应用',N61:'推理加速',N31:'对齐训练',N36:'训练流水线',N52:'智能搜索',N55:'客服机器人',N25:'基础模型',N35:'数据管道',N29:'预训练',N30:'指令微调',N28:'Embedding',N27:'Token',N26:'LLM',N22:'Transformer',N21:'RNN',N19:'梯度下降',N18:'反向传播',N17:'神经网络',N09:'监督学习',N01:'AI任务',N23:'自注意力',N46:'红队测试',N47:'幻觉',N43:'数据治理',N58:'行业AI应用',N60:'量化',N59:'GPU/TPU/NPU',N44:'标注质量'};
+const pred={N32:['N31','N23'],N33:['N32'],N42:['N34'],N38:['N37'],N40:['N38','N56'],N51:['N46'],N54:['N40'],N56:['N47','N48'],N58:['N43'],N61:['N36'],N31:['N30','N49','N54'],N36:['N35','N31','N51','N61'],N52:['N55','N64','N29','N36'],N55:['N32','N53'],N25:['N22','N50'],N35:['N25','N34','N39','N43','N57','N60'],N29:['N28'],N30:['N29','N24'],N28:['N27'],N27:['N26'],N26:['N25','N13'],N22:['N21'],N21:['N19','N07','N20'],N19:['N18','N06'],N18:['N17'],N17:['N09','N08'],N09:['N01'],N23:['N22'],N46:['N45'],N47:['N46'],N43:['N58'],N60:['N58'],N44:['N59']};
+const targets=['N32','N33','N42','N38','N40','N51','N54','N56','N58','N61'];
+const sel=document.getElementById('target');sel.innerHTML=targets.map(id=>`<option value="${id}">${nameById[id]}</option>`).join('');
+let root,svg=d3.select('#svg'),g=svg.append('g'),tree=d3.tree().nodeSize([42,190]);
+function makeTree(id,seen=new Set()){if(seen.has(id))return {name:nameById[id]||id,cycle:true};seen.add(id);return {name:nameById[id]||id,id,children:(pred[id]||[]).map(x=>makeTree(x,new Set(seen)))};}
+function collapse(d){if(d.children){d._children=d.children;d._children.forEach(collapse);d.children=null;}}
+function build(id){root=d3.hierarchy(makeTree(id));root.x0=0;root.y0=0;root.children&&root.children.forEach(collapse);render();}
+function render(){tree(root);const nodes=root.descendants(),links=root.links();const minX=d3.min(nodes,d=>d.x)-40,maxX=d3.max(nodes,d=>d.x)+40,minY=d3.min(nodes,d=>d.y)-40,maxY=d3.max(nodes,d=>d.y)+220;svg.attr('width',maxY-minY+80).attr('height',maxX-minX+80);g.attr('transform',`translate(${60-minY},${40-minX})`);
+const link=g.selectAll('path.link').data(links,d=>d.target.data.name);link.exit().remove();link.enter().append('path').attr('class','link').merge(link).attr('d',d=>`M${d.source.y},${d.source.x} C${(d.source.y+d.target.y)/2},${d.source.x} ${(d.source.y+d.target.y)/2},${d.target.x} ${d.target.y},${d.target.x}`);
+const node=g.selectAll('g.node').data(nodes,d=>d.data.name);node.exit().remove();const ne=node.enter().append('g').attr('class','node').on('click',(ev,d)=>{if(d.children){d._children=d.children;d.children=null}else if(d._children){d.children=d._children;d._children=null}render()});ne.append('rect');ne.append('text');const all=ne.merge(node).attr('transform',d=>`translate(${d.y},${d.x-15})`);all.select('rect').attr('width',d=>Math.max(86,d.data.name.length*13+24)).attr('height',30).attr('rx',6).attr('fill',d=>d.depth===0?'#1a237e':(d._children?'#e8eaf6':'#fff'));all.select('text').attr('x',12).attr('y',15).attr('fill',d=>d.depth===0?'#fff':'#1a1a2e').text(d=>(d._children?'▸ ':'')+d.data.name);}
+function expand(d){if(d._children){d.children=d._children;d._children=null}if(d.children)d.children.forEach(expand)}
+function expandAll(){expand(root);render()}
+function collapseToFirst(){root.children&&root.children.forEach(collapse);render()}
+build('N32');
+</script>
+</body>
+</html>

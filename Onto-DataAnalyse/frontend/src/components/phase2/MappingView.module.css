@@ -1,0 +1,156 @@
+.wrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 180px 1fr;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.svg path { pointer-events: auto; }
+
+.column {
+  padding: 12px;
+  overflow: auto;
+  max-height: calc(100vh - 240px);
+  background: var(--bg-card);
+  z-index: 1;
+}
+.leftCol { border-right: 1px solid var(--border-color); }
+.rightCol { border-left: 1px solid var(--border-color); }
+
+.colHead {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  padding: 6px 4px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.colCount {
+  background: var(--bg-page);
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 1px 8px;
+  border-radius: 8px;
+}
+
+.entCard {
+  margin-bottom: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.entHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-page);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.entHead:hover { background: rgba(14, 165, 233, 0.08); }
+.expander { color: var(--text-muted); font-size: 10px; }
+.entName { flex: 1; color: var(--text-primary); }
+.tableName {
+  flex: 1;
+  color: var(--text-primary);
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+.entId {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+
+.fieldList { padding: 4px 0; }
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: default;
+  transition: background 0.1s;
+}
+.field:hover { background: rgba(14, 165, 233, 0.08); }
+.fieldLeft { border-right: 3px solid transparent; }
+.fieldLeft:hover { border-right-color: var(--color-accent); }
+.fieldRight { border-left: 3px solid transparent; }
+.fieldRight:hover { border-left-color: var(--color-accent); }
+
+.fieldUnmapped { color: var(--text-muted); opacity: 0.6; }
+
+.fieldName {
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+.fieldLabel {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+/* 中间提示区 */
+.midCol {
+  padding: 12px;
+  background: linear-gradient(to right, var(--bg-page) 0%, rgba(0,0,0,0) 50%, var(--bg-page) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 1;
+}
+
+.midLegend {
+  background: white;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.legendRow { display: flex; align-items: center; gap: 6px; }
+.dotG, .dotO, .dotR {
+  width: 12px; height: 3px; border-radius: 1px;
+}
+.dotG { background: #22C55E; }
+.dotO { background: #F59E0B; }
+.dotR { background: #EF4444; }
+.legendNote { color: var(--text-muted); margin-top: 2px; }
+
+/* 悬停 tooltip */
+.tooltip {
+  background: rgba(15, 23, 42, 0.95);
+  color: white;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  max-width: 260px;
+  word-break: break-all;
+}
+.tooltipTitle { line-height: 1.5; margin-bottom: 6px; }
+.tooltipMeta { color: #94A3B8; font-size: 11px; }
+.tooltipNote { color: #FBBF24; margin-top: 4px; font-style: italic; }

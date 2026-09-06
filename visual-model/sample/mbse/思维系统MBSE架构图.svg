@@ -1,0 +1,280 @@
+<svg width="1400" height="1000" viewBox="0 0 1400 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- 定义渐变和样式 -->
+  <defs>
+    <!-- 需求层渐变 -->
+    <linearGradient id="requirementGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8eaf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c5cae9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 功能层渐变 -->
+    <linearGradient id="functionalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f1f8e9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dcedc8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 逻辑层渐变 -->
+    <linearGradient id="logicalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#bbdefb;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 物理层渐变 -->
+    <linearGradient id="physicalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fce4ec;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8bbd9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 箭头标记 -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#424242" />
+    </marker>
+    
+    <!-- 虚线箭头标记 -->
+    <marker id="dashedArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#757575" />
+    </marker>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="1400" height="1000" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <!-- 标题 -->
+  <text x="700" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#212121">
+    思维系统MBSE架构图
+  </text>
+  <text x="700" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666666">
+    基于模型的系统工程方法论构建的个人思维体系架构
+  </text>
+  
+  <!-- 需求层 (Requirements Layer) -->
+  <g id="requirements-layer">
+    <!-- 认知需求 -->
+    <rect x="100" y="120" width="200" height="80" fill="url(#requirementGradient)" stroke="#3f51b5" stroke-width="2" rx="5"/>
+    <text x="110" y="140" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+    <text x="200" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">认知需求</text>
+    <text x="110" y="180" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-001: 理解世界本质</text>
+    <text x="110" y="195" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-002: 构建知识体系</text>
+    
+    <!-- 逻辑需求 -->
+    <rect x="350" y="120" width="200" height="80" fill="url(#requirementGradient)" stroke="#3f51b5" stroke-width="2" rx="5"/>
+    <text x="360" y="140" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+    <text x="450" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">逻辑需求</text>
+    <text x="360" y="180" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-003: 清晰思维推理</text>
+    <text x="360" y="195" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-004: 结构化表达</text>
+    
+    <!-- 应用需求 -->
+    <rect x="600" y="120" width="200" height="80" fill="url(#requirementGradient)" stroke="#3f51b5" stroke-width="2" rx="5"/>
+    <text x="610" y="140" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+    <text x="700" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">应用需求</text>
+    <text x="610" y="180" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-005: 解决实际问题</text>
+    <text x="610" y="195" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-006: 指导实践行动</text>
+    
+    <!-- 系统需求 -->
+    <rect x="850" y="120" width="200" height="80" fill="url(#requirementGradient)" stroke="#3f51b5" stroke-width="2" rx="5"/>
+    <text x="860" y="140" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+    <text x="950" y="160" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">系统需求</text>
+    <text x="860" y="180" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-007: 整体性思考</text>
+    <text x="860" y="195" font-family="Arial, sans-serif" font-size="12" fill="#424242">REQ-008: 持续优化迭代</text>
+  </g>
+  
+  <!-- 功能层 (Functional Layer) -->
+  <g id="functional-layer">
+    <!-- 哲学思维功能 -->
+    <rect x="80" y="280" width="180" height="100" fill="url(#functionalGradient)" stroke="#4caf50" stroke-width="2" rx="10"/>
+    <text x="90" y="300" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«function»</text>
+    <text x="170" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">哲学思维</text>
+    <text x="90" y="340" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 本体论思考</text>
+    <text x="90" y="355" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 认识论分析</text>
+    <text x="90" y="370" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 价值论判断</text>
+    
+    <!-- 逻辑思维功能 -->
+    <rect x="300" y="280" width="180" height="100" fill="url(#functionalGradient)" stroke="#4caf50" stroke-width="2" rx="10"/>
+    <text x="310" y="300" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«function»</text>
+    <text x="390" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">逻辑思维</text>
+    <text x="310" y="340" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 归纳推理</text>
+    <text x="310" y="355" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 演绎推理</text>
+    <text x="310" y="370" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 辩证思维</text>
+    
+    <!-- 结构化思维功能 -->
+    <rect x="520" y="280" width="180" height="100" fill="url(#functionalGradient)" stroke="#4caf50" stroke-width="2" rx="10"/>
+    <text x="530" y="300" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«function»</text>
+    <text x="610" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">结构化思维</text>
+    <text x="530" y="340" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 静态结构分析</text>
+    <text x="530" y="355" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 动态流程梳理</text>
+    <text x="530" y="370" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 层次化组织</text>
+    
+    <!-- 系统思维功能 -->
+    <rect x="740" y="280" width="180" height="100" fill="url(#functionalGradient)" stroke="#4caf50" stroke-width="2" rx="10"/>
+    <text x="750" y="300" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«function»</text>
+    <text x="830" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">系统思维</text>
+    <text x="750" y="340" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 整体性分析</text>
+    <text x="750" y="355" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 关联性思考</text>
+    <text x="750" y="370" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 动态平衡</text>
+    
+    <!-- 批判性思维功能 -->
+    <rect x="960" y="280" width="180" height="100" fill="url(#functionalGradient)" stroke="#4caf50" stroke-width="2" rx="10"/>
+    <text x="970" y="300" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«function»</text>
+    <text x="1050" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">批判性思维</text>
+    <text x="970" y="340" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 质疑与验证</text>
+    <text x="970" y="355" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 逻辑漏洞识别</text>
+    <text x="970" y="370" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 多角度分析</text>
+  </g>
+  
+  <!-- 逻辑层 (Logical Layer) -->
+  <g id="logical-layer">
+    <!-- 方法论框架 -->
+    <rect x="150" y="450" width="250" height="120" fill="url(#logicalGradient)" stroke="#2196f3" stroke-width="2" rx="5"/>
+    <text x="160" y="470" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="275" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">方法论框架</text>
+    <line x1="160" y1="500" x2="390" y2="500" stroke="#2196f3" stroke-width="1"/>
+    <text x="160" y="520" font-family="Arial, sans-serif" font-size="12" fill="#424242">属性:</text>
+    <text x="160" y="535" font-family="Arial, sans-serif" font-size="11" fill="#424242">• MBSE系统工程方法论</text>
+    <text x="160" y="550" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 企业架构4A方法论</text>
+    <text x="160" y="565" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 数字化转型方法论</text>
+    
+    <!-- 知识体系 -->
+    <rect x="450" y="450" width="250" height="120" fill="url(#logicalGradient)" stroke="#2196f3" stroke-width="2" rx="5"/>
+    <text x="460" y="470" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="575" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">知识体系</text>
+    <line x1="460" y1="500" x2="690" y2="500" stroke="#2196f3" stroke-width="1"/>
+    <text x="460" y="520" font-family="Arial, sans-serif" font-size="12" fill="#424242">操作:</text>
+    <text x="460" y="535" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 知识获取与整理</text>
+    <text x="460" y="550" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 概念抽象与建模</text>
+    <text x="460" y="565" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 逻辑关系构建</text>
+    
+    <!-- 思维模型 -->
+    <rect x="750" y="450" width="250" height="120" fill="url(#logicalGradient)" stroke="#2196f3" stroke-width="2" rx="5"/>
+    <text x="760" y="470" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="875" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">思维模型</text>
+    <line x1="760" y1="500" x2="990" y2="500" stroke="#2196f3" stroke-width="1"/>
+    <text x="760" y="520" font-family="Arial, sans-serif" font-size="12" fill="#424242">端口:</text>
+    <text x="760" y="535" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 输入接口: 问题/需求</text>
+    <text x="760" y="550" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 处理接口: 分析/推理</text>
+    <text x="760" y="565" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 输出接口: 解决方案</text>
+  </g>
+  
+  <!-- 物理层 (Physical Layer) -->
+  <g id="physical-layer">
+    <!-- 写作实践 -->
+    <rect x="100" y="650" width="200" height="100" fill="url(#physicalGradient)" stroke="#e91e63" stroke-width="2" rx="5" 
+          style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+    <text x="110" y="670" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="200" y="690" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">写作实践</text>
+    <text x="110" y="710" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 文章创作</text>
+    <text x="110" y="725" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 逻辑图绘制</text>
+    <text x="110" y="740" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 知识卡片制作</text>
+    
+    <!-- 技术实践 -->
+    <rect x="350" y="650" width="200" height="100" fill="url(#physicalGradient)" stroke="#e91e63" stroke-width="2" rx="5" 
+          style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+    <text x="360" y="670" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="450" y="690" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">技术实践</text>
+    <text x="360" y="710" font-family="Arial, sans-serif" font-size="11" fill="#424242">• AI工具应用</text>
+    <text x="360" y="725" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 系统架构设计</text>
+    <text x="360" y="740" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 数字化转型</text>
+    
+    <!-- 管理实践 -->
+    <rect x="600" y="650" width="200" height="100" fill="url(#physicalGradient)" stroke="#e91e63" stroke-width="2" rx="5" 
+          style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+    <text x="610" y="670" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="700" y="690" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">管理实践</text>
+    <text x="610" y="710" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 项目管理</text>
+    <text x="610" y="725" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 团队协作</text>
+    <text x="610" y="740" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 知识管理</text>
+    
+    <!-- 学习实践 -->
+    <rect x="850" y="650" width="200" height="100" fill="url(#physicalGradient)" stroke="#e91e63" stroke-width="2" rx="5" 
+          style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+    <text x="860" y="670" font-family="Arial, sans-serif" font-size="12" font-style="italic" fill="#666666">«block»</text>
+    <text x="950" y="690" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#212121">学习实践</text>
+    <text x="860" y="710" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 持续学习</text>
+    <text x="860" y="725" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 实践复盘</text>
+    <text x="860" y="740" font-family="Arial, sans-serif" font-size="11" fill="#424242">• 经验总结</text>
+  </g>
+  
+  <!-- 关系连接线 -->
+  <!-- 需求到功能的satisfy关系 -->
+  <line x1="200" y1="200" x2="170" y2="280" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="180" y="240" font-family="Arial, sans-serif" font-size="10" fill="#4caf50">«satisfy»</text>
+  
+  <line x1="450" y1="200" x2="390" y2="280" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="415" y="240" font-family="Arial, sans-serif" font-size="10" fill="#4caf50">«satisfy»</text>
+  
+  <line x1="700" y1="200" x2="610" y2="280" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="650" y="240" font-family="Arial, sans-serif" font-size="10" fill="#4caf50">«satisfy»</text>
+  
+  <line x1="950" y1="200" x2="830" y2="280" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="950" y1="200" x2="1050" y2="280" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="890" y="240" font-family="Arial, sans-serif" font-size="10" fill="#4caf50">«satisfy»</text>
+  
+  <!-- 功能到逻辑的refine关系 -->
+  <line x1="170" y1="380" x2="275" y2="450" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dashedArrow)"/>
+  <text x="210" y="415" font-family="Arial, sans-serif" font-size="10" fill="#2196f3">«refine»</text>
+  
+  <line x1="390" y1="380" x2="575" y2="450" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dashedArrow)"/>
+  <text x="470" y="415" font-family="Arial, sans-serif" font-size="10" fill="#2196f3">«refine»</text>
+  
+  <line x1="610" y1="380" x2="575" y2="450" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dashedArrow)"/>
+  <line x1="830" y1="380" x2="875" y2="450" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dashedArrow)"/>
+  <line x1="1050" y1="380" x2="875" y2="450" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dashedArrow)"/>
+  
+  <!-- 逻辑到物理的realize关系 -->
+  <line x1="275" y1="570" x2="200" y2="650" stroke="#e91e63" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="230" y="610" font-family="Arial, sans-serif" font-size="10" fill="#e91e63">«realize»</text>
+  
+  <line x1="575" y1="570" x2="450" y2="650" stroke="#e91e63" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="575" y1="570" x2="700" y2="650" stroke="#e91e63" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="520" y="610" font-family="Arial, sans-serif" font-size="10" fill="#e91e63">«realize»</text>
+  
+  <line x1="875" y1="570" x2="950" y2="650" stroke="#e91e63" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="910" y="610" font-family="Arial, sans-serif" font-size="10" fill="#e91e63">«realize»</text>
+  
+  <!-- 反馈循环 -->
+  <path d="M 1100 700 Q 1200 600 1200 400 Q 1200 200 1100 160" 
+        fill="none" stroke="#ff9800" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#dashedArrow)"/>
+  <text x="1150" y="430" font-family="Arial, sans-serif" font-size="10" fill="#ff9800">反馈优化</text>
+  
+  <!-- 图例 -->
+  <g id="legend" transform="translate(1100, 800)">
+    <rect x="0" y="0" width="280" height="180" fill="#f9f9f9" stroke="#bdbdbd" stroke-width="1" rx="5"/>
+    <text x="140" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#212121">图例说明</text>
+    
+    <!-- 元素类型图例 -->
+    <rect x="10" y="30" width="60" height="20" fill="url(#requirementGradient)" stroke="#3f51b5" stroke-width="1"/>
+    <text x="80" y="44" font-family="Arial, sans-serif" font-size="11" fill="#424242">需求层</text>
+    
+    <rect x="10" y="55" width="60" height="20" fill="url(#functionalGradient)" stroke="#4caf50" stroke-width="1" rx="5"/>
+    <text x="80" y="69" font-family="Arial, sans-serif" font-size="11" fill="#424242">功能层</text>
+    
+    <rect x="10" y="80" width="60" height="20" fill="url(#logicalGradient)" stroke="#2196f3" stroke-width="1"/>
+    <text x="80" y="94" font-family="Arial, sans-serif" font-size="11" fill="#424242">逻辑层</text>
+    
+    <rect x="10" y="105" width="60" height="20" fill="url(#physicalGradient)" stroke="#e91e63" stroke-width="1"/>
+    <text x="80" y="119" font-family="Arial, sans-serif" font-size="11" fill="#424242">物理层</text>
+    
+    <!-- 关系类型图例 -->
+    <line x1="150" y1="40" x2="190" y2="40" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="200" y="44" font-family="Arial, sans-serif" font-size="11" fill="#424242">satisfy</text>
+    
+    <line x1="150" y1="65" x2="190" y2="65" stroke="#2196f3" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dashedArrow)"/>
+    <text x="200" y="69" font-family="Arial, sans-serif" font-size="11" fill="#424242">refine</text>
+    
+    <line x1="150" y1="90" x2="190" y2="90" stroke="#e91e63" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="200" y="94" font-family="Arial, sans-serif" font-size="11" fill="#424242">realize</text>
+    
+    <line x1="150" y1="115" x2="190" y2="115" stroke="#ff9800" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#dashedArrow)"/>
+    <text x="200" y="119" font-family="Arial, sans-serif" font-size="11" fill="#424242">feedback</text>
+    
+    <!-- 构造型说明 -->
+    <text x="10" y="140" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#666666">SysML构造型:</text>
+    <text x="10" y="155" font-family="Arial, sans-serif" font-size="9" fill="#666666">«requirement» «function» «block»</text>
+    <text x="10" y="170" font-family="Arial, sans-serif" font-size="9" fill="#666666">符合MBSE标准规范</text>
+  </g>
+  
+  <!-- 版权信息 -->
+  <text x="60" y="980" font-family="Arial, sans-serif" font-size="10" fill="#999999">
+    基于MBSE方法论构建 | 思维系统架构设计 | 2025
+  </text>
+  
+</svg>

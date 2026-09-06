@@ -1,0 +1,515 @@
+<svg width="1400" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- 箭头标记定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666666"/>
+    </marker>
+    <marker id="dataflow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4caf50"/>
+    </marker>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1400" height="1000" fill="#ffffff" stroke="none"/>
+  
+  <!-- 标题 -->
+  <text x="700" y="40" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#212121">
+    企业数字化转型微服务架构系统 - MBSE内部块图
+  </text>
+  
+  <!-- 系统边界框 -->
+  <rect x="60" y="80" width="1280" height="860" fill="#fafafa" stroke="#1976d2" stroke-width="3" rx="10"/>
+  <text x="80" y="110" font-family="Arial" font-size="18" font-weight="bold" fill="#1976d2">
+    «block» 企业数字化转型架构系统
+  </text>
+  
+  <!-- 业务层 -->
+  <rect x="100" y="140" width="1200" height="160" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="5"/>
+  <text x="120" y="165" font-family="Arial" font-size="16" font-weight="bold" fill="#3f51b5">
+    业务架构层 - 企业级业务能力(EBC)
+  </text>
+  
+  <!-- PBC业务组件 -->
+  <rect x="140" y="180" width="180" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="150" y="200" font-family="Arial" font-size="12" font-weight="bold" fill="#2196f3">
+    «PBC组件»
+  </text>
+  <text x="150" y="220" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    客户管理组件
+  </text>
+  <text x="150" y="240" font-family="Arial" font-size="12" fill="#424242">
+    • 客户信息管理
+  </text>
+  <text x="150" y="255" font-family="Arial" font-size="12" fill="#424242">
+    • 客户关系维护
+  </text>
+  <text x="150" y="270" font-family="Arial" font-size="12" fill="#424242">
+    • 界面+逻辑+数据
+  </text>
+  
+  <rect x="360" y="180" width="180" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="370" y="200" font-family="Arial" font-size="12" font-weight="bold" fill="#2196f3">
+    «PBC组件»
+  </text>
+  <text x="370" y="220" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    订单管理组件
+  </text>
+  <text x="370" y="240" font-family="Arial" font-size="12" fill="#424242">
+    • 订单创建处理
+  </text>
+  <text x="370" y="255" font-family="Arial" font-size="12" fill="#424242">
+    • 订单状态跟踪
+  </text>
+  <text x="370" y="270" font-family="Arial" font-size="12" fill="#424242">
+    • 界面+逻辑+数据
+  </text>
+  
+  <rect x="580" y="180" width="180" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="590" y="200" font-family="Arial" font-size="12" font-weight="bold" fill="#2196f3">
+    «PBC组件»
+  </text>
+  <text x="590" y="220" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    产品管理组件
+  </text>
+  <text x="590" y="240" font-family="Arial" font-size="12" fill="#424242">
+    • 产品信息管理
+  </text>
+  <text x="590" y="255" font-family="Arial" font-size="12" fill="#424242">
+    • 产品目录维护
+  </text>
+  <text x="590" y="270" font-family="Arial" font-size="12" fill="#424242">
+    • 界面+逻辑+数据
+  </text>
+  
+  <rect x="800" y="180" width="180" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="810" y="200" font-family="Arial" font-size="12" font-weight="bold" fill="#2196f3">
+    «PBC组件»
+  </text>
+  <text x="810" y="220" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    支付管理组件
+  </text>
+  <text x="810" y="240" font-family="Arial" font-size="12" fill="#424242">
+    • 支付处理
+  </text>
+  <text x="810" y="255" font-family="Arial" font-size="12" fill="#424242">
+    • 账单管理
+  </text>
+  <text x="810" y="270" font-family="Arial" font-size="12" fill="#424242">
+    • 界面+逻辑+数据
+  </text>
+  
+  <rect x="1020" y="180" width="180" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="1030" y="200" font-family="Arial" font-size="12" font-weight="bold" fill="#2196f3">
+    «PBC组件»
+  </text>
+  <text x="1030" y="220" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    库存管理组件
+  </text>
+  <text x="1030" y="240" font-family="Arial" font-size="12" fill="#424242">
+    • 库存监控
+  </text>
+  <text x="1030" y="255" font-family="Arial" font-size="12" fill="#424242">
+    • 库存调配
+  </text>
+  <text x="1030" y="270" font-family="Arial" font-size="12" fill="#424242">
+    • 界面+逻辑+数据
+  </text>
+  
+  <!-- 应用架构层 -->
+  <rect x="100" y="320" width="1200" height="200" fill="#f1f8e9" stroke="#4caf50" stroke-width="2" rx="5"/>
+  <text x="120" y="345" font-family="Arial" font-size="16" font-weight="bold" fill="#4caf50">
+    应用架构层 - 微服务架构
+  </text>
+  
+  <!-- 微服务模块 -->
+  <rect x="140" y="360" width="160" height="140" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="5"/>
+  <text x="150" y="380" font-family="Arial" font-size="12" font-weight="bold" fill="#4caf50">
+    «microservice»
+  </text>
+  <text x="150" y="400" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    用户中心
+  </text>
+  <text x="150" y="420" font-family="Arial" font-size="12" fill="#424242">
+    • 用户认证
+  </text>
+  <text x="150" y="435" font-family="Arial" font-size="12" fill="#424242">
+    • 权限管理
+  </text>
+  <text x="150" y="450" font-family="Arial" font-size="12" fill="#424242">
+    • 用户画像
+  </text>
+  <text x="150" y="470" font-family="Arial" font-size="10" fill="#666666">
+    独立数据库
+  </text>
+  <text x="150" y="485" font-family="Arial" font-size="10" fill="#666666">
+    独立部署
+  </text>
+  
+  <rect x="320" y="360" width="160" height="140" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="5"/>
+  <text x="330" y="380" font-family="Arial" font-size="12" font-weight="bold" fill="#4caf50">
+    «microservice»
+  </text>
+  <text x="330" y="400" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    订单中心
+  </text>
+  <text x="330" y="420" font-family="Arial" font-size="12" fill="#424242">
+    • 订单创建
+  </text>
+  <text x="330" y="435" font-family="Arial" font-size="12" fill="#424242">
+    • 订单处理
+  </text>
+  <text x="330" y="450" font-family="Arial" font-size="12" fill="#424242">
+    • 订单查询
+  </text>
+  <text x="330" y="470" font-family="Arial" font-size="10" fill="#666666">
+    独立数据库
+  </text>
+  <text x="330" y="485" font-family="Arial" font-size="10" fill="#666666">
+    独立部署
+  </text>
+  
+  <rect x="500" y="360" width="160" height="140" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="5"/>
+  <text x="510" y="380" font-family="Arial" font-size="12" font-weight="bold" fill="#4caf50">
+    «microservice»
+  </text>
+  <text x="510" y="400" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    商品中心
+  </text>
+  <text x="510" y="420" font-family="Arial" font-size="12" fill="#424242">
+    • 商品管理
+  </text>
+  <text x="510" y="435" font-family="Arial" font-size="12" fill="#424242">
+    • 价格管理
+  </text>
+  <text x="510" y="450" font-family="Arial" font-size="12" fill="#424242">
+    • 库存管理
+  </text>
+  <text x="510" y="470" font-family="Arial" font-size="10" fill="#666666">
+    独立数据库
+  </text>
+  <text x="510" y="485" font-family="Arial" font-size="10" fill="#666666">
+    独立部署
+  </text>
+  
+  <rect x="680" y="360" width="160" height="140" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="5"/>
+  <text x="690" y="380" font-family="Arial" font-size="12" font-weight="bold" fill="#4caf50">
+    «microservice»
+  </text>
+  <text x="690" y="400" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    支付中心
+  </text>
+  <text x="690" y="420" font-family="Arial" font-size="12" fill="#424242">
+    • 支付处理
+  </text>
+  <text x="690" y="435" font-family="Arial" font-size="12" fill="#424242">
+    • 账单管理
+  </text>
+  <text x="690" y="450" font-family="Arial" font-size="12" fill="#424242">
+    • 风控管理
+  </text>
+  <text x="690" y="470" font-family="Arial" font-size="10" fill="#666666">
+    独立数据库
+  </text>
+  <text x="690" y="485" font-family="Arial" font-size="10" fill="#666666">
+    独立部署
+  </text>
+  
+  <!-- API网关 -->
+  <rect x="860" y="360" width="160" height="140" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+  <text x="870" y="380" font-family="Arial" font-size="12" font-weight="bold" fill="#ff9800">
+    «gateway»
+  </text>
+  <text x="870" y="400" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    API网关
+  </text>
+  <text x="870" y="420" font-family="Arial" font-size="12" fill="#424242">
+    • 路由转发
+  </text>
+  <text x="870" y="435" font-family="Arial" font-size="12" fill="#424242">
+    • 负载均衡
+  </text>
+  <text x="870" y="450" font-family="Arial" font-size="12" fill="#424242">
+    • 安全认证
+  </text>
+  <text x="870" y="465" font-family="Arial" font-size="12" fill="#424242">
+    • 限流熔断
+  </text>
+  <text x="870" y="485" font-family="Arial" font-size="10" fill="#666666">
+    统一入口
+  </text>
+  
+  <!-- 服务治理 -->
+  <rect x="1040" y="360" width="160" height="140" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2" rx="5"/>
+  <text x="1050" y="380" font-family="Arial" font-size="12" font-weight="bold" fill="#7b1fa2">
+    «service-mesh»
+  </text>
+  <text x="1050" y="400" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    服务网格
+  </text>
+  <text x="1050" y="420" font-family="Arial" font-size="12" fill="#424242">
+    • 服务发现
+  </text>
+  <text x="1050" y="435" font-family="Arial" font-size="12" fill="#424242">
+    • 流量管理
+  </text>
+  <text x="1050" y="450" font-family="Arial" font-size="12" fill="#424242">
+    • 安全策略
+  </text>
+  <text x="1050" y="465" font-family="Arial" font-size="12" fill="#424242">
+    • 可观测性
+  </text>
+  <text x="1050" y="485" font-family="Arial" font-size="10" fill="#666666">
+    去中心化治理
+  </text>
+  
+  <!-- 云原生技术层 -->
+  <rect x="100" y="540" width="1200" height="180" fill="#e0f2f1" stroke="#00695c" stroke-width="2" rx="5"/>
+  <text x="120" y="565" font-family="Arial" font-size="16" font-weight="bold" fill="#00695c">
+    云原生技术层 - DevOps与容器化
+  </text>
+  
+  <!-- DevOps流水线 -->
+  <rect x="140" y="580" width="200" height="120" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="5"/>
+  <text x="150" y="600" font-family="Arial" font-size="12" font-weight="bold" fill="#4caf50">
+    «devops»
+  </text>
+  <text x="150" y="620" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    DevOps流水线
+  </text>
+  <text x="150" y="640" font-family="Arial" font-size="12" fill="#424242">
+    • 持续集成CI
+  </text>
+  <text x="150" y="655" font-family="Arial" font-size="12" fill="#424242">
+    • 持续部署CD
+  </text>
+  <text x="150" y="670" font-family="Arial" font-size="12" fill="#424242">
+    • 自动化测试
+  </text>
+  <text x="150" y="685" font-family="Arial" font-size="12" fill="#424242">
+    • 监控告警
+  </text>
+  
+  <!-- 容器编排 -->
+  <rect x="360" y="580" width="200" height="120" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="370" y="600" font-family="Arial" font-size="12" font-weight="bold" fill="#2196f3">
+    «container»
+  </text>
+  <text x="370" y="620" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    Kubernetes集群
+  </text>
+  <text x="370" y="640" font-family="Arial" font-size="12" fill="#424242">
+    • 容器编排
+  </text>
+  <text x="370" y="655" font-family="Arial" font-size="12" fill="#424242">
+    • 弹性伸缩
+  </text>
+  <text x="370" y="670" font-family="Arial" font-size="12" fill="#424242">
+    • 服务发现
+  </text>
+  <text x="370" y="685" font-family="Arial" font-size="12" fill="#424242">
+    • 负载均衡
+  </text>
+  
+  <!-- 数据中台 -->
+  <rect x="580" y="580" width="200" height="120" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5"/>
+  <text x="590" y="600" font-family="Arial" font-size="12" font-weight="bold" fill="#ff9800">
+    «data-platform»
+  </text>
+  <text x="590" y="620" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    数据中台
+  </text>
+  <text x="590" y="640" font-family="Arial" font-size="12" fill="#424242">
+    • 数据采集
+  </text>
+  <text x="590" y="655" font-family="Arial" font-size="12" fill="#424242">
+    • 数据治理
+  </text>
+  <text x="590" y="670" font-family="Arial" font-size="12" fill="#424242">
+    • 数据服务
+  </text>
+  <text x="590" y="685" font-family="Arial" font-size="12" fill="#424242">
+    • 数据分析
+  </text>
+  
+  <!-- 技术中台 -->
+  <rect x="800" y="580" width="200" height="120" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2" rx="5"/>
+  <text x="810" y="600" font-family="Arial" font-size="12" font-weight="bold" fill="#7b1fa2">
+    «tech-platform»
+  </text>
+  <text x="810" y="620" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    技术中台
+  </text>
+  <text x="810" y="640" font-family="Arial" font-size="12" fill="#424242">
+    • 统一认证
+  </text>
+  <text x="810" y="655" font-family="Arial" font-size="12" fill="#424242">
+    • 消息中间件
+  </text>
+  <text x="810" y="670" font-family="Arial" font-size="12" fill="#424242">
+    • 缓存服务
+  </text>
+  <text x="810" y="685" font-family="Arial" font-size="12" fill="#424242">
+    • 配置中心
+  </text>
+  
+  <!-- 低代码平台 -->
+  <rect x="1020" y="580" width="200" height="120" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="5"/>
+  <text x="1030" y="600" font-family="Arial" font-size="12" font-weight="bold" fill="#3f51b5">
+    «low-code»
+  </text>
+  <text x="1030" y="620" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    低代码平台
+  </text>
+  <text x="1030" y="640" font-family="Arial" font-size="12" fill="#424242">
+    • 可视化设计
+  </text>
+  <text x="1030" y="655" font-family="Arial" font-size="12" fill="#424242">
+    • 组件编排
+  </text>
+  <text x="1030" y="670" font-family="Arial" font-size="12" fill="#424242">
+    • 快速交付
+  </text>
+  <text x="1030" y="685" font-family="Arial" font-size="12" fill="#424242">
+    • 敏捷开发
+  </text>
+  
+  <!-- 基础设施层 -->
+  <rect x="100" y="740" width="1200" height="120" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="5"/>
+  <text x="120" y="765" font-family="Arial" font-size="16" font-weight="bold" fill="#e91e63">
+    基础设施层 - 云原生基础设施
+  </text>
+  
+  <!-- 云平台 -->
+  <rect x="140" y="780" width="180" height="60" fill="#ffebee" stroke="#e91e63" stroke-width="2" rx="5"/>
+  <text x="150" y="800" font-family="Arial" font-size="12" font-weight="bold" fill="#e91e63">
+    «cloud»
+  </text>
+  <text x="150" y="820" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    云计算平台
+  </text>
+  <text x="150" y="835" font-family="Arial" font-size="12" fill="#424242">
+    弹性计算 • 存储 • 网络
+  </text>
+  
+  <!-- 容器运行时 -->
+  <rect x="340" y="780" width="180" height="60" fill="#ffebee" stroke="#e91e63" stroke-width="2" rx="5"/>
+  <text x="350" y="800" font-family="Arial" font-size="12" font-weight="bold" fill="#e91e63">
+    «runtime»
+  </text>
+  <text x="350" y="820" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    容器运行时
+  </text>
+  <text x="350" y="835" font-family="Arial" font-size="12" fill="#424242">
+    Docker • Containerd
+  </text>
+  
+  <!-- 服务网格基础设施 -->
+  <rect x="540" y="780" width="180" height="60" fill="#ffebee" stroke="#e91e63" stroke-width="2" rx="5"/>
+  <text x="550" y="800" font-family="Arial" font-size="12" font-weight="bold" fill="#e91e63">
+    «infrastructure»
+  </text>
+  <text x="550" y="820" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    网络基础设施
+  </text>
+  <text x="550" y="835" font-family="Arial" font-size="12" fill="#424242">
+    Istio • Envoy • CNI
+  </text>
+  
+  <!-- 存储系统 -->
+  <rect x="740" y="780" width="180" height="60" fill="#ffebee" stroke="#e91e63" stroke-width="2" rx="5"/>
+  <text x="750" y="800" font-family="Arial" font-size="12" font-weight="bold" fill="#e91e63">
+    «storage»
+  </text>
+  <text x="750" y="820" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    分布式存储
+  </text>
+  <text x="750" y="835" font-family="Arial" font-size="12" fill="#424242">
+    Ceph • GlusterFS
+  </text>
+  
+  <!-- 监控系统 -->
+  <rect x="940" y="780" width="180" height="60" fill="#ffebee" stroke="#e91e63" stroke-width="2" rx="5"/>
+  <text x="950" y="800" font-family="Arial" font-size="12" font-weight="bold" fill="#e91e63">
+    «monitoring»
+  </text>
+  <text x="950" y="820" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">
+    监控告警
+  </text>
+  <text x="950" y="835" font-family="Arial" font-size="12" fill="#424242">
+    Prometheus • Grafana
+  </text>
+  
+  <!-- 连接线 - PBC组件到微服务 -->
+  <line x1="230" y1="280" x2="220" y2="360" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="450" y1="280" x2="400" y2="360" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="670" y1="280" x2="580" y2="360" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="890" y1="280" x2="760" y2="360" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 连接线 - 微服务到云原生技术层 -->
+  <line x1="220" y1="500" x2="240" y2="580" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="500" x2="460" y2="580" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="580" y1="500" x2="680" y2="580" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="760" y1="500" x2="900" y2="580" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 连接线 - 云原生技术层到基础设施层 -->
+  <line x1="240" y1="700" x2="230" y2="780" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="460" y1="700" x2="430" y2="780" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="680" y1="700" x2="630" y2="780" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="900" y1="700" x2="830" y2="780" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="1120" y1="700" x2="1030" y2="780" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- 数据流连接线 -->
+  <line x1="320" y1="230" x2="360" y2="230" stroke="#4caf50" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#dataflow)"/>
+  <text x="340" y="225" font-family="Arial" font-size="10" fill="#4caf50">数据流</text>
+  
+  <line x1="540" y1="230" x2="580" y2="230" stroke="#4caf50" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#dataflow)"/>
+  <text x="560" y="225" font-family="Arial" font-size="10" fill="#4caf50">数据流</text>
+  
+  <line x1="760" y1="230" x2="800" y2="230" stroke="#4caf50" stroke-width="3" stroke-dasharray="5,5" marker-end="url(#dataflow)"/>
+  <text x="780" y="225" font-family="Arial" font-size="10" fill="#4caf50">数据流</text>
+  
+  <!-- 服务调用连接线 -->
+  <line x1="300" y1="430" x2="320" y2="430" stroke="#2196f3" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="310" y="425" font-family="Arial" font-size="10" fill="#2196f3">API调用</text>
+  
+  <line x1="480" y1="430" x2="500" y2="430" stroke="#2196f3" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="490" y="425" font-family="Arial" font-size="10" fill="#2196f3">API调用</text>
+  
+  <line x1="660" y1="430" x2="680" y2="430" stroke="#2196f3" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="670" y="425" font-family="Arial" font-size="10" fill="#2196f3">API调用</text>
+  
+  <!-- 端口定义 -->
+  <rect x="135" y="225" width="10" height="10" fill="#2196f3" stroke="#1976d2" stroke-width="1"/>
+  <rect x="355" y="225" width="10" height="10" fill="#2196f3" stroke="#1976d2" stroke-width="1"/>
+  <rect x="575" y="225" width="10" height="10" fill="#2196f3" stroke="#1976d2" stroke-width="1"/>
+  <rect x="795" y="225" width="10" height="10" fill="#2196f3" stroke="#1976d2" stroke-width="1"/>
+  <rect x="1015" y="225" width="10" height="10" fill="#2196f3" stroke="#1976d2" stroke-width="1"/>
+  
+  <!-- 图例说明 -->
+  <rect x="1050" y="880" width="280" height="100" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="1" rx="5"/>
+  <text x="1060" y="900" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">图例说明</text>
+  
+  <rect x="1060" y="910" width="15" height="10" fill="#e8eaf6" stroke="#3f51b5" stroke-width="1"/>
+  <text x="1080" y="920" font-family="Arial" font-size="12" fill="#424242">需求层(PBC组件)</text>
+  
+  <rect x="1060" y="925" width="15" height="10" fill="#f1f8e9" stroke="#4caf50" stroke-width="1"/>
+  <text x="1080" y="935" font-family="Arial" font-size="12" fill="#424242">应用层(微服务)</text>
+  
+  <rect x="1060" y="940" width="15" height="10" fill="#e0f2f1" stroke="#00695c" stroke-width="1"/>
+  <text x="1080" y="950" font-family="Arial" font-size="12" fill="#424242">技术层(云原生)</text>
+  
+  <rect x="1060" y="955" width="15" height="10" fill="#fce4ec" stroke="#e91e63" stroke-width="1"/>
+  <text x="1080" y="965" font-family="Arial" font-size="12" fill="#424242">基础设施层</text>
+  
+  <line x1="1200" y1="915" x2="1220" y2="915" stroke="#666666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="1225" y="920" font-family="Arial" font-size="12" fill="#424242">依赖关系</text>
+  
+  <line x1="1200" y1="930" x2="1220" y2="930" stroke="#4caf50" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#dataflow)"/>
+  <text x="1225" y="935" font-family="Arial" font-size="12" fill="#424242">数据流</text>
+  
+  <!-- 版本信息 -->
+  <text x="80" y="970" font-family="Arial" font-size="12" fill="#666666">
+    基于MBSE方法论 | SysML标准 | 版本: v1.0 | 创建时间: 2025-01-01
+  </text>
+
+</svg>

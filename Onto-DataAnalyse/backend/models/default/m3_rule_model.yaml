@@ -1,0 +1,470 @@
+model_type: RULE
+version: '1.0'
+domain: 电商经营分析
+rules:
+  - id: RULE-MTR-001
+    name: GMV口径定义
+    ruleType: CALCULATION
+    description: 有效订单 = status NOT IN (5, 6)；GMV = SUM(有效订单的payment_amount)
+    expression: 'effective_orders = orders WHERE status NOT IN (5, 6)
+
+      gmv = SUM(effective_orders.payment_amount)
+
+      '
+    inputParams:
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+      - BHV-ANA-002
+  - id: RULE-MTR-002
+    name: 有效订单数口径定义
+    ruleType: CALCULATION
+    description: 统计周期内状态不为5（已取消）和6（退款完成）的订单数量
+    expression: 'effective_order_count = COUNT(orders WHERE status NOT IN (5, 6))
+
+      '
+    inputParams:
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+    outputType: Integer
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+      - BHV-ANA-002
+  - id: RULE-MTR-003
+    name: 客单价口径定义
+    ruleType: CALCULATION
+    description: 统计周期内GMV除以有效订单数
+    expression: 'avg_order_value = gmv / effective_order_count
+
+      '
+    inputParams:
+      - name: gmv
+        type: Decimal
+        sourceField: RULE-MTR-001
+      - name: effective_order_count
+        type: Integer
+        sourceField: RULE-MTR-002
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+  - id: RULE-MTR-004
+    name: 订单取消率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内状态为5（已取消）的订单数除以总订单数
+    expression: 'cancel_rate = COUNT(orders WHERE status = 5) / COUNT(orders)
+
+      '
+    inputParams:
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+      - BHV-ANA-007
+  - id: RULE-MTR-005
+    name: 退款率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内退款金额之和除以GMV，退款金额按申请时间归属周期
+    expression: 'refund_rate = SUM(refunds.refund_amount) / gmv
+
+      '
+    inputParams:
+      - name: refunds
+        type: List<Refund>
+        sourceField: t_refund
+      - name: gmv
+        type: Decimal
+        sourceField: RULE-MTR-001
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+      - BHV-ANA-007
+  - id: RULE-MTR-006
+    name: 新增用户数口径定义
+    ruleType: CALCULATION
+    description: 统计周期内注册日期在周期内的用户数量
+    expression: 'new_user_count = COUNT(users WHERE register_date IN time_range)
+
+      '
+    inputParams:
+      - name: users
+        type: List<User>
+        sourceField: t_user
+      - name: time_range
+        type: DateRange
+    outputType: Integer
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-003
+  - id: RULE-MTR-007
+    name: 活跃用户数口径定义
+    ruleType: CALCULATION
+    description: 统计周期内有过任一登录、浏览、搜索、加购或下单行为的用户数（去重）
+    expression: 'active_user_count = COUNT(DISTINCT users WHERE user_id IN (SELECT user_id FROM behaviors WHERE gmt_create IN time_range) OR user_id IN (SELECT buyer_id FROM orders WHERE gmt_create IN time_range))
+
+      '
+    inputParams:
+      - name: users
+        type: List<User>
+        sourceField: t_user
+      - name: behaviors
+        type: List<UserBehavior>
+        sourceField: t_user_behavior
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Integer
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-003
+      - BHV-ANA-004
+  - id: RULE-MTR-008
+    name: 复购率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内有≥2笔有效订单的用户数除以有≥1笔有效订单的用户数
+    expression: 'repeat_buyer_count = COUNT(DISTINCT users WHERE user_id IN (SELECT buyer_id FROM orders WHERE status NOT IN (5, 6) GROUP BY buyer_id HAVING COUNT(order_id) >= 2))
+
+      buyer_count = COUNT(DISTINCT users WHERE user_id IN (SELECT buyer_id FROM orders WHERE status NOT IN (5, 6) GROUP BY buyer_id HAVING COUNT(order_id) >= 1))
+
+      repeat_purchase_rate = repeat_buyer_count / buyer_count
+
+      '
+    inputParams:
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-003
+      - BHV-ANA-004
+  - id: RULE-MTR-009
+    name: 用户留存率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内，在指定时间点（如7/30/90天后）仍活跃的用户数除以初始活跃用户数
+    expression: 'retention_rate = COUNT(users WHERE user_id IN initial_active_users AND (user_id IN (SELECT user_id FROM behaviors WHERE gmt_create BETWEEN start_date AND end_date) OR user_id IN (SELECT buyer_id FROM orders WHERE gmt_create BETWEEN start_date AND end_date))) / COUNT(initial_active_users)
+
+      '
+    inputParams:
+      - name: initial_active_users
+        type: List<User>
+        description: 初始活跃用户列表
+      - name: behaviors
+        type: List<UserBehavior>
+        sourceField: t_user_behavior
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: start_date
+        type: Date
+      - name: end_date
+        type: Date
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-003
+      - BHV-ANA-004
+  - id: RULE-MTR-010
+    name: 用户流失率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内，曾经活跃但近期（如30天）无任何行为的用户数除以总活跃用户数
+    expression: 'churned_user_count = COUNT(users WHERE user_id IN historically_active_users AND user_id NOT IN (SELECT user_id FROM behaviors WHERE gmt_create >= date_sub(current_date, 30)) AND user_id NOT IN (SELECT buyer_id FROM orders WHERE gmt_create >= date_sub(current_date, 30)))
+
+      churn_rate = churned_user_count / COUNT(historically_active_users)
+
+      '
+    inputParams:
+      - name: historically_active_users
+        type: List<User>
+        description: 历史活跃用户列表
+      - name: behaviors
+        type: List<UserBehavior>
+        sourceField: t_user_behavior
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-003
+      - BHV-ANA-004
+  - id: RULE-MTR-011
+    name: 访问转化率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内，从浏览（VIEW）到下单（有效订单）的用户转化比例
+    expression: 'view_users = COUNT(DISTINCT users WHERE user_id IN (SELECT user_id FROM behaviors WHERE behavior_type = ''VIEW'' AND gmt_create IN time_range))
+
+      order_users = COUNT(DISTINCT users WHERE user_id IN (SELECT buyer_id FROM orders WHERE status NOT IN (5, 6) AND gmt_create IN time_range))
+
+      conversion_rate = order_users / view_users
+
+      '
+    inputParams:
+      - name: behaviors
+        type: List<UserBehavior>
+        sourceField: t_user_behavior
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-005
+  - id: RULE-MTR-012
+    name: 加购转化率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内，从加购（ADD_CART）到下单（有效订单）的用户转化比例
+    expression: 'add_cart_users = COUNT(DISTINCT users WHERE user_id IN (SELECT user_id FROM behaviors WHERE behavior_type = ''ADD_CART'' AND gmt_create IN time_range))
+
+      order_users = COUNT(DISTINCT users WHERE user_id IN (SELECT buyer_id FROM orders WHERE status NOT IN (5, 6) AND gmt_create IN time_range))
+
+      conversion_rate = order_users / add_cart_users
+
+      '
+    inputParams:
+      - name: behaviors
+        type: List<UserBehavior>
+        sourceField: t_user_behavior
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-005
+  - id: RULE-MTR-013
+    name: 商品详情页转化率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内，访问商品详情页后下单的用户比例
+    expression: 'product_view_users = COUNT(DISTINCT users WHERE user_id IN (SELECT user_id FROM behaviors WHERE behavior_type = ''VIEW'' AND target_type = ''PRODUCT'' AND gmt_create IN time_range))
+
+      order_users = COUNT(DISTINCT users WHERE user_id IN (SELECT buyer_id FROM orders WHERE status NOT IN (5, 6) AND gmt_create IN time_range))
+
+      conversion_rate = order_users / product_view_users
+
+      '
+    inputParams:
+      - name: behaviors
+        type: List<UserBehavior>
+        sourceField: t_user_behavior
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-005
+  - id: RULE-MTR-014
+    name: 退款金额按申请时间归属
+    ruleType: DERIVATION
+    description: 退款金额按申请时间（apply_time）归属到统计周期，用于退款率计算
+    expression: 'refund_amount_by_period = SUM(refunds.refund_amount) WHERE refunds.apply_time IN time_range
+
+      '
+    inputParams:
+      - name: refunds
+        type: List<Refund>
+        sourceField: t_refund
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - RULE-MTR-005
+  - id: RULE-MTR-015
+    name: 营销活动ROI口径定义
+    ruleType: CALCULATION
+    description: 营销活动ROI = 活动期间关联订单的GMV贡献 / 活动预算
+    expression: 'campaign_gmv = SUM(orders.payment_amount) WHERE orders.order_id IN (SELECT order_id FROM coupon_usage WHERE campaign_id = campaign_id) AND orders.status NOT IN (5, 6)
+
+      roi = campaign_gmv / campaign.budget
+
+      '
+    inputParams:
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: coupon_usage
+        type: List<CouponUsage>
+        sourceField: t_coupon_usage
+      - name: campaign
+        type: Campaign
+        sourceField: t_campaign
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-006
+  - id: RULE-MTR-016
+    name: 优惠券使用率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内已使用的优惠券数量除以已领取的优惠券数量
+    expression: 'usage_rate = COUNT(coupon_usage WHERE status = ''USED'') / COUNT(coupon_usage WHERE status IN (''ISSUED'', ''USED''))
+
+      '
+    inputParams:
+      - name: coupon_usage
+        type: List<CouponUsage>
+        sourceField: t_coupon_usage
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-006
+  - id: RULE-MTR-017
+    name: 新用户首单转化率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内注册并在周期内完成首单（有效订单）的用户数除以新增用户数
+    expression: 'first_order_users = COUNT(DISTINCT users WHERE user_id IN (SELECT buyer_id FROM orders WHERE status NOT IN (5, 6) AND gmt_create IN time_range) AND register_date IN time_range)
+
+      new_user_count = COUNT(users WHERE register_date IN time_range)
+
+      conversion_rate = first_order_users / new_user_count
+
+      '
+    inputParams:
+      - name: users
+        type: List<User>
+        sourceField: t_user
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-003
+  - id: RULE-MTR-018
+    name: 商品动销率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内有销售记录的商品SPU数除以总上架商品SPU数
+    expression: 'active_product_count = COUNT(DISTINCT products WHERE product_id IN (SELECT product_id FROM order_items WHERE order_id IN (SELECT order_id FROM orders WHERE status NOT IN (5, 6) AND gmt_create IN time_range)))
+
+      total_product_count = COUNT(products WHERE status = 1)
+
+      sell_through_rate = active_product_count / total_product_count
+
+      '
+    inputParams:
+      - name: products
+        type: List<Product>
+        sourceField: t_product
+      - name: order_items
+        type: List<OrderItem>
+        sourceField: t_order_item
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-002
+  - id: RULE-MTR-019
+    name: 库存周转率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内销售成本除以平均库存成本
+    expression: 'cost_of_goods_sold = SUM(order_items.quantity * skus.cost_price) WHERE order_items.order_id IN (SELECT order_id FROM orders WHERE status NOT IN (5, 6) AND gmt_create IN time_range)
+
+      avg_inventory_cost = AVG(skus.stock * skus.cost_price)
+
+      inventory_turnover = cost_of_goods_sold / avg_inventory_cost
+
+      '
+    inputParams:
+      - name: order_items
+        type: List<OrderItem>
+        sourceField: t_order_item
+      - name: skus
+        type: List<Sku>
+        sourceField: t_sku
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: time_range
+        type: DateRange
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-002
+  - id: RULE-MTR-020
+    name: 发货及时率口径定义
+    ruleType: CALCULATION
+    description: 统计周期内下单后48小时内发货的订单数除以总有效订单数
+    expression: 'on_time_ship_count = COUNT(orders WHERE order_id IN (SELECT order_id FROM logistics WHERE ship_time <= datetime(gmt_create, ''+48 hours'')) AND status NOT IN (5, 6))
+
+      total_effective_orders = COUNT(orders WHERE status NOT IN (5, 6))
+
+      on_time_ship_rate = on_time_ship_count / total_effective_orders
+
+      '
+    inputParams:
+      - name: orders
+        type: List<Order>
+        sourceField: t_order
+      - name: logistics
+        type: List<Logistics>
+        sourceField: t_logistics
+    outputType: Decimal
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-002
+  - id: RULE-DQ-001
+    name: 测试订单排除
+    ruleType: VALIDATION
+    description: 排除测试账号订单和金额 ≤ 0.01 元的订单
+    expression: buyer_id NOT IN test_accounts AND payment_amount > 0.01
+    inputParams:
+      - name: test_accounts
+        type: List<String>
+        description: 测试账号ID列表
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+      - BHV-ANA-002
+  - id: RULE-DQ-002
+    name: 订单金额非负校验
+    ruleType: VALIDATION
+    description: 订单实付金额不能为负
+    expression: payment_amount >= 0
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001
+  - id: RULE-DQ-003
+    name: 退款金额不超过订单金额校验
+    ruleType: VALIDATION
+    description: 退款金额不能超过订单实付金额
+    expression: refund_amount <= (SELECT payment_amount FROM t_order WHERE order_id = refund.order_id)
+    inputParams:
+      - name: refund
+        type: Refund
+        sourceField: t_refund
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-007
+  - id: RULE-DQ-004
+    name: 订单状态转换合法性校验
+    ruleType: VALIDATION
+    description: 订单状态转换必须符合业务规则（如已取消订单不能变为已付款）
+    expression: status IN (1, 2, 3, 4, 5, 6) AND (status = 1 OR gmt_payment IS NOT NULL) AND (status = 5 OR status != 6 OR refund_amount > 0)
+    version: '1.0'
+    reusedBy:
+      - BHV-ANA-001

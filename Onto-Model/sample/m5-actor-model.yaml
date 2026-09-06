@@ -1,0 +1,66 @@
+# M5 主体模型 - 合同管理
+model_type: ACTOR
+version: "1.1"
+domain: "合同管理"
+
+actors:
+  - actorId: ACTOR-SALES
+    name: 销售员
+    actorType: HUMAN
+    attributes:
+      deptScope: DEPT
+    roles: [ROLE-SALES-CONTRACT]
+
+  - actorId: ACTOR-FINANCE
+    name: 财务人员
+    actorType: HUMAN
+    attributes:
+      deptScope: DEPT
+    roles: [ROLE-FINANCE-INVOICE]
+
+roles:
+  - roleId: ROLE-SALES-CONTRACT
+    name: 合同录入专员
+    permissions:
+      - PERM-CONTRACT-CREATE
+      - PERM-CONTRACT-QUERY
+      - PERM-CONTRACT-DETAIL
+
+  - roleId: ROLE-FINANCE-INVOICE
+    name: 财务结算专员
+    permissions:
+      - PERM-CONTRACT-QUERY
+      - PERM-CONTRACT-DETAIL
+      - PERM-INVOICE-CREATE
+      - PERM-PAYMENT-RECEIVE
+
+permissions:
+  - permissionId: PERM-CONTRACT-CREATE
+    targetType: BEHAVIOR
+    targetRef: Contract_Create
+    dataScope: DEPT
+    abacCondition: "actor.deptId == contract.deptId"
+
+  - permissionId: PERM-CONTRACT-QUERY
+    targetType: BEHAVIOR
+    targetRef: Contract_Query
+    dataScope: DEPT
+    abacCondition: "actor.deptId == resource.deptId"
+
+  - permissionId: PERM-CONTRACT-DETAIL
+    targetType: BEHAVIOR
+    targetRef: Contract_GetDetail
+    dataScope: DEPT
+    abacCondition: "actor.deptId == resource.deptId"
+
+  - permissionId: PERM-INVOICE-CREATE
+    targetType: BEHAVIOR
+    targetRef: Invoice_Create
+    dataScope: DEPT
+    abacCondition: "actor.deptId == contract.deptId"
+
+  - permissionId: PERM-PAYMENT-RECEIVE
+    targetType: BEHAVIOR
+    targetRef: Payment_Receive
+    dataScope: DEPT
+    abacCondition: "actor.deptId == resource.deptId"

@@ -1,0 +1,42 @@
+# M3 规则模型 - 合同管理
+model_type: RULE
+version: "1.1"
+domain: "合同管理"
+
+rules:
+  - id: RULE-INVOICE-AMT-CHECK
+    name: 开票金额上限检查
+    ruleType: VALIDATION
+    description: 开票总金额不能超过合同剩余可开票金额
+    inputParams:
+      - name: currentInvoiceAmt
+        type: Decimal
+      - name: contractId
+        type: String
+    expression: |
+      currentInvoiceAmt <= (Contract.totalAmount - Contract.invoicedAmountTotal)
+    violationMessage: "开票金额超过合同剩余可开票金额"
+
+  - id: RULE-INVOICE-STAGE-MAPPING-CHECK
+    name: 开票付款阶段合法性检查
+    ruleType: VALIDATION
+    description: 开票映射的付款阶段必须属于目标合同的付款条款
+    inputParams:
+      - name: contractId
+        type: String
+      - name: stageNoList
+        type: Array<String>
+    expression: |
+      forall(stageNo in stageNoList): stageNo in Contract.paymentTerms.stageNo
+    violationMessage: "开票选择的付款阶段不属于当前合同"
+
+  - id: RULE-TAX-CALC
+    name: 开票税额计算
+    ruleType: CALCULATION
+    inputParams:
+      - name: amount
+        type: Decimal
+      - name: taxRate
+        type: Decimal
+    outputType: Decimal
+    expression: "amount * taxRate"

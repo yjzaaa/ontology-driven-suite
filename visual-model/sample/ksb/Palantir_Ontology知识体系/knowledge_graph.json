@@ -1,0 +1,1134 @@
+{
+  "nodes": [
+    {
+      "name": "Ontology 思想",
+      "categoryName": "思想与定位",
+      "layer": 0,
+      "importance": 0.95,
+      "value": "把现实业务对象、关系、权限和动作统一为可计算的操作语义层。",
+      "category": 0,
+      "degreeScore": 0.451,
+      "symbolSize": 48
+    },
+    {
+      "name": "Operational Layer",
+      "categoryName": "思想与定位",
+      "layer": 0,
+      "importance": 0.9,
+      "value": "位于数据、应用和决策之间的运行层，使组织围绕同一对象模型行动。",
+      "category": 0,
+      "degreeScore": 0.174,
+      "symbolSize": 41
+    },
+    {
+      "name": "业务对象化",
+      "categoryName": "思想与定位",
+      "layer": 0,
+      "importance": 0.86,
+      "value": "把订单、资产、人员、地点、事件等现实实体建成可查询、可授权、可操作对象。",
+      "category": 0,
+      "degreeScore": 0.2,
+      "symbolSize": 41
+    },
+    {
+      "name": "语义层优先",
+      "categoryName": "思想与定位",
+      "layer": 0,
+      "importance": 0.82,
+      "value": "先定义业务对象与动作语义，再把底层数据映射到该语义层。",
+      "category": 0,
+      "degreeScore": 0.084,
+      "symbolSize": 37
+    },
+    {
+      "name": "决策闭环",
+      "categoryName": "思想与定位",
+      "layer": 0,
+      "importance": 0.84,
+      "value": "把发现问题、分析原因、执行动作、审计反馈连接成闭环。",
+      "category": 0,
+      "degreeScore": 0.164,
+      "symbolSize": 39
+    },
+    {
+      "name": "数据模型边界",
+      "categoryName": "思想与定位",
+      "layer": 0,
+      "importance": 0.72,
+      "value": "区分数据库表结构、BI 指标层与面向行动的 Ontology。",
+      "category": 0,
+      "degreeScore": 0.086,
+      "symbolSize": 34
+    },
+    {
+      "name": "Object Type",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.96,
+      "value": "定义一类业务对象的属性、主键、显示方式、权限和行为入口。",
+      "category": 1,
+      "degreeScore": 1.0,
+      "symbolSize": 59
+    },
+    {
+      "name": "Object Instance",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.82,
+      "value": "Object type 的具体实例，如某个订单、设备、客户或任务。",
+      "category": 1,
+      "degreeScore": 0.105,
+      "symbolSize": 38
+    },
+    {
+      "name": "Property",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.9,
+      "value": "对象的字段或状态，可来自数据源、派生计算或人工动作。",
+      "category": 1,
+      "degreeScore": 0.539,
+      "symbolSize": 48
+    },
+    {
+      "name": "Primary Key",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.78,
+      "value": "用于稳定识别对象实例的唯一键，是对象同步和链接的基础。",
+      "category": 1,
+      "degreeScore": 0.18,
+      "symbolSize": 38
+    },
+    {
+      "name": "Derived Property",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.76,
+      "value": "通过函数、聚合或规则从其他属性计算得到的对象属性。",
+      "category": 1,
+      "degreeScore": 0.132,
+      "symbolSize": 36
+    },
+    {
+      "name": "Object Set",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.86,
+      "value": "满足条件的一组对象，是分析、应用和 AIP 操作的常用输入。",
+      "category": 1,
+      "degreeScore": 0.318,
+      "symbolSize": 43
+    },
+    {
+      "name": "Link Type",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.92,
+      "value": "定义两类对象之间的语义关系、方向和基数。",
+      "category": 1,
+      "degreeScore": 0.312,
+      "symbolSize": 44
+    },
+    {
+      "name": "Relation Cardinality",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.7,
+      "value": "描述一对一、一对多、多对多等连接结构。",
+      "category": 1,
+      "degreeScore": 0.084,
+      "symbolSize": 34
+    },
+    {
+      "name": "Ontology Manager",
+      "categoryName": "核心语义模型",
+      "layer": 1,
+      "importance": 0.8,
+      "value": "用于配置和维护 Ontology 类型、属性、链接和动作的管理界面。",
+      "category": 1,
+      "degreeScore": 0.208,
+      "symbolSize": 39
+    },
+    {
+      "name": "Source System",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.72,
+      "value": "ERP、MES、CRM、数据湖等提供原始事实的数据系统。",
+      "category": 2,
+      "degreeScore": 0.074,
+      "symbolSize": 34
+    },
+    {
+      "name": "Pipeline",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.74,
+      "value": "把源数据清洗、转换、同步到对象和属性的处理流程。",
+      "category": 2,
+      "degreeScore": 0.221,
+      "symbolSize": 38
+    },
+    {
+      "name": "Dataset Mapping",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.78,
+      "value": "把数据集字段映射为 Object type 的属性与主键。",
+      "category": 2,
+      "degreeScore": 0.261,
+      "symbolSize": 39
+    },
+    {
+      "name": "Entity Resolution",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.82,
+      "value": "把多个系统中指向同一现实实体的记录合并或对齐。",
+      "category": 2,
+      "degreeScore": 0.172,
+      "symbolSize": 39
+    },
+    {
+      "name": "Master Data Alignment",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.76,
+      "value": "统一组织内关键实体的命名、编码和口径。",
+      "category": 2,
+      "degreeScore": 0.09,
+      "symbolSize": 36
+    },
+    {
+      "name": "Incremental Sync",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.66,
+      "value": "以增量方式保持数据源与 Ontology 对象状态同步。",
+      "category": 2,
+      "degreeScore": 0.072,
+      "symbolSize": 32
+    },
+    {
+      "name": "Data Lineage",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.8,
+      "value": "追踪对象属性从何而来、如何加工、被谁使用。",
+      "category": 2,
+      "degreeScore": 0.162,
+      "symbolSize": 38
+    },
+    {
+      "name": "Data Quality Rule",
+      "categoryName": "数据与集成",
+      "layer": 2,
+      "importance": 0.7,
+      "value": "约束对象属性完整性、合法性和一致性的校验规则。",
+      "category": 2,
+      "degreeScore": 0.082,
+      "symbolSize": 34
+    },
+    {
+      "name": "Action Type",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.96,
+      "value": "定义用户或系统可以对对象执行的创建、更新、删除或关系变更操作。",
+      "category": 3,
+      "degreeScore": 0.84,
+      "symbolSize": 56
+    },
+    {
+      "name": "Action Form",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.78,
+      "value": "将动作参数呈现给业务用户填写和提交的界面。",
+      "category": 3,
+      "degreeScore": 0.082,
+      "symbolSize": 36
+    },
+    {
+      "name": "Writeback",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.82,
+      "value": "把动作结果写回 Ontology 或外部业务系统。",
+      "category": 3,
+      "degreeScore": 0.099,
+      "symbolSize": 38
+    },
+    {
+      "name": "Validation Rule",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.76,
+      "value": "动作执行前对参数、权限和业务状态进行校验。",
+      "category": 3,
+      "degreeScore": 0.092,
+      "symbolSize": 36
+    },
+    {
+      "name": "Function",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.9,
+      "value": "可复用计算逻辑，可读取对象、聚合数据、执行业务计算或调用 AI。",
+      "category": 3,
+      "degreeScore": 0.383,
+      "symbolSize": 45
+    },
+    {
+      "name": "Aggregation",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.68,
+      "value": "在对象集合上计算统计指标、风险分数或业务汇总。",
+      "category": 3,
+      "degreeScore": 0.076,
+      "symbolSize": 33
+    },
+    {
+      "name": "Workflow State",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.74,
+      "value": "对象在业务流程中的状态，如待审批、执行中、已关闭。",
+      "category": 3,
+      "degreeScore": 0.149,
+      "symbolSize": 36
+    },
+    {
+      "name": "Human-in-the-loop",
+      "categoryName": "动作与工作流",
+      "layer": 3,
+      "importance": 0.78,
+      "value": "把人的审批、判断和责任嵌入自动化流程。",
+      "category": 3,
+      "degreeScore": 0.148,
+      "symbolSize": 37
+    },
+    {
+      "name": "Object Permission",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.9,
+      "value": "控制谁能看到或操作某类对象及其实例。",
+      "category": 4,
+      "degreeScore": 0.324,
+      "symbolSize": 44
+    },
+    {
+      "name": "Property Permission",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.82,
+      "value": "控制敏感属性的可见性和可编辑性。",
+      "category": 4,
+      "degreeScore": 0.092,
+      "symbolSize": 37
+    },
+    {
+      "name": "Dynamic Policy",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.86,
+      "value": "根据用户、对象状态、组织关系或环境动态决定访问权限。",
+      "category": 4,
+      "degreeScore": 0.247,
+      "symbolSize": 42
+    },
+    {
+      "name": "Audit Log",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.78,
+      "value": "记录用户、系统和 AI 对对象及动作的访问和修改行为。",
+      "category": 4,
+      "degreeScore": 0.215,
+      "symbolSize": 39
+    },
+    {
+      "name": "Lineage Governance",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.78,
+      "value": "把数据血缘、动作记录和模型调用串联为可追溯治理链。",
+      "category": 4,
+      "degreeScore": 0.227,
+      "symbolSize": 39
+    },
+    {
+      "name": "Ontology Versioning",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.68,
+      "value": "管理 Ontology 结构和语义规则的变更版本。",
+      "category": 4,
+      "degreeScore": 0.069,
+      "symbolSize": 33
+    },
+    {
+      "name": "Simulation",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.72,
+      "value": "在不污染生产对象的环境中测试动作、逻辑或 AI 计划。",
+      "category": 4,
+      "degreeScore": 0.202,
+      "symbolSize": 37
+    },
+    {
+      "name": "AIP Evals",
+      "categoryName": "安全治理",
+      "layer": 4,
+      "importance": 0.76,
+      "value": "评估 AIP 应用、工具调用和 Ontology 编辑行为的可靠性。",
+      "category": 4,
+      "degreeScore": 0.139,
+      "symbolSize": 37
+    },
+    {
+      "name": "AIP Grounding",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.92,
+      "value": "把 LLM 的上下文锚定在可授权的 Ontology 对象、关系和动作上。",
+      "category": 5,
+      "degreeScore": 0.335,
+      "symbolSize": 45
+    },
+    {
+      "name": "LLM Tool",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.82,
+      "value": "供模型调用的函数、动作或查询能力。",
+      "category": 5,
+      "degreeScore": 0.342,
+      "symbolSize": 42
+    },
+    {
+      "name": "AIP Logic Block",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.84,
+      "value": "在 AIP Logic 中组合提示、函数、对象查询和工具调用的构件。",
+      "category": 5,
+      "degreeScore": 0.169,
+      "symbolSize": 39
+    },
+    {
+      "name": "Prompt Template",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.66,
+      "value": "把业务语义、对象上下文和任务目标稳定注入模型调用。",
+      "category": 5,
+      "degreeScore": 0.076,
+      "symbolSize": 32
+    },
+    {
+      "name": "Agent Plan",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.78,
+      "value": "AI 根据目标拆解出的查询、判断、动作和反馈步骤。",
+      "category": 5,
+      "degreeScore": 0.092,
+      "symbolSize": 36
+    },
+    {
+      "name": "Tool Authorization",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.82,
+      "value": "约束模型能调用哪些工具、针对哪些对象执行哪些动作。",
+      "category": 5,
+      "degreeScore": 0.31,
+      "symbolSize": 42
+    },
+    {
+      "name": "AIP Analyst",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.72,
+      "value": "面向分析工作的 AI 能力，可围绕 Ontology 对象搜索、过滤、分析和可视化。",
+      "category": 5,
+      "degreeScore": 0.137,
+      "symbolSize": 35
+    },
+    {
+      "name": "AI Action Review",
+      "categoryName": "AIP 与 Agent",
+      "layer": 5,
+      "importance": 0.74,
+      "value": "对 AI 建议或动作执行进行人工确认、审计和回滚准备。",
+      "category": 5,
+      "degreeScore": 0.163,
+      "symbolSize": 36
+    },
+    {
+      "name": "Workshop",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.84,
+      "value": "面向业务应用搭建的产品能力，可基于 Ontology 构建交互界面。",
+      "category": 6,
+      "degreeScore": 0.267,
+      "symbolSize": 41
+    },
+    {
+      "name": "Object View",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.78,
+      "value": "围绕单个或一组对象展示属性、关系、历史和可执行动作。",
+      "category": 6,
+      "degreeScore": 0.09,
+      "symbolSize": 36
+    },
+    {
+      "name": "Dashboard",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.62,
+      "value": "基于对象集合和指标构建运营态势视图。",
+      "category": 6,
+      "degreeScore": 0.108,
+      "symbolSize": 32
+    },
+    {
+      "name": "OSDK",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.86,
+      "value": "Ontology SDK，使开发者用代码访问对象、链接和动作。",
+      "category": 6,
+      "degreeScore": 0.452,
+      "symbolSize": 45
+    },
+    {
+      "name": "TypeScript SDK",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.66,
+      "value": "在前端或 Node 环境中以类型化 API 使用 Ontology。",
+      "category": 6,
+      "degreeScore": 0.069,
+      "symbolSize": 32
+    },
+    {
+      "name": "Python SDK",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.66,
+      "value": "在分析、自动化或数据科学环境中访问 Ontology。",
+      "category": 6,
+      "degreeScore": 0.069,
+      "symbolSize": 32
+    },
+    {
+      "name": "Java SDK",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.58,
+      "value": "在企业级后端服务中接入 Ontology。",
+      "category": 6,
+      "degreeScore": 0.059,
+      "symbolSize": 30
+    },
+    {
+      "name": "Application Permission",
+      "categoryName": "应用与开发",
+      "layer": 6,
+      "importance": 0.72,
+      "value": "应用层对用户、对象和动作的授权边界。",
+      "category": 6,
+      "degreeScore": 0.074,
+      "symbolSize": 34
+    },
+    {
+      "name": "Supply Chain Ontology",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.8,
+      "value": "以订单、供应商、库存、运输、风险为核心对象的供应链本体。",
+      "category": 7,
+      "degreeScore": 0.163,
+      "symbolSize": 38
+    },
+    {
+      "name": "Manufacturing Ontology",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.8,
+      "value": "以设备、工艺、批次、质量、产能为核心对象的制造本体。",
+      "category": 7,
+      "degreeScore": 0.082,
+      "symbolSize": 37
+    },
+    {
+      "name": "Defense Intelligence Ontology",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.76,
+      "value": "以人员、组织、地点、事件、线索、行动为核心对象的情报本体。",
+      "category": 7,
+      "degreeScore": 0.076,
+      "symbolSize": 35
+    },
+    {
+      "name": "Healthcare Operations Ontology",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.7,
+      "value": "以患者流、床位、人员、物资和质量指标为核心对象的运营本体。",
+      "category": 7,
+      "degreeScore": 0.069,
+      "symbolSize": 33
+    },
+    {
+      "name": "Financial Risk Ontology",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.72,
+      "value": "以账户、交易、实体、敞口、告警和调查为核心对象的风险本体。",
+      "category": 7,
+      "degreeScore": 0.071,
+      "symbolSize": 34
+    },
+    {
+      "name": "Ontology Blueprint",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.84,
+      "value": "将行业通用对象、关系、动作和治理策略抽象为可复用蓝图。",
+      "category": 7,
+      "degreeScore": 0.567,
+      "symbolSize": 47
+    },
+    {
+      "name": "Deployment Pattern",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.66,
+      "value": "从试点、对象扩展、动作闭环到规模化治理的实施模式。",
+      "category": 7,
+      "degreeScore": 0.174,
+      "symbolSize": 34
+    },
+    {
+      "name": "Value Loop",
+      "categoryName": "行业落地",
+      "layer": 7,
+      "importance": 0.78,
+      "value": "用业务结果反馈本体设计、动作流程和 AI 自动化效果。",
+      "category": 7,
+      "degreeScore": 0.263,
+      "symbolSize": 40
+    }
+  ],
+  "edges": [
+    {
+      "source": "Ontology 思想",
+      "target": "Operational Layer",
+      "type": "contains",
+      "weight": 0.9
+    },
+    {
+      "source": "Ontology 思想",
+      "target": "语义层优先",
+      "type": "contains",
+      "weight": 0.8
+    },
+    {
+      "source": "业务对象化",
+      "target": "Ontology 思想",
+      "type": "depends",
+      "weight": 0.8
+    },
+    {
+      "source": "决策闭环",
+      "target": "Operational Layer",
+      "type": "evolved",
+      "weight": 0.75
+    },
+    {
+      "source": "数据模型边界",
+      "target": "Ontology 思想",
+      "type": "contrast",
+      "weight": 0.65
+    },
+    {
+      "source": "Object Type",
+      "target": "业务对象化",
+      "type": "depends",
+      "weight": 0.9
+    },
+    {
+      "source": "Object Instance",
+      "target": "Object Type",
+      "type": "contains",
+      "weight": 0.8
+    },
+    {
+      "source": "Property",
+      "target": "Object Type",
+      "type": "contains",
+      "weight": 0.82
+    },
+    {
+      "source": "Primary Key",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.76
+    },
+    {
+      "source": "Derived Property",
+      "target": "Property",
+      "type": "evolved",
+      "weight": 0.65
+    },
+    {
+      "source": "Object Set",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.8
+    },
+    {
+      "source": "Link Type",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.86
+    },
+    {
+      "source": "Relation Cardinality",
+      "target": "Link Type",
+      "type": "contains",
+      "weight": 0.64
+    },
+    {
+      "source": "Ontology Manager",
+      "target": "Object Type",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "Ontology Manager",
+      "target": "Link Type",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "Dataset Mapping",
+      "target": "Source System",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "Dataset Mapping",
+      "target": "Property",
+      "type": "contains",
+      "weight": 0.74
+    },
+    {
+      "source": "Pipeline",
+      "target": "Dataset Mapping",
+      "type": "evolved",
+      "weight": 0.68
+    },
+    {
+      "source": "Entity Resolution",
+      "target": "Primary Key",
+      "type": "depends",
+      "weight": 0.76
+    },
+    {
+      "source": "Master Data Alignment",
+      "target": "Entity Resolution",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "Incremental Sync",
+      "target": "Pipeline",
+      "type": "contains",
+      "weight": 0.55
+    },
+    {
+      "source": "Data Lineage",
+      "target": "Pipeline",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "Data Quality Rule",
+      "target": "Property",
+      "type": "depends",
+      "weight": 0.62
+    },
+    {
+      "source": "Action Type",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.88
+    },
+    {
+      "source": "Action Type",
+      "target": "Property",
+      "type": "depends",
+      "weight": 0.72
+    },
+    {
+      "source": "Action Form",
+      "target": "Action Type",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "Writeback",
+      "target": "Action Type",
+      "type": "contains",
+      "weight": 0.75
+    },
+    {
+      "source": "Validation Rule",
+      "target": "Action Type",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "Function",
+      "target": "Object Set",
+      "type": "contains",
+      "weight": 0.72
+    },
+    {
+      "source": "Function",
+      "target": "Property",
+      "type": "contains",
+      "weight": 0.66
+    },
+    {
+      "source": "Aggregation",
+      "target": "Function",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "Workflow State",
+      "target": "Action Type",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "Human-in-the-loop",
+      "target": "Workflow State",
+      "type": "contains",
+      "weight": 0.64
+    },
+    {
+      "source": "Object Permission",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "Property Permission",
+      "target": "Property",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "Dynamic Policy",
+      "target": "Object Permission",
+      "type": "evolved",
+      "weight": 0.78
+    },
+    {
+      "source": "Audit Log",
+      "target": "Action Type",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "Lineage Governance",
+      "target": "Data Lineage",
+      "type": "evolved",
+      "weight": 0.66
+    },
+    {
+      "source": "Lineage Governance",
+      "target": "Audit Log",
+      "type": "contains",
+      "weight": 0.64
+    },
+    {
+      "source": "Ontology Versioning",
+      "target": "Ontology Manager",
+      "type": "contains",
+      "weight": 0.52
+    },
+    {
+      "source": "Simulation",
+      "target": "Action Type",
+      "type": "depends",
+      "weight": 0.64
+    },
+    {
+      "source": "AIP Evals",
+      "target": "Simulation",
+      "type": "evolved",
+      "weight": 0.64
+    },
+    {
+      "source": "AIP Grounding",
+      "target": "Object Set",
+      "type": "contains",
+      "weight": 0.82
+    },
+    {
+      "source": "AIP Grounding",
+      "target": "Object Permission",
+      "type": "contains",
+      "weight": 0.76
+    },
+    {
+      "source": "LLM Tool",
+      "target": "Function",
+      "type": "depends",
+      "weight": 0.78
+    },
+    {
+      "source": "LLM Tool",
+      "target": "Action Type",
+      "type": "depends",
+      "weight": 0.68
+    },
+    {
+      "source": "AIP Logic Block",
+      "target": "LLM Tool",
+      "type": "contains",
+      "weight": 0.72
+    },
+    {
+      "source": "Prompt Template",
+      "target": "AIP Grounding",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "Agent Plan",
+      "target": "AIP Logic Block",
+      "type": "evolved",
+      "weight": 0.7
+    },
+    {
+      "source": "Tool Authorization",
+      "target": "Dynamic Policy",
+      "type": "depends",
+      "weight": 0.74
+    },
+    {
+      "source": "Tool Authorization",
+      "target": "LLM Tool",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "AIP Analyst",
+      "target": "AIP Grounding",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "AI Action Review",
+      "target": "Human-in-the-loop",
+      "type": "evolved",
+      "weight": 0.6
+    },
+    {
+      "source": "AI Action Review",
+      "target": "Tool Authorization",
+      "type": "depends",
+      "weight": 0.64
+    },
+    {
+      "source": "Workshop",
+      "target": "Object Type",
+      "type": "contains",
+      "weight": 0.7
+    },
+    {
+      "source": "Object View",
+      "target": "Workshop",
+      "type": "contains",
+      "weight": 0.68
+    },
+    {
+      "source": "Dashboard",
+      "target": "Object Set",
+      "type": "evolved",
+      "weight": 0.48
+    },
+    {
+      "source": "OSDK",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.76
+    },
+    {
+      "source": "OSDK",
+      "target": "Action Type",
+      "type": "depends",
+      "weight": 0.62
+    },
+    {
+      "source": "TypeScript SDK",
+      "target": "OSDK",
+      "type": "contains",
+      "weight": 0.52
+    },
+    {
+      "source": "Python SDK",
+      "target": "OSDK",
+      "type": "contains",
+      "weight": 0.52
+    },
+    {
+      "source": "Java SDK",
+      "target": "OSDK",
+      "type": "contains",
+      "weight": 0.45
+    },
+    {
+      "source": "Application Permission",
+      "target": "Object Permission",
+      "type": "evolved",
+      "weight": 0.56
+    },
+    {
+      "source": "Supply Chain Ontology",
+      "target": "Ontology Blueprint",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "Supply Chain Ontology",
+      "target": "Object Type",
+      "type": "depends",
+      "weight": 0.62
+    },
+    {
+      "source": "Manufacturing Ontology",
+      "target": "Ontology Blueprint",
+      "type": "contains",
+      "weight": 0.62
+    },
+    {
+      "source": "Defense Intelligence Ontology",
+      "target": "Ontology Blueprint",
+      "type": "contains",
+      "weight": 0.58
+    },
+    {
+      "source": "Healthcare Operations Ontology",
+      "target": "Ontology Blueprint",
+      "type": "contains",
+      "weight": 0.52
+    },
+    {
+      "source": "Financial Risk Ontology",
+      "target": "Ontology Blueprint",
+      "type": "contains",
+      "weight": 0.54
+    },
+    {
+      "source": "Ontology Blueprint",
+      "target": "Ontology 思想",
+      "type": "depends",
+      "weight": 0.7
+    },
+    {
+      "source": "Ontology Blueprint",
+      "target": "Link Type",
+      "type": "depends",
+      "weight": 0.66
+    },
+    {
+      "source": "Ontology Blueprint",
+      "target": "Action Type",
+      "type": "depends",
+      "weight": 0.64
+    },
+    {
+      "source": "Deployment Pattern",
+      "target": "Workshop",
+      "type": "evolved",
+      "weight": 0.52
+    },
+    {
+      "source": "Deployment Pattern",
+      "target": "OSDK",
+      "type": "evolved",
+      "weight": 0.5
+    },
+    {
+      "source": "Value Loop",
+      "target": "决策闭环",
+      "type": "evolved",
+      "weight": 0.62
+    },
+    {
+      "source": "Value Loop",
+      "target": "Audit Log",
+      "type": "depends",
+      "weight": 0.52
+    },
+    {
+      "source": "Value Loop",
+      "target": "AIP Evals",
+      "type": "depends",
+      "weight": 0.52
+    },
+    {
+      "source": "AIP Analyst",
+      "target": "Dashboard",
+      "type": "contrast",
+      "weight": 0.42
+    },
+    {
+      "source": "OSDK",
+      "target": "Workshop",
+      "type": "contrast",
+      "weight": 0.46
+    },
+    {
+      "source": "Function",
+      "target": "Derived Property",
+      "type": "analogy",
+      "weight": 0.44
+    },
+    {
+      "source": "Dynamic Policy",
+      "target": "Tool Authorization",
+      "type": "analogy",
+      "weight": 0.5
+    },
+    {
+      "source": "Lineage Governance",
+      "target": "Value Loop",
+      "type": "analogy",
+      "weight": 0.42
+    },
+    {
+      "source": "Simulation",
+      "target": "Deployment Pattern",
+      "type": "analogy",
+      "weight": 0.38
+    }
+  ]
+}

@@ -1,0 +1,822 @@
+model_type: OBJECT
+version: '1.0'
+domain: 电商经营分析
+entities:
+  - id: ENT-USR-001
+    name: 用户
+    alias: User
+    domain: 用户域
+    description: 在平台注册的个人用户账户信息
+    lifecycle:
+      - 注册
+      - 活跃
+      - 沉默
+      - 流失
+    attributes:
+      - name: userId
+        label: 用户ID
+        type: String
+        required: true
+        unique: true
+      - name: nickname
+        label: 昵称
+        type: String
+      - name: gender
+        label: 性别
+        type: Enum
+        enumValues:
+          - M
+          - F
+          - U
+      - name: ageRange
+        label: 年龄段
+        type: Enum
+        enumValues:
+          - 18-25
+          - 26-35
+          - 36-45
+          - 46-55
+          - 55+
+      - name: province
+        label: 省份
+        type: String
+      - name: city
+        label: 城市
+        type: String
+      - name: registerChannel
+        label: 注册渠道
+        type: Enum
+        enumValues:
+          - APP
+          - PC
+          - MINI
+          - H5
+      - name: userLevel
+        label: 用户等级
+        type: Enum
+        enumValues:
+          - 普通
+          - VIP1
+          - VIP2
+          - VIP3
+      - name: registerDate
+        label: 注册时间
+        type: DateTime
+        required: true
+      - name: lastLoginDate
+        label: 最后登录时间
+        type: DateTime
+    tags:
+      - 核心域
+  - id: ENT-USR-002
+    name: 用户行为
+    alias: UserBehavior
+    domain: 用户域
+    description: 用户在平台上的浏览、搜索、加购、收藏、分享等行为记录
+    attributes:
+      - name: behaviorId
+        label: 行为ID
+        type: String
+        required: true
+        unique: true
+      - name: userId
+        label: 用户ID
+        type: Reference
+        refEntity: ENT-USR-001
+        refCardinality: MANY_TO_ONE
+      - name: behaviorType
+        label: 行为类型
+        type: Enum
+        enumValues:
+          - VIEW
+          - SEARCH
+          - ADD_CART
+          - COLLECT
+          - SHARE
+        required: true
+      - name: targetType
+        label: 对象类型
+        type: Enum
+        enumValues:
+          - PRODUCT
+          - CATEGORY
+          - SHOP
+      - name: targetId
+        label: 对象ID
+        type: String
+      - name: sessionId
+        label: 会话ID
+        type: String
+      - name: channel
+        label: 渠道
+        type: Enum
+        enumValues:
+          - APP
+          - PC
+          - MINI
+          - H5
+      - name: deviceType
+        label: 设备类型
+        type: Enum
+        enumValues:
+          - iOS
+          - Android
+          - Windows
+          - Mac
+      - name: gmtCreate
+        label: 行为时间
+        type: DateTime
+        required: true
+    tags:
+      - 核心域
+  - id: ENT-ORD-001
+    name: 订单
+    alias: Order
+    domain: 交易域
+    description: 用户在平台的一次购买记录，包含支付、物流、退款等全生命周期
+    lifecycle:
+      - 待付款
+      - 已付款
+      - 已发货
+      - 已签收
+      - 已取消
+      - 退款完成
+    attributes:
+      - name: orderId
+        label: 订单号
+        type: String
+        required: true
+        unique: true
+      - name: buyerId
+        label: 买家ID
+        type: Reference
+        refEntity: ENT-USR-001
+        refCardinality: MANY_TO_ONE
+      - name: sellerId
+        label: 卖家店铺ID
+        type: Reference
+        refEntity: ENT-SHP-001
+        refCardinality: MANY_TO_ONE
+      - name: status
+        label: 订单状态
+        type: Enum
+        enumValues:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+        required: true
+      - name: paymentAmount
+        label: 实付金额
+        type: Decimal
+        required: true
+      - name: originalAmount
+        label: 原始金额
+        type: Decimal
+      - name: discountAmount
+        label: 优惠金额
+        type: Decimal
+      - name: refundAmount
+        label: 已退款金额
+        type: Decimal
+      - name: channel
+        label: 下单渠道
+        type: Enum
+        enumValues:
+          - APP
+          - PC
+          - MINI
+          - H5
+      - name: deviceType
+        label: 设备类型
+        type: Enum
+        enumValues:
+          - iOS
+          - Android
+          - Windows
+          - Mac
+      - name: gmtCreate
+        label: 下单时间
+        type: DateTime
+        required: true
+      - name: gmtPayment
+        label: 支付完成时间
+        type: DateTime
+      - name: gmtModified
+        label: 最后修改时间
+        type: DateTime
+    constraints:
+      - constraintType: CHECK
+        scope: ENTITY
+        expression: paymentAmount >= 0
+        violationMessage: 实付金额不能为负
+    tags:
+      - 核心域
+  - id: ENT-ORD-002
+    name: 订单明细
+    alias: OrderItem
+    domain: 交易域
+    description: 订单中包含的每个商品SKU的购买明细
+    attributes:
+      - name: itemId
+        label: 明细ID
+        type: String
+        required: true
+        unique: true
+      - name: orderId
+        label: 所属订单ID
+        type: Reference
+        refEntity: ENT-ORD-001
+        refCardinality: MANY_TO_ONE
+      - name: productId
+        label: 商品SPU ID
+        type: Reference
+        refEntity: ENT-PRD-001
+        refCardinality: MANY_TO_ONE
+      - name: skuId
+        label: 商品SKU ID
+        type: Reference
+        refEntity: ENT-PRD-002
+        refCardinality: MANY_TO_ONE
+      - name: quantity
+        label: 购买数量
+        type: Integer
+        required: true
+      - name: unitPrice
+        label: 标准单价
+        type: Decimal
+      - name: payPrice
+        label: 实付单价
+        type: Decimal
+      - name: categoryId
+        label: 类目ID
+        type: Reference
+        refEntity: ENT-PRD-003
+        refCardinality: MANY_TO_ONE
+      - name: gmtCreate
+        label: 创建时间
+        type: DateTime
+    tags:
+      - 核心域
+  - id: ENT-ORD-003
+    name: 物流记录
+    alias: Logistics
+    domain: 交易域
+    description: 订单的物流配送信息
+    attributes:
+      - name: logisticsId
+        label: 物流ID
+        type: String
+        required: true
+        unique: true
+      - name: orderId
+        label: 关联订单ID
+        type: Reference
+        refEntity: ENT-ORD-001
+        refCardinality: ONE_TO_ONE
+      - name: carrier
+        label: 承运商
+        type: Enum
+        enumValues:
+          - 顺丰
+          - 中通
+          - 京东物流
+          - EMS
+          - 圆通
+      - name: trackingNo
+        label: 运单号
+        type: String
+      - name: shipTime
+        label: 发货时间
+        type: DateTime
+      - name: deliveryTime
+        label: 签收时间
+        type: DateTime
+      - name: province
+        label: 收货省
+        type: String
+      - name: city
+        label: 收货市
+        type: String
+      - name: status
+        label: 物流状态
+        type: Enum
+        enumValues:
+          - SHIPPED
+          - IN_TRANSIT
+          - DELIVERED
+          - EXCEPTION
+    tags:
+      - 交易域
+  - id: ENT-ORD-004
+    name: 退款记录
+    alias: Refund
+    domain: 交易域
+    description: 用户申请的退款或退货退款记录
+    attributes:
+      - name: refundId
+        label: 退款ID
+        type: String
+        required: true
+        unique: true
+      - name: orderId
+        label: 关联订单ID
+        type: Reference
+        refEntity: ENT-ORD-001
+        refCardinality: MANY_TO_ONE
+      - name: userId
+        label: 用户ID
+        type: Reference
+        refEntity: ENT-USR-001
+        refCardinality: MANY_TO_ONE
+      - name: refundType
+        label: 退款类型
+        type: Enum
+        enumValues:
+          - 仅退款
+          - 退货退款
+      - name: refundAmount
+        label: 退款金额
+        type: Decimal
+        required: true
+      - name: reason
+        label: 退款原因
+        type: Enum
+        enumValues:
+          - 质量问题
+          - 尺寸不合
+          - 不喜欢
+          - 物流问题
+          - 其他
+      - name: status
+        label: 处理状态
+        type: Enum
+        enumValues:
+          - PENDING
+          - AGREED
+          - REJECTED
+          - COMPLETED
+      - name: applyTime
+        label: 申请时间
+        type: DateTime
+        required: true
+      - name: completeTime
+        label: 完成时间
+        type: DateTime
+    tags:
+      - 交易域
+  - id: ENT-PRD-001
+    name: 商品SPU
+    alias: Product
+    domain: 商品域
+    description: 商品标准产品单元，包含商品基本信息
+    attributes:
+      - name: productId
+        label: 商品SPU ID
+        type: String
+        required: true
+        unique: true
+      - name: productName
+        label: 商品名
+        type: String
+        required: true
+      - name: categoryId
+        label: 所属类目ID
+        type: Reference
+        refEntity: ENT-PRD-003
+        refCardinality: MANY_TO_ONE
+      - name: shopId
+        label: 所属店铺ID
+        type: Reference
+        refEntity: ENT-SHP-001
+        refCardinality: MANY_TO_ONE
+      - name: brand
+        label: 品牌
+        type: String
+      - name: status
+        label: 上下架状态
+        type: Enum
+        enumValues:
+          - 1
+          - 2
+          - 3
+      - name: listPrice
+        label: 标准售价
+        type: Decimal
+      - name: avgRating
+        label: 平均评分
+        type: Decimal
+      - name: reviewCount
+        label: 评价数
+        type: Integer
+      - name: gmtCreate
+        label: 上架时间
+        type: DateTime
+      - name: gmtModified
+        label: 最后修改时间
+        type: DateTime
+    tags:
+      - 核心域
+  - id: ENT-PRD-002
+    name: 商品SKU
+    alias: Sku
+    domain: 商品域
+    description: 商品最小可售单元，包含规格和库存信息
+    attributes:
+      - name: skuId
+        label: SKU ID
+        type: String
+        required: true
+        unique: true
+      - name: productId
+        label: 所属SPU ID
+        type: Reference
+        refEntity: ENT-PRD-001
+        refCardinality: MANY_TO_ONE
+      - name: skuName
+        label: SKU名称
+        type: String
+      - name: color
+        label: 颜色
+        type: String
+      - name: size
+        label: 尺寸
+        type: Enum
+        enumValues:
+          - S
+          - M
+          - L
+          - XL
+          - XXL
+          - 均码
+      - name: stock
+        label: 当前库存
+        type: Integer
+      - name: salePrice
+        label: 销售价
+        type: Decimal
+      - name: costPrice
+        label: 成本价
+        type: Decimal
+      - name: gmtCreate
+        label: 创建时间
+        type: DateTime
+    tags:
+      - 商品域
+  - id: ENT-PRD-003
+    name: 商品类目
+    alias: Category
+    domain: 商品域
+    description: 商品三级树形分类体系
+    attributes:
+      - name: categoryId
+        label: 类目ID
+        type: String
+        required: true
+        unique: true
+      - name: categoryName
+        label: 类目名称
+        type: String
+        required: true
+      - name: parentId
+        label: 上级类目ID
+        type: Reference
+        refEntity: ENT-PRD-003
+        refCardinality: MANY_TO_ONE
+      - name: level
+        label: 层级
+        type: Integer
+        required: true
+      - name: sortOrder
+        label: 排序
+        type: Integer
+      - name: gmtCreate
+        label: 创建时间
+        type: DateTime
+    tags:
+      - 商品域
+  - id: ENT-SHP-001
+    name: 店铺
+    alias: Shop
+    domain: 店铺域
+    description: 平台商家店铺信息
+    attributes:
+      - name: shopId
+        label: 店铺ID
+        type: String
+        required: true
+        unique: true
+      - name: shopName
+        label: 店铺名
+        type: String
+        required: true
+      - name: shopLevel
+        label: 店铺评级
+        type: Integer
+      - name: mainCategory
+        label: 主营类目ID
+        type: Reference
+        refEntity: ENT-PRD-003
+        refCardinality: MANY_TO_ONE
+      - name: province
+        label: 店铺所在省
+        type: String
+      - name: deposit
+        label: 保证金
+        type: Decimal
+      - name: status
+        label: 状态
+        type: Enum
+        enumValues:
+          - 1
+          - 0
+      - name: gmtCreate
+        label: 创建时间
+        type: DateTime
+    tags:
+      - 核心域
+  - id: ENT-MKT-001
+    name: 营销活动
+    alias: Campaign
+    domain: 营销域
+    description: 平台发起的各类营销活动
+    attributes:
+      - name: campaignId
+        label: 活动ID
+        type: String
+        required: true
+        unique: true
+      - name: campaignName
+        label: 活动名
+        type: String
+        required: true
+      - name: campaignType
+        label: 活动类型
+        type: Enum
+        enumValues:
+          - 满减
+          - 折扣
+          - 秒杀
+          - 拼团
+          - 大促
+      - name: startTime
+        label: 活动开始时间
+        type: DateTime
+        required: true
+      - name: endTime
+        label: 活动结束时间
+        type: DateTime
+        required: true
+      - name: budget
+        label: 预算
+        type: Decimal
+      - name: targetCategory
+        label: 主要面向类目ID
+        type: Reference
+        refEntity: ENT-PRD-003
+        refCardinality: MANY_TO_ONE
+      - name: gmtCreate
+        label: 创建时间
+        type: DateTime
+    tags:
+      - 营销域
+  - id: ENT-MKT-002
+    name: 优惠券使用记录
+    alias: CouponUsage
+    domain: 营销域
+    description: 用户领取和使用优惠券的记录
+    attributes:
+      - name: usageId
+        label: 记录ID
+        type: String
+        required: true
+        unique: true
+      - name: couponCode
+        label: 券码
+        type: String
+      - name: campaignId
+        label: 关联活动ID
+        type: Reference
+        refEntity: ENT-MKT-001
+        refCardinality: MANY_TO_ONE
+      - name: userId
+        label: 领取用户ID
+        type: Reference
+        refEntity: ENT-USR-001
+        refCardinality: MANY_TO_ONE
+      - name: orderId
+        label: 使用订单ID
+        type: Reference
+        refEntity: ENT-ORD-001
+        refCardinality: ONE_TO_ONE
+      - name: couponAmount
+        label: 券面额
+        type: Decimal
+      - name: status
+        label: 状态
+        type: Enum
+        enumValues:
+          - ISSUED
+          - USED
+          - EXPIRED
+      - name: issuedAt
+        label: 领取时间
+        type: DateTime
+      - name: usedAt
+        label: 使用时间
+        type: DateTime
+    tags:
+      - 营销域
+relations:
+  - id: REL-001
+    type: COMPOSITION
+    sourceEntity: ENT-ORD-001
+    targetEntity: ENT-ORD-002
+    sourceRole: 所属订单
+    targetRole: 订单明细
+    sourceCardinality: ONE
+    targetCardinality: ONE_OR_MORE
+    cascadeDelete: true
+    description: 订单包含一个或多个订单明细
+  - id: REL-002
+    type: ASSOCIATION
+    sourceEntity: ENT-USR-001
+    targetEntity: ENT-ORD-001
+    sourceRole: 买家
+    targetRole: 订单
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 用户拥有多个订单
+  - id: REL-003
+    type: ASSOCIATION
+    sourceEntity: ENT-SHP-001
+    targetEntity: ENT-ORD-001
+    sourceRole: 卖家店铺
+    targetRole: 订单
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 店铺拥有多个订单
+  - id: REL-004
+    type: ASSOCIATION
+    sourceEntity: ENT-ORD-001
+    targetEntity: ENT-ORD-003
+    sourceRole: 订单
+    targetRole: 物流记录
+    sourceCardinality: ONE
+    targetCardinality: ZERO_OR_ONE
+    cascadeDelete: false
+    description: 订单有一条物流记录
+  - id: REL-005
+    type: ASSOCIATION
+    sourceEntity: ENT-ORD-001
+    targetEntity: ENT-ORD-004
+    sourceRole: 订单
+    targetRole: 退款记录
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 订单可以有多个退款记录
+  - id: REL-006
+    type: ASSOCIATION
+    sourceEntity: ENT-USR-001
+    targetEntity: ENT-ORD-004
+    sourceRole: 用户
+    targetRole: 退款记录
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 用户可以有多个退款记录
+  - id: REL-007
+    type: ASSOCIATION
+    sourceEntity: ENT-ORD-002
+    targetEntity: ENT-PRD-001
+    sourceRole: 订单明细
+    targetRole: 商品SPU
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 订单明细关联一个商品SPU
+  - id: REL-008
+    type: ASSOCIATION
+    sourceEntity: ENT-ORD-002
+    targetEntity: ENT-PRD-002
+    sourceRole: 订单明细
+    targetRole: 商品SKU
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 订单明细关联一个商品SKU
+  - id: REL-009
+    type: ASSOCIATION
+    sourceEntity: ENT-ORD-002
+    targetEntity: ENT-PRD-003
+    sourceRole: 订单明细
+    targetRole: 商品类目
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 订单明细关联一个商品类目
+  - id: REL-010
+    type: COMPOSITION
+    sourceEntity: ENT-PRD-001
+    targetEntity: ENT-PRD-002
+    sourceRole: 商品SPU
+    targetRole: 商品SKU
+    sourceCardinality: ONE
+    targetCardinality: ONE_OR_MORE
+    cascadeDelete: true
+    description: 商品SPU包含一个或多个SKU
+  - id: REL-011
+    type: ASSOCIATION
+    sourceEntity: ENT-PRD-001
+    targetEntity: ENT-PRD-003
+    sourceRole: 商品SPU
+    targetRole: 商品类目
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 商品SPU属于一个类目
+  - id: REL-012
+    type: ASSOCIATION
+    sourceEntity: ENT-PRD-001
+    targetEntity: ENT-SHP-001
+    sourceRole: 商品SPU
+    targetRole: 店铺
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 商品SPU属于一个店铺
+  - id: REL-013
+    type: AGGREGATION
+    sourceEntity: ENT-PRD-003
+    targetEntity: ENT-PRD-003
+    sourceRole: 父类目
+    targetRole: 子类目
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 类目自引用树形结构，父类目包含多个子类目
+  - id: REL-014
+    type: ASSOCIATION
+    sourceEntity: ENT-SHP-001
+    targetEntity: ENT-PRD-003
+    sourceRole: 店铺
+    targetRole: 主营类目
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 店铺有一个主营类目
+  - id: REL-015
+    type: AGGREGATION
+    sourceEntity: ENT-USR-001
+    targetEntity: ENT-USR-002
+    sourceRole: 用户
+    targetRole: 用户行为
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 用户有多个行为记录
+  - id: REL-016
+    type: ASSOCIATION
+    sourceEntity: ENT-MKT-001
+    targetEntity: ENT-MKT-002
+    sourceRole: 营销活动
+    targetRole: 优惠券使用记录
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 一个营销活动对应多个优惠券使用记录
+  - id: REL-017
+    type: ASSOCIATION
+    sourceEntity: ENT-USR-001
+    targetEntity: ENT-MKT-002
+    sourceRole: 用户
+    targetRole: 优惠券使用记录
+    sourceCardinality: ONE
+    targetCardinality: MANY
+    cascadeDelete: false
+    description: 用户可以领取多张优惠券
+  - id: REL-018
+    type: ASSOCIATION
+    sourceEntity: ENT-ORD-001
+    targetEntity: ENT-MKT-002
+    sourceRole: 订单
+    targetRole: 优惠券使用记录
+    sourceCardinality: ONE
+    targetCardinality: ZERO_OR_ONE
+    cascadeDelete: false
+    description: 订单可以使用一张优惠券
+  - id: REL-019
+    type: ASSOCIATION
+    sourceEntity: ENT-MKT-001
+    targetEntity: ENT-PRD-003
+    sourceRole: 营销活动
+    targetRole: 目标类目
+    sourceCardinality: ONE
+    targetCardinality: ONE
+    cascadeDelete: false
+    description: 营销活动面向一个目标类目

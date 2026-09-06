@@ -1,0 +1,44 @@
+{
+  "name": "工作台",
+  "version": "1.0",
+  "sourceProject": "workbench-v3",
+  "pages": [
+    {
+      "id": "p1",
+      "title": "模型",
+      "blocks": [
+        {
+          "type": "table",
+          "title": "清单",
+          "entity": "AppSchema",
+          "columns": [
+            {
+              "name": "name",
+              "label": "应用名"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "登记",
+      "blocks": [
+        {
+          "type": "form",
+          "title": "登记",
+          "entity": "Page",
+          "behavior": "Schema_Generate",
+          "fields": [
+            {
+              "name": "id",
+              "label": "id",
+              "control": "input",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

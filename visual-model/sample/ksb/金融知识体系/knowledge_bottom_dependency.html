@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>金融知识体系依赖路径视图</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#f7f8fa;font-family:"Microsoft YaHei",Arial,sans-serif;color:#1a1a2e;}
+#c{width:100%;height:100vh;}
+#tip{position:fixed;left:16px;top:12px;background:#fff;border:1px solid #d7dbe8;border-radius:6px;padding:10px 12px;box-shadow:0 2px 8px #0001;font-size:13px;line-height:1.6;z-index:5;}
+</style>
+</head>
+<body>
+<div id="tip"><b>金融知识依赖路径视图</b><br>仅展示 depends 边，用于查看学习前置关系。节点按知识模块分列，箭头表示“理解源节点有助于掌握目标节点”。</div>
+<div id="c"></div>
+<script>
+const colors=['#3f51b5','#009688','#ff9800','#e91e63','#4caf50','#00bcd4','#9c27b0','#ff5722'];
+const categories=['金融体系与市场','货币银行与中央银行','公司金融','投资与资产定价','金融工具与资产类别','风险管理','金融科技与数据','监管伦理与个人财务'];
+const rows=[
+['N01','资金盈余/短缺',0],['N02','金融中介',0],['N03','一级市场',0],['N04','二级市场',0],['N05','价格发现',0],['N06','流动性',0],['N07','清算结算',0],['N08','市场效率',0],
+['N09','货币职能',1],['N10','存款创造',1],['N11','商业银行',1],['N12','资产负债管理',1],['N13','央行政策利率',1],['N14','公开市场操作',1],['N15','支付系统',1],['N16','金融稳定',1],
+['N17','财务报表',2],['N18','自由现金流',2],['N19','净现值',2],['N20','内部收益率',2],['N21','加权平均资本成本',2],['N22','资本结构',2],['N23','股利政策',2],['N24','并购估值',2],
+['N25','风险收益权衡',3],['N26','投资组合',3],['N27','分散化',3],['N28','系统性风险',3],['N29','CAPM',3],['N30','因子模型',3],['N31','有效市场假说',3],['N32','行为金融',3],
+['N33','股票',4],['N34','债券',4],['N35','久期',4],['N36','收益率曲线',4],['N37','基金',4],['N38','ETF',4],['N39','期货',4],['N40','期权',4],
+['N41','市场风险',5],['N42','信用风险',5],['N43','流动性风险',5],['N44','操作风险',5],['N45','VaR',5],['N46','压力测试',5],['N47','对冲',5],['N48','风险限额',5],
+['N49','电子支付',6],['N50','数字银行',6],['N51','信用评分',6],['N52','量化交易',6],['N53','智能投顾',6],['N54','区块链',6],['N55','数据治理',6],['N56','模型风险',6],
+['N57','投资者保护',7],['N58','信息披露',7],['N59','适当性原则',7],['N60','反洗钱',7],['N61','预算管理',7],['N62','应急金',7],['N63','保险',7],['N64','退休规划',7]
+];
+const depends=[
+['N07','N06',0.66],['N05','N08',0.72],['N09','N10',0.70],['N10','N11',0.78],['N15','N49',0.72],['N16','N43',0.70],['N11','N16',0.76],
+['N17','N18',0.82],['N18','N19',0.88],['N21','N19',0.86],['N22','N21',0.78],['N21','N24',0.68],['N18','N23',0.56],
+['N25','N26',0.86],['N28','N29',0.84],['N31','N05',0.62],['N33','N25',0.72],['N36','N34',0.76],['N35','N41',0.78],['N37','N27',0.64],['N39','N47',0.70],['N40','N47',0.72],
+['N41','N45',0.68],['N42','N51',0.74],['N43','N06',0.82],['N46','N48',0.70],['N47','N41',0.72],['N48','N43',0.62],
+['N49','N15',0.70],['N51','N42',0.78],['N52','N30',0.64],['N53','N26',0.70],['N55','N56',0.82],['N55','N51',0.76],['N56','N52',0.68],
+['N57','N58',0.74],['N58','N33',0.58],['N59','N40',0.68],['N59','N53',0.62],['N60','N49',0.62],['N61','N62',0.72],['N62','N26',0.56],['N64','N27',0.72],['N64','N63',0.58],
+['N36','N21',0.66],['N27','N37',0.58],['N55','N60',0.54],['N52','N41',0.62],['N24','N33',0.52],['N22','N34',0.50],['N32','N61',0.40]
+];
+const perCat={};rows.forEach(r=>{perCat[r[2]]=(perCat[r[2]]||0)+1;});
+const seen={};
+const nodes=rows.map(r=>{const i=seen[r[2]]||0;seen[r[2]]=i+1;return{id:r[0],name:r[1],category:r[2],x:120+r[2]*210,y:125+i*64,symbolSize:34,itemStyle:{color:colors[r[2]]},label:{show:true,formatter:r[1],fontSize:11}};});
+const links=depends.map(e=>({source:e[0],target:e[1],value:e[2],symbol:['none','arrow'],lineStyle:{width:e[2]*4+1,color:'#4f9bff',curveness:0.12,opacity:0.68}}));
+const chart=echarts.init(document.getElementById('c'));
+chart.setOption({
+  title:{text:'最底层 · depends 依赖路径视图',left:'center',top:12,textStyle:{color:'#1a1a2e'}},
+  tooltip:{formatter:p=>p.dataType==='edge'?`${p.data.source} → ${p.data.target}<br>depends / ${p.data.value}`:p.data.name},
+  legend:[{data:categories,top:48,type:'scroll'}],
+  series:[{type:'graph',layout:'none',roam:true,data:nodes,links,categories:categories.map((name,i)=>({name,itemStyle:{color:colors[i]}})),edgeSymbol:['none','arrow'],emphasis:{focus:'adjacency'},lineStyle:{opacity:0.65}}]
+});
+window.addEventListener('resize',()=>chart.resize());
+</script>
+</body>
+</html>

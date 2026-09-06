@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1400" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- 定义样式 -->
+  <defs>
+    <style>
+      .title-text { font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+      .layer-text { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #34495e; }
+      .component-text { font-family: Arial, sans-serif; font-size: 12px; fill: #2c3e50; }
+      .small-text { font-family: Arial, sans-serif; font-size: 10px; fill: #7f8c8d; }
+      .business-layer { fill: #e8f5e8; stroke: #27ae60; stroke-width: 2; }
+      .application-layer { fill: #e3f2fd; stroke: #3498db; stroke-width: 2; }
+      .data-layer { fill: #fff3e0; stroke: #f39c12; stroke-width: 2; }
+      .tech-layer { fill: #fce4ec; stroke: #e91e63; stroke-width: 2; }
+      .governance-layer { fill: #f3e5f5; stroke: #9c27b0; stroke-width: 2; }
+      .external-env { fill: #f5f5f5; stroke: #95a5a6; stroke-width: 2; stroke-dasharray: 5,5; }
+      .component-box { fill: #ffffff; stroke: #bdc3c7; stroke-width: 1; }
+      .platform-box { fill: #ecf0f1; stroke: #34495e; stroke-width: 2; }
+      .data-flow { stroke: #e74c3c; stroke-width: 2; fill: none; marker-end: url(#arrowhead-red); }
+      .control-flow { stroke: #2980b9; stroke-width: 2; fill: none; marker-end: url(#arrowhead-blue); }
+      .service-flow { stroke: #27ae60; stroke-width: 2; fill: none; marker-end: url(#arrowhead-green); }
+      .interface-line { stroke: #7f8c8d; stroke-width: 1; stroke-dasharray: 3,3; }
+    </style>
+    
+    <!-- 箭头标记 -->
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c" />
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2980b9" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60" />
+    </marker>
+  </defs>
+
+  <!-- 系统边界 -->
+  <rect x="60" y="60" width="1280" height="880" class="external-env" />
+  <text x="70" y="50" class="title-text">数字化转型企业架构系统 - 基于MBSE建模</text>
+  
+  <!-- 外部环境 -->
+  <text x="70" y="85" class="small-text">外部环境：监管要求、市场变化、技术发展、合作伙伴、客户需求</text>
+  
+  <!-- 架构治理层 -->
+  <rect x="80" y="110" width="1240" height="70" class="governance-layer" />
+  <text x="95" y="130" class="layer-text">«governance» 架构治理层</text>
+  <rect x="110" y="140" width="140" height="30" class="component-box" />
+  <text x="120" y="158" class="component-text">架构委员会</text>
+  <rect x="270" y="140" width="140" height="30" class="component-box" />
+  <text x="280" y="158" class="component-text">架构标准规范</text>
+  <rect x="430" y="140" width="140" height="30" class="component-box" />
+  <text x="440" y="158" class="component-text">架构评审治理</text>
+  <rect x="590" y="140" width="140" height="30" class="component-box" />
+  <text x="600" y="158" class="component-text">架构资产库</text>
+  <rect x="750" y="140" width="140" height="30" class="component-box" />
+  <text x="760" y="158" class="component-text">架构度量评估</text>
+  <rect x="910" y="140" width="140" height="30" class="component-box" />
+  <text x="920" y="158" class="component-text">变更管控</text>
+  <rect x="1070" y="140" width="140" height="30" class="component-box" />
+  <text x="1080" y="158" class="component-text">合规检查</text>
+
+  <!-- 业务架构层 -->
+  <rect x="80" y="200" width="1240" height="160" class="business-layer" />
+  <text x="95" y="220" class="layer-text">«business» 业务架构层</text>
+  
+  <!-- 价值链模型 -->
+  <rect x="110" y="235" width="280" height="115" class="component-box" />
+  <text x="120" y="250" class="component-text">«block» 企业价值链模型</text>
+  <rect x="120" y="260" width="120" height="25" class="component-box" />
+  <text x="125" y="275" class="small-text">核心价值活动</text>
+  <rect x="250" y="260" width="120" height="25" class="component-box" />
+  <text x="255" y="275" class="small-text">支撑价值活动</text>
+  <rect x="120" y="295" width="120" height="25" class="component-box" />
+  <text x="125" y="310" class="small-text">客户价值创造</text>
+  <rect x="250" y="295" width="120" height="25" class="component-box" />
+  <text x="255" y="310" class="small-text">价值传递网络</text>
+  <rect x="120" y="320" width="250" height="20" class="component-box" />
+  <text x="125" y="332" class="small-text">端到端业务流程</text>
+  
+  <!-- 业务能力地图 -->
+  <rect x="410" y="235" width="280" height="115" class="component-box" />
+  <text x="420" y="250" class="component-text">«block» 业务能力地图</text>
+  <rect x="420" y="260" width="120" height="25" class="component-box" />
+  <text x="425" y="275" class="small-text">客户管理能力</text>
+  <rect x="550" y="260" width="120" height="25" class="component-box" />
+  <text x="555" y="275" class="small-text">产品管理能力</text>
+  <rect x="420" y="295" width="120" height="25" class="component-box" />
+  <text x="425" y="310" class="small-text">供应链能力</text>
+  <rect x="550" y="295" width="120" height="25" class="component-box" />
+  <text x="555" y="310" class="small-text">财务管理能力</text>
+  <rect x="420" y="320" width="250" height="20" class="component-box" />
+  <text x="425" y="332" class="small-text">业务组件化服务</text>
+  
+  <!-- 组织架构 -->
+  <rect x="710" y="235" width="280" height="115" class="component-box" />
+  <text x="720" y="250" class="component-text">«block» 组织架构模型</text>
+  <rect x="720" y="260" width="120" height="25" class="component-box" />
+  <text x="725" y="275" class="small-text">前台敏捷组织</text>
+  <rect x="850" y="260" width="120" height="25" class="component-box" />
+  <text x="855" y="275" class="small-text">中台共享组织</text>
+  <rect x="720" y="295" width="120" height="25" class="component-box" />
+  <text x="725" y="310" class="small-text">后台稳定组织</text>
+  <rect x="850" y="295" width="120" height="25" class="component-box" />
+  <text x="855" y="310" class="small-text">平台支撑组织</text>
+  <rect x="720" y="320" width="250" height="20" class="component-box" />
+  <text x="725" y="332" class="small-text">数字化转型组织</text>
+
+  <!-- 业务治理 -->
+  <rect x="1010" y="235" width="280" height="115" class="component-box" />
+  <text x="1020" y="250" class="component-text">«block» 业务治理体系</text>
+  <rect x="1020" y="260" width="120" height="25" class="component-box" />
+  <text x="1025" y="275" class="small-text">业务流程管理</text>
+  <rect x="1150" y="260" width="120" height="25" class="component-box" />
+  <text x="1155" y="275" class="small-text">业务规则引擎</text>
+  <rect x="1020" y="295" width="120" height="25" class="component-box" />
+  <text x="1025" y="310" class="small-text">绩效管理</text>
+  <rect x="1150" y="295" width="120" height="25" class="component-box" />
+  <text x="1155" y="310" class="small-text">风险管控</text>
+  <rect x="1020" y="320" width="250" height="20" class="component-box" />
+  <text x="1025" y="332" class="small-text">业务连续性管理</text>
+
+  <!-- 应用架构层 -->
+  <rect x="80" y="380" width="1240" height="160" class="application-layer" />
+  <text x="95" y="400" class="layer-text">«application» 应用架构层</text>
+  
+  <!-- 前台应用 -->
+  <rect x="110" y="415" width="280" height="115" class="component-box" />
+  <text x="120" y="430" class="component-text">«block» 前台应用系统</text>
+  <rect x="120" y="440" width="120" height="25" class="component-box" />
+  <text x="125" y="455" class="small-text">移动应用</text>
+  <rect x="250" y="440" width="120" height="25" class="component-box" />
+  <text x="255" y="455" class="small-text">Web门户</text>
+  <rect x="120" y="475" width="120" height="25" class="component-box" />
+  <text x="125" y="490" class="small-text">小程序</text>
+  <rect x="250" y="475" width="120" height="25" class="component-box" />
+  <text x="255" y="490" class="small-text">API网关</text>
+  <rect x="120" y="500" width="250" height="20" class="component-box" />
+  <text x="125" y="512" class="small-text">用户体验层</text>
+  
+  <!-- 中台服务 -->
+  <rect x="410" y="415" width="280" height="115" class="platform-box" />
+  <text x="420" y="430" class="component-text">«platform» 中台服务体系</text>
+  <rect x="420" y="440" width="120" height="25" class="component-box" />
+  <text x="425" y="455" class="small-text">业务中台</text>
+  <rect x="550" y="440" width="120" height="25" class="component-box" />
+  <text x="555" y="455" class="small-text">数据中台</text>
+  <rect x="420" y="475" width="120" height="25" class="component-box" />
+  <text x="425" y="490" class="small-text">技术中台</text>
+  <rect x="550" y="475" width="120" height="25" class="component-box" />
+  <text x="555" y="490" class="small-text">AI中台</text>
+  <rect x="420" y="500" width="250" height="20" class="component-box" />
+  <text x="425" y="512" class="small-text">共享服务能力</text>
+  
+  <!-- 后台系统 -->
+  <rect x="710" y="415" width="280" height="115" class="component-box" />
+  <text x="720" y="430" class="component-text">«block» 后台核心系统</text>
+  <rect x="720" y="440" width="120" height="25" class="component-box" />
+  <text x="725" y="455" class="small-text">ERP系统</text>
+  <rect x="850" y="440" width="120" height="25" class="component-box" />
+  <text x="855" y="455" class="small-text">CRM系统</text>
+  <rect x="720" y="475" width="120" height="25" class="component-box" />
+  <text x="725" y="490" class="small-text">SCM系统</text>
+  <rect x="850" y="475" width="120" height="25" class="component-box" />
+  <text x="855" y="490" class="small-text">HRM系统</text>
+  <rect x="720" y="500" width="250" height="20" class="component-box" />
+  <text x="725" y="512" class="small-text">业务系统集群</text>
+  
+  <!-- 集成平台 -->
+  <rect x="1010" y="415" width="280" height="115" class="platform-box" />
+  <text x="1020" y="430" class="component-text">«platform» 集成平台</text>
+  <rect x="1020" y="440" width="120" height="25" class="component-box" />
+  <text x="1025" y="455" class="small-text">ESB总线</text>
+  <rect x="1150" y="440" width="120" height="25" class="component-box" />
+  <text x="1155" y="455" class="small-text">消息队列</text>
+  <rect x="1020" y="475" width="120" height="25" class="component-box" />
+  <text x="1025" y="490" class="small-text">工作流引擎</text>
+  <rect x="1150" y="475" width="120" height="25" class="component-box" />
+  <text x="1155" y="490" class="small-text">规则引擎</text>
+  <rect x="1020" y="500" width="250" height="20" class="component-box" />
+  <text x="1025" y="512" class="small-text">SOA服务治理</text>
+
+  <!-- 数据架构层 -->
+  <rect x="80" y="560" width="1240" height="160" class="data-layer" />
+  <text x="95" y="580" class="layer-text">«data» 数据架构层</text>
+  
+  <!-- 数据湖 -->
+  <rect x="110" y="595" width="280" height="115" class="component-box" />
+  <text x="120" y="610" class="component-text">«block» 数据湖</text>
+  <rect x="120" y="620" width="120" height="25" class="component-box" />
+  <text x="125" y="635" class="small-text">原始数据</text>
+  <rect x="250" y="620" width="120" height="25" class="component-box" />
+  <text x="255" y="635" class="small-text">结构化数据</text>
+  <rect x="120" y="655" width="120" height="25" class="component-box" />
+  <text x="125" y="670" class="small-text">非结构化数据</text>
+  <rect x="250" y="655" width="120" height="25" class="component-box" />
+  <text x="255" y="670" class="small-text">多模态数据</text>
+  <rect x="120" y="680" width="250" height="20" class="component-box" />
+  <text x="125" y="692" class="small-text">数据存储底座</text>
+  
+  <!-- 数据中台 -->
+  <rect x="410" y="595" width="280" height="115" class="platform-box" />
+  <text x="420" y="610" class="component-text">«platform» 数据中台</text>
+  <rect x="420" y="620" width="120" height="25" class="component-box" />
+  <text x="425" y="635" class="small-text">数据仓库</text>
+  <rect x="550" y="620" width="120" height="25" class="component-box" />
+  <text x="555" y="635" class="small-text">数据集市</text>
+  <rect x="420" y="655" width="120" height="25" class="component-box" />
+  <text x="425" y="670" class="small-text">实时计算</text>
+  <rect x="550" y="655" width="120" height="25" class="component-box" />
+  <text x="555" y="670" class="small-text">离线计算</text>
+  <rect x="420" y="680" width="250" height="20" class="component-box" />
+  <text x="425" y="692" class="small-text">数据服务API</text>
+  
+  <!-- 主数据管理 -->
+  <rect x="710" y="595" width="280" height="115" class="component-box" />
+  <text x="720" y="610" class="component-text">«block» 主数据管理</text>
+  <rect x="720" y="620" width="120" height="25" class="component-box" />
+  <text x="725" y="635" class="small-text">客户主数据</text>
+  <rect x="850" y="620" width="120" height="25" class="component-box" />
+  <text x="855" y="635" class="small-text">产品主数据</text>
+  <rect x="720" y="655" width="120" height="25" class="component-box" />
+  <text x="725" y="670" class="small-text">供应商主数据</text>
+  <rect x="850" y="655" width="120" height="25" class="component-box" />
+  <text x="855" y="670" class="small-text">组织主数据</text>
+  <rect x="720" y="680" width="250" height="20" class="component-box" />
+  <text x="725" y="692" class="small-text">数据质量管理</text>
+  
+  <!-- 数据治理 -->
+  <rect x="1010" y="595" width="280" height="115" class="component-box" />
+  <text x="1020" y="610" class="component-text">«block» 数据治理</text>
+  <rect x="1020" y="620" width="120" height="25" class="component-box" />
+  <text x="1025" y="635" class="small-text">元数据管理</text>
+  <rect x="1150" y="620" width="120" height="25" class="component-box" />
+  <text x="1155" y="635" class="small-text">数据血缘</text>
+  <rect x="1020" y="655" width="120" height="25" class="component-box" />
+  <text x="1025" y="670" class="small-text">数据安全</text>
+  <rect x="1150" y="655" width="120" height="25" class="component-box" />
+  <text x="1155" y="670" class="small-text">数据标准</text>
+  <rect x="1020" y="680" width="250" height="20" class="component-box" />
+  <text x="1025" y="692" class="small-text">数据生命周期</text>
+
+  <!-- 技术架构层 -->
+  <rect x="80" y="740" width="1240" height="160" class="tech-layer" />
+  <text x="95" y="760" class="layer-text">«technology» 技术架构层</text>
+  
+  <!-- 云原生平台 -->
+  <rect x="110" y="775" width="280" height="115" class="platform-box" />
+  <text x="120" y="790" class="component-text">«platform» 云原生平台</text>
+  <rect x="120" y="800" width="120" height="25" class="component-box" />
+  <text x="125" y="815" class="small-text">容器编排</text>
+  <rect x="250" y="800" width="120" height="25" class="component-box" />
+  <text x="255" y="815" class="small-text">服务网格</text>
+  <rect x="120" y="835" width="120" height="25" class="component-box" />
+  <text x="125" y="850" class="small-text">DevOps平台</text>
+  <rect x="250" y="835" width="120" height="25" class="component-box" />
+  <text x="255" y="850" class="small-text">监控运维</text>
+  <rect x="120" y="860" width="250" height="20" class="component-box" />
+  <text x="125" y="872" class="small-text">云原生技术栈</text>
+  
+  <!-- 微服务框架 -->
+  <rect x="410" y="775" width="280" height="115" class="component-box" />
+  <text x="420" y="790" class="component-text">«block» 微服务框架</text>
+  <rect x="420" y="800" width="120" height="25" class="component-box" />
+  <text x="425" y="815" class="small-text">服务注册</text>
+  <rect x="550" y="800" width="120" height="25" class="component-box" />
+  <text x="555" y="815" class="small-text">服务发现</text>
+  <rect x="420" y="835" width="120" height="25" class="component-box" />
+  <text x="425" y="850" class="small-text">负载均衡</text>
+  <rect x="550" y="835" width="120" height="25" class="component-box" />
+  <text x="555" y="850" class="small-text">熔断限流</text>
+  <rect x="420" y="860" width="250" height="20" class="component-box" />
+  <text x="425" y="872" class="small-text">微服务治理</text>
+  
+  <!-- 安全平台 -->
+  <rect x="710" y="775" width="280" height="115" class="component-box" />
+  <text x="720" y="790" class="component-text">«block» 安全平台</text>
+  <rect x="720" y="800" width="120" height="25" class="component-box" />
+  <text x="725" y="815" class="small-text">身份认证</text>
+  <rect x="850" y="800" width="120" height="25" class="component-box" />
+  <text x="855" y="815" class="small-text">权限管理</text>
+  <rect x="720" y="835" width="120" height="25" class="component-box" />
+  <text x="725" y="850" class="small-text">安全审计</text>
+  <rect x="850" y="835" width="120" height="25" class="component-box" />
+  <text x="855" y="850" class="small-text">威胁检测</text>
+  <rect x="720" y="860" width="250" height="20" class="component-box" />
+  <text x="725" y="872" class="small-text">安全防护体系</text>
+  
+  <!-- 基础设施 -->
+  <rect x="1010" y="775" width="280" height="115" class="component-box" />
+  <text x="1020" y="790" class="component-text">«block» 基础设施</text>
+  <rect x="1020" y="800" width="120" height="25" class="component-box" />
+  <text x="1025" y="815" class="small-text">计算资源</text>
+  <rect x="1150" y="800" width="120" height="25" class="component-box" />
+  <text x="1155" y="815" class="small-text">存储资源</text>
+  <rect x="1020" y="835" width="120" height="25" class="component-box" />
+  <text x="1025" y="850" class="small-text">网络资源</text>
+  <rect x="1150" y="835" width="120" height="25" class="component-box" />
+  <text x="1155" y="850" class="small-text">混合云</text>
+  <rect x="1020" y="860" width="250" height="20" class="component-box" />
+  <text x="1025" y="872" class="small-text">IaaS资源池</text>
+
+  <!-- 数据流连接 -->
+  <line x1="250" y1="360" x2="250" y2="415" class="data-flow" />
+  <line x1="550" y1="360" x2="550" y2="415" class="data-flow" />
+  <line x1="850" y1="360" x2="850" y2="415" class="data-flow" />
+  <line x1="1150" y1="360" x2="1150" y2="415" class="data-flow" />
+  
+  <line x1="250" y1="540" x2="250" y2="595" class="data-flow" />
+  <line x1="550" y1="540" x2="550" y2="595" class="data-flow" />
+  <line x1="850" y1="540" x2="850" y2="595" class="data-flow" />
+  <line x1="1150" y1="540" x2="1150" y2="595" class="data-flow" />
+  
+  <line x1="250" y1="720" x2="250" y2="775" class="control-flow" />
+  <line x1="550" y1="720" x2="550" y2="775" class="control-flow" />
+  <line x1="850" y1="720" x2="850" y2="775" class="control-flow" />
+  <line x1="1150" y1="720" x2="1150" y2="775" class="control-flow" />
+
+  <!-- 服务流连接 -->
+  <line x1="390" y1="472" x2="410" y2="472" class="service-flow" />
+  <line x1="690" y1="472" x2="710" y2="472" class="service-flow" />
+  <line x1="990" y1="472" x2="1010" y2="472" class="service-flow" />
+  
+  <line x1="390" y1="652" x2="410" y2="652" class="service-flow" />
+  <line x1="690" y1="652" x2="710" y2="652" class="service-flow" />
+  <line x1="990" y1="652" x2="1010" y2="652" class="service-flow" />
+
+  <!-- 治理连接线 -->
+  <line x1="180" y1="180" x2="180" y2="235" class="interface-line" />
+  <line x1="340" y1="180" x2="340" y2="235" class="interface-line" />
+  <line x1="500" y1="180" x2="500" y2="235" class="interface-line" />
+  <line x1="660" y1="180" x2="660" y2="235" class="interface-line" />
+  <line x1="820" y1="180" x2="820" y2="235" class="interface-line" />
+  <line x1="980" y1="180" x2="980" y2="235" class="interface-line" />
+  <line x1="1140" y1="180" x2="1140" y2="235" class="interface-line" />
+
+  <!-- 图例 -->
+  <rect x="1200" y="800" width="120" height="120" class="component-box" />
+  <text x="1210" y="815" class="small-text">图例说明</text>
+  <line x1="1210" y1="825" x2="1240" y2="825" class="data-flow" />
+  <text x="1245" y="829" class="small-text">数据流</text>
+  <line x1="1210" y1="840" x2="1240" y2="840" class="control-flow" />
+  <text x="1245" y="844" class="small-text">控制流</text>
+  <line x1="1210" y1="855" x2="1240" y2="855" class="service-flow" />
+  <text x="1245" y="859" class="small-text">服务流</text>
+  <line x1="1210" y1="870" x2="1240" y2="870" class="interface-line" />
+  <text x="1245" y="874" class="small-text">接口</text>
+  <rect x="1210" y="885" width="15" height="10" class="platform-box" />
+  <text x="1230" y="892" class="small-text">平台</text>
+  <rect x="1210" y="900" width="15" height="10" class="component-box" />
+  <text x="1230" y="907" class="small-text">组件</text>
+
+  <!-- 系统说明 -->
+  <text x="80" y="930" class="small-text">系统特征：基于MBSE建模的数字化转型企业架构，体现业务驱动IT、平台+应用、中台思想、SOA服务化、云原生技术融合</text>
+
+</svg>

@@ -1,0 +1,40 @@
+domain: 本体工作台 V3 应用生成机制
+model_type: RULE
+rules:
+  - description: 字段控件类型必须在枚举内
+    expression: field.control in ['select','input','textarea','date','datetime','radio','number']
+    id: RULE-CONTROL-LEGAL
+    name: 控件类型合法
+    ruleType: VALIDATION
+    violationMessage: 非法控件类型
+  - description: schema 引用的实体必须存在于 M1
+    expression: schema.entity in model.m1.entities
+    id: RULE-ENTITY-EXISTS
+    name: 实体引用存在
+    ruleType: VALIDATION
+    violationMessage: 引用实体不在 M1 中
+  - description: schema 引用的行为必须存在于 M2
+    expression: schema.behavior in model.m2.behaviors
+    id: RULE-BEHAVIOR-EXISTS
+    name: 行为引用存在
+    ruleType: VALIDATION
+    violationMessage: 引用行为不在 M2 中
+  - description: 页面 id 全局唯一
+    expression: unique(schema.pages.id)
+    id: RULE-PAGE-ID-UNIQUE
+    name: 页面 id 唯一
+    ruleType: VALIDATION
+    violationMessage: 页面 id 重复
+  - description: rowClick 跳转目标必须存在
+    expression: 'forall(a in schema.pages.blocks.actions): a.rowClick in schema.pages.id'
+    id: RULE-ROWCLICK-EXISTS
+    name: 跳转目标存在
+    ruleType: VALIDATION
+    violationMessage: 跳转目标页面不存在
+  - description: 校验通过才能生成应用
+    expression: schema.lifecycle == '已校验'
+    id: RULE-VALIDATED-BEFORE-GENERATE
+    name: 校验通过才能生成
+    ruleType: VALIDATION
+    violationMessage: Schema 未通过校验，禁止生成应用
+version: '1.1'

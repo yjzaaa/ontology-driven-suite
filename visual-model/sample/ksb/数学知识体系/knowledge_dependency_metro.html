@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>大学理工科数学知识体系 - 地铁线路式学习路径</title>
+  <style>
+    :root{--bg:#f6f8fb;--panel:#fff;--text:#172033;--muted:#657287;--line:#dce2ec}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:"Microsoft YaHei",Arial,sans-serif;color:var(--text)}
+    header{height:72px;padding:14px 24px;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    h1{font-size:20px;margin:0}.sub{font-size:13px;color:var(--muted);margin-top:5px}
+    .toolbar{display:flex;gap:10px;align-items:center}.toolbar label{font-size:13px;color:#3a4657}
+    .wrap{display:grid;grid-template-columns:1fr 300px;height:calc(100vh - 72px)}
+    #stage{width:100%;height:100%;overflow:auto;background:linear-gradient(#f9fbfe,#f3f6fb)}
+    aside{border-left:1px solid var(--line);background:#fff;padding:18px;overflow:auto}
+    aside h2{font-size:16px;margin:0 0 10px}.small{font-size:12px;line-height:1.7;color:var(--muted)}
+    .route{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}.sw{width:22px;height:6px;border-radius:999px}
+    svg{min-width:1450px;min-height:760px;display:block}
+    .route-line{fill:none;stroke-width:10;stroke-linecap:round;opacity:.88}
+    .station{fill:#fff;stroke-width:4;cursor:pointer}.station.major{stroke-width:6}
+    .station-label{font-size:13px;fill:#1d2a3b;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}
+    .route-label{font-size:15px;font-weight:700;fill:#26364a}
+    .dep{fill:none;stroke:#34445c;stroke-width:2;stroke-dasharray:6 5;opacity:.46;marker-end:url(#arrow)}
+    .dep:hover,.dep.active{opacity:1;stroke-width:3;stroke:#111827}
+    .station.active{filter:drop-shadow(0 0 8px rgba(24,33,47,.35))}
+  </style>
+</head>
+<body>
+<header>
+  <div><h1>数学学习路径地铁图</h1><div class="sub">彩色线路表示核心学习主线；虚线贝塞尔箭头表示跨路线前后依赖</div></div>
+  <div class="toolbar"><label><input id="toggleDeps" type="checkbox" checked> 显示跨路线依赖</label></div>
+</header>
+<div class="wrap">
+  <main id="stage"><svg id="map" viewBox="0 0 1450 760"></svg></main>
+  <aside>
+    <h2>线路说明</h2>
+    <div id="legend"></div>
+    <p class="small">建议学习顺序：先建立基础语言，再推进微积分和线性代数，两者共同支撑概率统计、微分方程、数值优化与工程建模。点击站点或依赖线可查看局部关系。</p>
+    <h2 id="infoTitle">选择一个站点</h2>
+    <div id="info" class="small">地铁图适合展示“主线推进 + 跨线换乘”。当 DAG 边很多时，它比完整依赖图更便于读学习路线。</div>
+  </aside>
+</div>
+<script>
+const routes=[
+  {name:"基础语言线",color:"#2f6fed",y:90,stations:["集合","映射","函数","极限","连续","导数","积分"]},
+  {name:"微积分分析线",color:"#15a36d",y:175,stations:["极限","连续","导数","积分","泰勒公式","级数","偏导数","梯度"]},
+  {name:"线性代数线",color:"#e4572e",y:260,stations:["向量","矩阵","线性方程组","向量空间","秩","特征值","正交性","SVD"]},
+  {name:"概率统计线",color:"#8f5bd6",y:345,stations:["样本空间","条件概率","随机变量","分布","期望方差","大数定律","中心极限定理","估计检验"]},
+  {name:"离散计算线",color:"#d99a00",y:430,stations:["命题逻辑","集合关系","组合计数","递推","图","树","最短路","复杂度"]},
+  {name:"微分方程线",color:"#0f8b8d",y:515,stations:["一阶ODE","线性ODE","方程组","拉普拉斯变换","稳定性","相图","数值ODE","动力系统"]},
+  {name:"数值优化线",color:"#c23b73",y:600,stations:["误差分析","浮点数","插值拟合","数值积分","线性系统数值解","牛顿法","梯度下降","凸优化"]},
+  {name:"工程建模线",color:"#506176",y:685,stations:["建模流程","量纲分析","傅里叶分析","复变函数","PDE","控制基础","信息论","测度论边界"]}
+];
+const major=new Set(["函数","极限","导数","积分","矩阵","线性方程组","随机变量","分布","梯度","凸优化","建模流程","傅里叶分析","PDE"]);
+const deps=[
+  ["函数","极限","函数概念是极限与连续讨论的对象"],
+  ["导数","梯度","单变量变化率推广到多变量方向变化"],
+  ["积分","数值积分","连续累积问题转化为离散近似计算"],
+  ["梯度","梯度下降","梯度给出优化迭代的下降方向"],
+  ["矩阵","线性系统数值解","矩阵表达是数值解线性系统的前提"],
+  ["秩","建模流程","秩帮助判断模型约束是否独立"],
+  ["SVD","凸优化","矩阵分解支撑降维、正则化和优化建模"],
+  ["条件概率","随机变量","条件化思想支撑随机变量建模"],
+  ["估计检验","凸优化","现代统计估计常转化为优化问题"],
+  ["大数定律","量纲分析","统计稳定性与工程尺度判断共同支撑建模"],
+  ["组合计数","误差分析","离散计数思维支撑算法误差与复杂度估计"],
+  ["复杂度","信息论","计算资源边界与信息编码边界相互关联"],
+  ["矩阵","拉普拉斯变换","线性系统语言支撑微分方程代数化"],
+  ["方程组","控制基础","状态方程是控制系统建模基础"],
+  ["傅里叶分析","PDE","频域分解是求解偏微分方程的重要工具"],
+  ["PDE","控制基础","连续场模型进一步进入控制与系统分析"]
+];
+const svg=document.getElementById("map"), ns="http://www.w3.org/2000/svg";
+const startX=120, gap=155, pos={};
+function el(tag,attrs,parent=svg){const n=document.createElementNS(ns,tag);Object.entries(attrs||{}).forEach(([k,v])=>n.setAttribute(k,v));parent.appendChild(n);return n}
+const defs=el("defs",{});const marker=el("marker",{id:"arrow",viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);el("path",{d:"M 0 0 L 10 5 L 0 10 z",fill:"#34445c"},marker);
+routes.forEach((r,ri)=>{
+  const pts=r.stations.map((s,i)=>[startX+i*gap,r.y]);
+  el("path",{class:"route-line",d:"M "+pts.map(p=>p.join(" ")).join(" L "),stroke:r.color});
+  el("text",{class:"route-label",x:20,y:r.y+5},svg).textContent=r.name;
+  r.stations.forEach((s,i)=>{
+    const x=startX+i*gap,y=r.y; pos[s]=pos[s]||{x,y,routes:[]}; pos[s].routes.push(r.name);
+    const c=el("circle",{class:"station"+(major.has(s)?" major":""),cx:x,cy:y,r:major.has(s)?12:9,stroke:r.color,"data-name":s});
+    const label=el("text",{class:"station-label",x:x-20,y:y-18},svg);label.textContent=s;
+    c.addEventListener("click",()=>showStation(s,c));
+  });
+});
+const depGroup=el("g",{id:"deps"});
+deps.forEach(([a,b,desc],i)=>{
+  const p1=pos[a],p2=pos[b]; if(!p1||!p2)return;
+  const dx=Math.abs(p2.x-p1.x), bend=Math.max(70,dx*.45), sweep=p1.y<p2.y?1:-1;
+  const d=`M ${p1.x} ${p1.y} C ${p1.x+bend} ${p1.y+sweep*42}, ${p2.x-bend} ${p2.y-sweep*42}, ${p2.x} ${p2.y}`;
+  const path=el("path",{class:"dep",d,"data-text":`${a} -> ${b}：${desc}`},depGroup);
+  path.addEventListener("click",()=>{document.querySelectorAll(".dep").forEach(x=>x.classList.remove("active"));path.classList.add("active");document.getElementById("infoTitle").textContent=`${a} -> ${b}`;document.getElementById("info").textContent=desc;});
+});
+document.getElementById("legend").innerHTML=routes.map(r=>`<div class="route"><span class="sw" style="background:${r.color}"></span>${r.name}</div>`).join("");
+document.getElementById("toggleDeps").addEventListener("change",e=>depGroup.style.display=e.target.checked?"block":"none");
+function showStation(name,node){
+  document.querySelectorAll(".station").forEach(x=>x.classList.remove("active"));node.classList.add("active");
+  const incoming=deps.filter(d=>d[1]===name).map(d=>d[0]), outgoing=deps.filter(d=>d[0]===name).map(d=>d[1]);
+  document.getElementById("infoTitle").textContent=name;
+  document.getElementById("info").innerHTML=`所在路线：${pos[name].routes.join("、")}<br>前置来源：${incoming.join("、")||"本路线内部推进"}<br>后续去向：${outgoing.join("、")||"继续沿本路线深化"}`;
+}
+</script>
+</body>
+</html>

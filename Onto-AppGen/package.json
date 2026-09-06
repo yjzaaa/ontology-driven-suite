@@ -1,0 +1,19 @@
+{
+  "name": "onto-appgen",
+  "version": "0.1.0",
+  "description": "Schema 驱动的应用生成器 —— 本体工作台 V3 落地（独立项目，不写入 DSH 源码）",
+  "type": "module",
+  "scripts": {
+    "dogfood": "tsx scripts/dogfood-self-app.mjs",
+    "verify:plugin": "tsx scripts/verify-plugin.mjs",
+    "start": "node app/app.cjs --port 4399"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0",
+    "vitest": "^5.0.0"
+  }
+}

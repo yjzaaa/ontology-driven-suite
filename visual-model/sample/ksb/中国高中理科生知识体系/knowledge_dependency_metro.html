@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中国高中理科生知识体系 - 地铁线路学习路径</title>
+<style>
+body{margin:0;background:#f6f8fb;color:#172033;font-family:"Microsoft YaHei",Arial,sans-serif}.head{height:72px;background:#fff;border-bottom:1px solid #dce2ec;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}h1{font-size:20px;margin:0}.sub{font-size:13px;color:#657287;margin-top:5px}.wrap{display:grid;grid-template-columns:1fr 300px;height:calc(100vh - 72px)}#stage{overflow:auto;background:linear-gradient(#f9fbfe,#f3f6fb)}aside{background:#fff;border-left:1px solid #dce2ec;padding:18px;overflow:auto}aside h2{font-size:16px;margin:0 0 10px}.small{font-size:12px;line-height:1.7;color:#657287}.route{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}.sw{width:22px;height:6px;border-radius:999px}svg{min-width:1450px;min-height:760px;display:block}.route-line{fill:none;stroke-width:10;stroke-linecap:round;opacity:.88}.station{fill:#fff;stroke-width:4;cursor:pointer}.station.major{stroke-width:6}.station-label{font-size:13px;fill:#1d2a3b;paint-order:stroke;stroke:#fff;stroke-width:4;stroke-linejoin:round}.route-label{font-size:15px;font-weight:700;fill:#26364a}.dep{fill:none;stroke:#34445c;stroke-width:2;stroke-dasharray:6 5;opacity:.46;marker-end:url(#arrow)}.dep:hover,.dep.active{opacity:1;stroke-width:3;stroke:#111827}.station.active{filter:drop-shadow(0 0 8px rgba(24,33,47,.35))}
+</style>
+</head>
+<body>
+<div class="head"><div><h1>中国高中理科生学习路径地铁图</h1><div class="sub">彩色线路表示学科主线；虚线贝塞尔箭头表示跨学科前后依赖</div></div><label style="font-size:13px"><input id="toggleDeps" type="checkbox" checked> 显示跨线依赖</label></div>
+<div class="wrap"><main id="stage"><svg id="map" viewBox="0 0 1450 760"></svg></main><aside><h2>线路说明</h2><div id="legend"></div><p class="small">建议从数学基础、物理力学、化学计量、生物细胞和英语语法起步，再推进综合模型、实验变量和考试输出。点击站点或依赖线查看说明。</p><h2 id="infoTitle">选择一个站点</h2><div id="info" class="small">地铁图用于展示“学科主线 + 跨线换乘”。它比完整依赖图更适合规划学习顺序。</div></aside></div>
+<script>
+const routes=[
+{name:"数学基础线",color:"#2f6fed",y:88,stations:["函数与映射","三角函数","不等式","导数","解析几何","概率统计","模型意识"]},
+{name:"物理模型线",color:"#15a36d",y:178,stations:["受力分析","牛顿定律","运动学","功和能","电场","电路","电磁感应"]},
+{name:"化学反应线",color:"#e4572e",y:268,stations:["物质的量","离子反应","氧化还原","化学平衡","电化学","化学实验操作","变量控制"]},
+{name:"生物生命线",color:"#8f5bd6",y:358,stations:["细胞结构","物质运输","酶与代谢","遗传规律","DNA表达","生命活动调节","生物实验设计"]},
+{name:"语文表达线",color:"#d99a00",y:448,stations:["审题","现代文阅读","材料整合","作文立意","论证结构","语言表达"]},
+{name:"英语阅读线",color:"#0f8b8d",y:538,stations:["词汇语法","长难句","阅读理解","完形填空","七选五","英语写作"]},
+{name:"通用能力线",color:"#c23b73",y:628,stations:["目标拆解","时间管理","图表解读","预习听课","复盘总结","错题系统","刷题策略","考试节奏","心理调节"]}
+];
+const major=new Set(["函数与映射","导数","牛顿定律","物质的量","化学平衡","遗传规律","审题","词汇语法","模型意识","复盘总结","考试节奏"]);
+const deps=[
+["函数与映射","导数","函数是导数、最值和变化率分析的对象"],
+["三角函数","运动学","周期与角度关系支撑物理运动模型"],
+["导数","功和能","变化率与面积思想支撑能量图像理解"],
+["解析几何","电场","坐标和曲线帮助理解电场、电势图像"],
+["概率统计","图表解读","统计思想支撑理综图表题"],
+["受力分析","牛顿定律","受力分析是牛顿定律应用入口"],
+["牛顿定律","模型意识","物理问题需要先抽象研究对象和约束"],
+["物质的量","化学平衡","计量关系是平衡计算基础"],
+["氧化还原","电化学","电化学本质上依赖电子转移"],
+["化学实验操作","变量控制","实验方案需要控制变量"],
+["遗传规律","概率统计","遗传题常需要概率组合思维"],
+["图表解读","生物实验设计","生物实验题大量依赖图表和变量判断"],
+["审题","考试节奏","准确识别任务要求决定考试分配"],
+["材料整合","英语写作","材料组织能力迁移到英语输出"],
+["词汇语法","长难句","词法句法是长难句分析基础"],
+["长难句","阅读理解","句子结构分析支撑篇章理解"],
+["目标拆解","时间管理","目标必须转化为可安排的时间任务"],
+["复盘总结","刷题策略","复盘决定刷题是否形成迁移"],
+["错题系统","复盘总结","错题记录为复盘提供素材"],
+["考试节奏","心理调节","节奏稳定有助于降低考试波动"]
+];
+const svg=document.getElementById("map"),ns="http://www.w3.org/2000/svg",startX=120,gap=155,pos={};
+function el(tag,attrs,parent=svg){const n=document.createElementNS(ns,tag);Object.entries(attrs||{}).forEach(([k,v])=>n.setAttribute(k,v));parent.appendChild(n);return n}
+const defs=el("defs",{}),marker=el("marker",{id:"arrow",viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);el("path",{d:"M 0 0 L 10 5 L 0 10 z",fill:"#34445c"},marker);
+routes.forEach(r=>{const pts=r.stations.map((s,i)=>[startX+i*gap,r.y]);el("path",{class:"route-line",d:"M "+pts.map(p=>p.join(" ")).join(" L "),stroke:r.color});el("text",{class:"route-label",x:20,y:r.y+5}).textContent=r.name;r.stations.forEach((s,i)=>{const x=startX+i*gap,y=r.y;pos[s]=pos[s]||{x,y,routes:[]};pos[s].routes.push(r.name);const c=el("circle",{class:"station"+(major.has(s)?" major":""),cx:x,cy:y,r:major.has(s)?12:9,stroke:r.color,"data-name":s});el("text",{class:"station-label",x:x-20,y:y-18}).textContent=s;c.addEventListener("click",()=>showStation(s,c))})});
+const depGroup=el("g",{id:"deps"});
+deps.forEach(([a,b,desc])=>{const p1=pos[a],p2=pos[b];if(!p1||!p2)return;const bend=Math.max(70,Math.abs(p2.x-p1.x)*.45),sweep=p1.y<p2.y?1:-1,d=`M ${p1.x} ${p1.y} C ${p1.x+bend} ${p1.y+sweep*42}, ${p2.x-bend} ${p2.y-sweep*42}, ${p2.x} ${p2.y}`;const path=el("path",{class:"dep",d},depGroup);path.addEventListener("click",()=>{document.querySelectorAll(".dep").forEach(x=>x.classList.remove("active"));path.classList.add("active");document.getElementById("infoTitle").textContent=`${a} -> ${b}`;document.getElementById("info").textContent=desc})});
+document.getElementById("legend").innerHTML=routes.map(r=>`<div class="route"><span class="sw" style="background:${r.color}"></span>${r.name}</div>`).join("");
+document.getElementById("toggleDeps").addEventListener("change",e=>depGroup.style.display=e.target.checked?"block":"none");
+function showStation(name,node){document.querySelectorAll(".station").forEach(x=>x.classList.remove("active"));node.classList.add("active");const incoming=deps.filter(d=>d[1]===name).map(d=>d[0]),outgoing=deps.filter(d=>d[0]===name).map(d=>d[1]);document.getElementById("infoTitle").textContent=name;document.getElementById("info").innerHTML=`所在路线：${pos[name].routes.join("、")}<br>前置来源：${incoming.join("、")||"本路线内部推进"}<br>后续去向：${outgoing.join("、")||"继续沿本路线深化"}`}
+</script>
+</body>
+</html>

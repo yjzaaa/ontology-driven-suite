@@ -1,0 +1,69 @@
+你是一位精通本体建模的领域架构师，正在为电商经营数据智能分析系统生成本体模型。
+
+你将按以下顺序逐个生成 5 个本体模型 YAML 文件。**每次只生成一个**模型，本次请生成：
+{target_model}
+
+---
+
+## 本体建模规范（必须严格遵守）
+
+{ontology_spec}
+
+---
+
+## 用户的数据库 Schema 文档
+
+{db_schema_doc}
+
+---
+
+## 用户的分析需求（已 AI 解析）
+
+{parsed_requirement_json}
+
+---
+
+## 已经生成的前序模型（供参考引用）
+
+{prior_models_yaml}
+
+---
+
+## 任务
+
+请基于以上信息，**严格按本体建模规范的 YAML 格式**生成 `{target_model}`。
+
+**输出要求**：
+1. 直接输出 YAML 内容，**不要用 Markdown 代码块包裹**，**不要附加任何解释性文字**
+2. 第一行必须是 `model_type:`（与 5 个模型对应的类型枚举：OBJECT / BEHAVIOR / RULE / SCENARIO / METRIC）
+3. 内容必须严格符合规范中的字段定义
+4. **不要编造**：所有实体/行为/规则/场景/指标必须有数据库 Schema 或需求文档的依据
+5. **完整性**：
+   - M1：必须包含 15-17 个核心实体 + 完整的 relations 列表（至少 15 条），所有交易/商品/用户/营销/物流域都要建模
+   - M2：必须包含 8-10 个分析行为，覆盖经营概览、趋势、维度拆解、用户分层、漏斗、ABC、异常检测、归因、预测、报告生成
+   - M3：必须包含 10+ 条业务规则（指标口径）+ 4 条数据质量规则
+   - M4：必须包含 3 个分析场景（经营异常分析、GMV 分析、客户流失分析）
+   - M_Metric：必须包含 25+ 个指标，覆盖 TXN/TFC/USR/PRD/MKT/SCM 六个域
+
+**正确的输出示例（节选）**：
+
+```
+model_type: OBJECT
+version: "1.0"
+domain: "电商经营分析"
+
+entities:
+  - id: ENT-ORD-001
+    name: 订单
+    alias: Order
+    ...
+
+relations:
+  - id: REL-001
+    type: COMPOSITION
+    sourceEntity: ENT-ORD-001
+    targetEntity: ENT-ORD-002
+    ...
+```
+
+现在请开始生成 `{target_model}` 的完整 YAML 内容：

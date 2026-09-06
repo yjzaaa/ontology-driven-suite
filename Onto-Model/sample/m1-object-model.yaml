@@ -1,0 +1,227 @@
+# M1 聚合对象模型 - 合同管理
+model_type: AGGREGATE_OBJECT
+version: "1.1"
+domain: "合同管理"
+
+aggregates:
+  # ══════════════════════════════════════════════════════════
+  # 合同聚合：以合同头为聚合根，包含付款条款明细及结算汇总
+  # ══════════════════════════════════════════════════════════
+  - id: AGG-CONTRACT
+    name: 合同聚合
+    rootEntity:
+      alias: Contract
+      name: 合同基本信息
+      lifecycle: [生效, 作废]
+      attributes:
+        - name: contractNo
+          label: 合同编号
+          type: String
+          required: true
+          unique: true
+        - name: contractName
+          label: 合同名称
+          type: String
+          required: true
+        - name: status
+          label: 合同状态
+          type: Enum
+          enumValues: [生效, 作废]
+          required: true
+          defaultValue: 生效
+        - name: productId
+          label: 所属产品
+          type: Reference
+          refEntity: Product
+          required: true
+        - name: customerId
+          label: 所属客户
+          type: Reference
+          refEntity: Customer
+          required: true
+        - name: deptId
+          label: 所属部门
+          type: Reference
+          refEntity: Department
+          required: true
+        - name: ownerId
+          label: 责任人
+          type: Reference
+          refEntity: Employee
+          required: true
+        - name: signDate
+          label: 合同签订时间
+          type: Date
+          required: true
+        - name: totalAmount
+          label: 合同总金额
+          type: Decimal
+          required: true
+        - name: purchaseAmount
+          label: 对外采购金额
+          type: Decimal
+          required: true
+        - name: taxRate
+          label: 合同税率
+          type: Decimal
+          required: true
+        - name: invoicedAmountTotal
+          label: 累计开票金额
+          type: Decimal
+          defaultValue: 0
+        - name: receivedAmountTotal
+          label: 累计收款金额
+          type: Decimal
+          defaultValue: 0
+        - name: invoiceStatus
+          label: 开票状态
+          type: Enum
+          enumValues: [未开票, 部分开票, 已开票]
+          defaultValue: 未开票
+        - name: receiptStatus
+          label: 收款状态
+          type: Enum
+          enumValues: [未收款, 部分收款, 已收款]
+          defaultValue: 未收款
+      compositions:
+        - alias: paymentTerms
+          targetEntity: PaymentTerm
+          name: 付款条款明细
+          cardinality: ONE_OR_MORE
+          cascade: ALL
+
+    internalEntities:
+      - alias: PaymentTerm
+        name: 合同付款条款
+        attributes:
+          - name: stageNo
+            label: 付款阶段编号
+            type: String
+            required: true
+          - name: stageName
+            label: 付款阶段名称
+            type: String
+            required: true
+          - name: ratio
+            label: 付款比例
+            type: Decimal
+            required: true
+        constraints:
+          - expression: "ratio > 0 AND ratio <= 1"
+            violationMessage: "付款比例必须在0到1之间"
+
+    aggregateConstraints:
+      - name: 付款比例总和校验
+        expression: "sum(Contract.paymentTerms.ratio) == 1.0"
+        enforcedAt: PERSIST
+      - name: 付款阶段编号唯一
+        expression: "unique(Contract.paymentTerms.stageNo)"
+        enforcedAt: PERSIST
+      - name: 合同金额边界校验
+        expression: "purchaseAmount >= 0 AND purchaseAmount <= totalAmount"
+        enforcedAt: PERSIST
+      - name: 开票累计金额校验
+        expression: "invoicedAmountTotal >= 0 AND invoicedAmountTotal <= totalAmount"
+        enforcedAt: PERSIST
+      - name: 收款累计金额校验
+        expression: "receivedAmountTotal >= 0 AND receivedAmountTotal <= invoicedAmountTotal"
+        enforcedAt: PERSIST
+      - name: 合同税率范围校验
+        expression: "taxRate >= 0 AND taxRate <= 1"
+        enforcedAt: PERSIST
+
+  # ══════════════════════════════════════════════════════════
+  # 开票聚合：以开票详情为根，包含与付款阶段的映射及收款状态
+  # ══════════════════════════════════════════════════════════
+  - id: AGG-INVOICE
+    name: 开票聚合
+    rootEntity:
+      alias: Invoice
+      name: 开票明细
+      attributes:
+        - name: invoiceNo
+          label: 开票编号
+          type: String
+          required: true
+          unique: true
+        - name: contractId
+          label: 对应合同
+          type: Reference
+          refEntity: Contract
+          required: true
+        - name: amount
+          label: 开票金额
+          type: Decimal
+          required: true
+        - name: taxRate
+          label: 开票税率
+          type: Decimal
+          required: true
+        - name: invoiceDate
+          label: 开票时间
+          type: DateTime
+          required: true
+        - name: status
+          label: 开票状态
+          type: Enum
+          enumValues: [已开票, 已收款, 已冲销]
+          required: true
+          defaultValue: 已开票
+        - name: isReceived
+          label: 是否收款
+          type: Boolean
+          defaultValue: false
+        - name: receivedDate
+          label: 收款时间
+          type: DateTime
+      compositions:
+        - alias: stageMappings
+          targetEntity: InvoiceTermMapping
+          name: 开票对应付款阶段
+          cardinality: ONE_OR_MORE
+
+    internalEntities:
+      - alias: InvoiceTermMapping
+        name: 开票与付款阶段对应关系
+        attributes:
+          - name: stageNo
+            label: 付款阶段编号
+            type: String
+            required: true
+          - name: stageName
+            label: 付款阶段名称
+            type: String
+
+    aggregateConstraints:
+      - name: 开票金额必须大于零
+        expression: "amount > 0"
+        enforcedAt: PERSIST
+      - name: 开票税率范围校验
+        expression: "taxRate >= 0 AND taxRate <= 1"
+        enforcedAt: PERSIST
+      - name: 开票阶段编号唯一
+        expression: "unique(Invoice.stageMappings.stageNo)"
+        enforcedAt: PERSIST
+      - name: 收款状态与收款时间一致
+        expression: "IF Invoice.isReceived == true THEN Invoice.receivedDate.isNotNull()"
+        enforcedAt: PERSIST
+      - name: 开票状态与收款标记一致
+        expression: "IF Invoice.status == '已收款' THEN Invoice.isReceived == true"
+        enforcedAt: PERSIST
+
+# ══════════════════════════════════════════════════════════
+# 主数据模型（Master Data）
+# ══════════════════════════════════════════════════════════
+masterEntities:
+  - alias: Product
+    name: 产品信息
+    attributes: [productNo, productType, productName]
+  - alias: Customer
+    name: 客户信息
+    attributes: [customerNo, customerType, customerName]
+  - alias: Department
+    name: 部门信息
+    attributes: [deptNo, deptName]
+  - alias: Employee
+    name: 人员信息
+    attributes: [employeeNo, employeeName, deptId]

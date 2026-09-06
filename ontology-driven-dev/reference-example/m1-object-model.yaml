@@ -1,0 +1,737 @@
+aggregate_associations:
+- associationType: REFERENCE
+  cardinality: MANY_TO_ONE
+  id: ASSOC-CONTRACT-PRODUCT
+  referenceField: productId
+  sourceAggregate: AGG-CONTRACT-001
+  sourceRole: 所属产品
+  targetAggregate: AGG-PRODUCT-001
+  targetRole: 产品合同
+- associationType: REFERENCE
+  cardinality: MANY_TO_ONE
+  id: ASSOC-CONTRACT-CUSTOMER
+  referenceField: customerId
+  sourceAggregate: AGG-CONTRACT-001
+  sourceRole: 所属客户
+  targetAggregate: AGG-CUSTOMER-001
+  targetRole: 客户合同
+- associationType: REFERENCE
+  cardinality: MANY_TO_ONE
+  id: ASSOC-CONTRACT-DEPARTMENT
+  referenceField: departmentId
+  sourceAggregate: AGG-CONTRACT-001
+  sourceRole: 归属部门
+  targetAggregate: AGG-DEPARTMENT-001
+  targetRole: 部门合同
+- associationType: REFERENCE
+  cardinality: MANY_TO_ONE
+  id: ASSOC-CONTRACT-EMPLOYEE
+  referenceField: ownerId
+  sourceAggregate: AGG-CONTRACT-001
+  sourceRole: 责任人
+  targetAggregate: AGG-EMPLOYEE-001
+  targetRole: 负责合同
+- associationType: REFERENCE
+  cardinality: MANY_TO_ONE
+  id: ASSOC-DEPARTMENT-EMPLOYEE
+  referenceField: departmentId
+  sourceAggregate: AGG-EMPLOYEE-001
+  sourceRole: 所属部门
+  targetAggregate: AGG-DEPARTMENT-001
+  targetRole: 部门人员
+- associationType: REFERENCE
+  cardinality: ONE_TO_MANY
+  id: ASSOC-CONTRACT-INVOICE
+  referenceField: contractId
+  sourceAggregate: AGG-CONTRACT-001
+  sourceRole: 产生开票
+  targetAggregate: AGG-INVOICE-001
+  targetRole: 所属合同
+- associationType: REFERENCE
+  cardinality: ONE_TO_MANY
+  id: ASSOC-CONTRACT-RECEIPT
+  referenceField: contractId
+  sourceAggregate: AGG-CONTRACT-001
+  sourceRole: 对应收款
+  targetAggregate: AGG-RECEIPT-001
+  targetRole: 所属合同
+- associationType: REFERENCE
+  cardinality: ONE_TO_MANY
+  id: ASSOC-INVOICE-RECEIPT
+  referenceField: invoiceId
+  sourceAggregate: AGG-INVOICE-001
+  sourceRole: 对应收款
+  targetAggregate: AGG-RECEIPT-001
+  targetRole: 所属开票
+aggregates:
+- aggregateType: AGGREGATE_ROOT
+  id: AGG-PRODUCT-001
+  rootEntity:
+    alias: Product
+    attributes:
+    - label: 产品编号
+      name: productId
+      required: true
+      type: String
+      unique: true
+    - dictionaryRef:
+        dictionaryId: DICT-PRODUCT-TYPE
+        typeCode: PRODUCT_TYPE
+      label: 产品类型
+      name: productType
+      required: true
+      type: DictionaryRef
+    - label: 产品名称
+      name: productName
+      required: true
+      type: String
+    description: 产品主数据，本系统维护，被合同引用
+    lifecycle:
+    - 在用
+    - 停用
+    name: 产品
+    tags:
+    - 主数据
+- aggregateType: AGGREGATE_ROOT
+  id: AGG-CUSTOMER-001
+  rootEntity:
+    alias: Customer
+    attributes:
+    - label: 客户编号
+      name: customerId
+      required: true
+      type: String
+      unique: true
+    - dictionaryRef:
+        dictionaryId: DICT-CUSTOMER-TYPE
+        typeCode: CUSTOMER_TYPE
+      label: 客户类型
+      name: customerType
+      required: true
+      type: DictionaryRef
+    - label: 客户名称
+      name: customerName
+      required: true
+      type: String
+    description: 客户主数据，本系统维护，被合同引用
+    lifecycle:
+    - 在用
+    - 停用
+    name: 客户
+    tags:
+    - 主数据
+- aggregateType: AGGREGATE_ROOT
+  id: AGG-DEPARTMENT-001
+  rootEntity:
+    alias: Department
+    attributes:
+    - label: 部门编号
+      name: departmentId
+      required: true
+      type: String
+      unique: true
+    - label: 部门名称
+      name: departmentName
+      required: true
+      type: String
+    description: 组织主数据，本系统维护，被人员和合同引用
+    lifecycle:
+    - 在用
+    - 停用
+    name: 部门
+    tags:
+    - 主数据
+- aggregateType: AGGREGATE_ROOT
+  id: AGG-EMPLOYEE-001
+  rootEntity:
+    alias: Employee
+    attributes:
+    - label: 人员编号
+      name: employeeId
+      required: true
+      type: String
+      unique: true
+    - label: 人员名称
+      name: employeeName
+      required: true
+      type: String
+    - label: 所属部门
+      name: departmentId
+      required: true
+      targetAggregate: AGG-DEPARTMENT-001
+      type: AggregateRootRef
+    description: 人员主数据，本系统维护，被合同责任人引用
+    lifecycle:
+    - 在用
+    - 停用
+    name: 人员
+    tags:
+    - 主数据
+- aggregateType: AGGREGATE_ROOT
+  entities:
+  - alias: PaymentStage
+    attributes:
+    - label: 付款阶段编号
+      name: stageId
+      required: true
+      type: String
+    - label: 付款阶段名称
+      name: stageName
+      required: true
+      type: String
+    - label: 付款比例（百分比）
+      name: payRatio
+      refRules:
+      - description: 付款比例在 0 到 100 之间
+        enforcedAt: ALWAYS
+        expression: value > 0 AND value <= 100
+        name: 付款比例合法范围
+        violationMessage: 付款比例应在 0 到 100 之间
+      required: true
+      type: Decimal
+    - description: 派生字段，合同总金额乘以付款比例
+      label: 阶段应付金额
+      name: stageAmount
+      required: true
+      type: Money
+    - defaultValue: 未开票
+      description: 派生字段，由开票分摊累计金额判定
+      enumValues:
+      - 未开票
+      - 部分开票
+      - 已足额开票
+      label: 阶段开票状态
+      name: invoiceStatus
+      required: true
+      type: Enum
+    cardinality: ONE_OR_MORE
+    cascadeDelete: true
+    description: 合同付款阶段明细
+    localId: stageId
+    name: 付款阶段
+  id: AGG-CONTRACT-001
+  invariants:
+  - enforcedAt: ALWAYS
+    expression: purchaseAmount <= totalAmount
+    name: 采购金额不超过合同金额
+    violationMessage: 对外采购金额不得大于合同总金额
+  - enforcedAt: ON_CREATE
+    expression: SUM(stages.payRatio) == 100
+    name: 付款比例合计等于100
+    violationMessage: 付款阶段付款比例合计必须等于 100
+  rootEntity:
+    alias: Contract
+    attributes:
+    - label: 合同编号
+      name: contractNo
+      required: true
+      type: String
+      unique: true
+    - label: 合同名称
+      name: contractName
+      refRules:
+      - description: 合同名称最多 100 个字符
+        enforcedAt: ALWAYS
+        expression: LENGTH(value) <= 100
+        name: 合同名称长度限制
+        violationMessage: 合同名称不能超过 100 个字符
+      required: true
+      type: String
+    - label: 所属产品
+      name: productId
+      required: true
+      targetAggregate: AGG-PRODUCT-001
+      type: AggregateRootRef
+    - label: 所属客户
+      name: customerId
+      required: true
+      targetAggregate: AGG-CUSTOMER-001
+      type: AggregateRootRef
+    - label: 所属部门
+      name: departmentId
+      required: true
+      targetAggregate: AGG-DEPARTMENT-001
+      type: AggregateRootRef
+    - dictionaryRef:
+        dictionaryId: DICT-CONTRACT-TYPE
+        typeCode: CONTRACT_TYPE
+      label: 合同类型
+      name: contractType
+      required: true
+      type: DictionaryRef
+    - label: 合同签订时间
+      name: signDate
+      required: true
+      type: Date
+    - label: 责任人
+      name: ownerId
+      required: true
+      targetAggregate: AGG-EMPLOYEE-001
+      type: AggregateRootRef
+    - label: 合同总金额（含税）
+      name: totalAmount
+      refRules:
+      - description: 合同总金额必须大于 0
+        enforcedAt: ALWAYS
+        expression: value > 0
+        name: 合同总金额必须为正数
+        violationMessage: 合同总金额必须大于 0
+      required: true
+      type: Money
+    - label: 对外采购金额（含税）
+      name: purchaseAmount
+      refRules:
+      - description: 对外采购金额不能小于 0
+        enforcedAt: ALWAYS
+        expression: value >= 0
+        name: 采购金额非负
+        violationMessage: 对外采购金额不能小于 0
+      required: true
+      type: Money
+    - label: 合同税率
+      name: taxRate
+      refRules:
+      - description: 税率取值在 0 到 1 之间
+        enforcedAt: ALWAYS
+        expression: value >= 0 AND value <= 1
+        name: 税率合法范围
+        violationMessage: 税率取值应在 0 到 1 之间
+      required: true
+      type: Decimal
+    - defaultValue: 草稿
+      enumValues:
+      - 草稿
+      - 待财务经理审批
+      - 待总经理审批
+      - 已纳入管理
+      - 已结清
+      - 已驳回
+      - 已作废
+      - 已归档
+      label: 登记管理状态
+      name: status
+      required: true
+      type: Enum
+    - label: 登记时间
+      name: registeredAt
+      required: true
+      type: DateTime
+    - label: 登记人
+      name: registrantId
+      required: true
+      targetAggregate: AGG-EMPLOYEE-001
+      type: AggregateRootRef
+    description: 对外销售产生的合同签订信息，包含合同基本信息和付款条款明细
+    lifecycle:
+    - 草稿
+    - 待财务经理审批
+    - 待总经理审批
+    - 已纳入管理
+    - 已结清
+    - 已驳回
+    - 已作废
+    - 已归档
+    name: 合同
+    tags:
+    - 核心域
+- aggregateType: AGGREGATE_ROOT
+  entities:
+  - alias: InvoiceStageAllocation
+    attributes:
+    - description: 聚合内唯一标识
+      label: 分摊标识
+      name: allocationId
+      required: true
+      type: String
+    - label: 对应合同
+      name: contractId
+      required: true
+      targetAggregate: AGG-CONTRACT-001
+      type: AggregateRootRef
+    - description: 付款阶段编号，配合 contractId 定位
+      label: 对应付款阶段
+      name: stageId
+      required: true
+      type: String
+    - label: 分摊金额
+      name: allocatedAmount
+      refRules:
+      - description: 分摊金额必须大于 0
+        enforcedAt: ALWAYS
+        expression: value > 0
+        name: 分摊金额必须为正数
+        violationMessage: 分摊金额必须大于 0
+      required: true
+      type: Money
+    cardinality: ONE_OR_MORE
+    cascadeDelete: true
+    description: 开票与付款阶段之间的多对多分摊关系
+    localId: allocationId
+    name: 开票付款阶段分摊
+  id: AGG-INVOICE-001
+  invariants:
+  - enforcedAt: ALWAYS
+    expression: SUM(allocations.allocatedAmount) == invoiceAmount
+    name: 开票分摊金额平衡
+    violationMessage: 同一开票的分摊金额合计必须等于开票金额
+  - enforcedAt: ALWAYS
+    expression: receivedAmount >= 0 AND receivedAmount <= invoiceAmount
+    name: 已收款金额范围
+    violationMessage: 已收款金额应在 0 到开票金额之间
+  - enforcedAt: ALWAYS
+    expression: IF receivedFlag == true THEN receivedAmount == invoiceAmount AND receivedDate
+      != null
+    name: 收款完成信息一致
+    violationMessage: 是否收款为是时，已收款金额须等于开票金额且完成时间非空
+  rootEntity:
+    alias: Invoice
+    attributes:
+    - label: 开票编号
+      name: invoiceNo
+      required: true
+      type: String
+      unique: true
+    - label: 对应合同
+      name: contractId
+      required: true
+      targetAggregate: AGG-CONTRACT-001
+      type: AggregateRootRef
+    - label: 开票金额（含税）
+      name: invoiceAmount
+      refRules:
+      - description: 开票金额必须大于 0
+        enforcedAt: ALWAYS
+        expression: value > 0
+        name: 开票金额必须为正数
+        violationMessage: 开票金额必须大于 0
+      required: true
+      type: Money
+    - label: 开票税率
+      name: invoiceTaxRate
+      refRules:
+      - description: 开票税率取值在 0 到 1 之间
+        enforcedAt: ALWAYS
+        expression: value >= 0 AND value <= 1
+        name: 开票税率合法范围
+        violationMessage: 开票税率应在 0 到 1 之间
+      required: true
+      type: Decimal
+    - label: 开票时间
+      name: invoiceDate
+      required: true
+      type: Date
+    - defaultValue: false
+      label: 是否收款
+      name: receivedFlag
+      required: true
+      type: Boolean
+    - defaultValue: 0
+      description: 由有效收款累计得到
+      label: 已收款金额
+      name: receivedAmount
+      required: true
+      type: Money
+    - description: 全部收齐后由系统更新
+      label: 收款完成时间
+      name: receivedDate
+      required: false
+      type: DateTime
+    - defaultValue: 草稿
+      enumValues:
+      - 草稿
+      - 待财务经理审批
+      - 已批准
+      - 已驳回
+      - 已作废
+      label: 开票审批状态
+      name: approvalStatus
+      required: true
+      type: Enum
+    description: 针对一个合同登记的开票业务记录，通过分摊关系覆盖一个或多个付款阶段
+    lifecycle:
+    - 草稿
+    - 待财务经理审批
+    - 已批准
+    - 已驳回
+    - 已作废
+    name: 开票
+    tags:
+    - 核心域
+- aggregateType: AGGREGATE_ROOT
+  id: AGG-RECEIPT-001
+  rootEntity:
+    alias: Receipt
+    attributes:
+    - label: 收款编号
+      name: receiptNo
+      required: true
+      type: String
+      unique: true
+    - label: 对应合同
+      name: contractId
+      required: true
+      targetAggregate: AGG-CONTRACT-001
+      type: AggregateRootRef
+    - label: 对应开票
+      name: invoiceId
+      required: true
+      targetAggregate: AGG-INVOICE-001
+      type: AggregateRootRef
+    - label: 收款金额
+      name: receiptAmount
+      refRules:
+      - description: 收款金额必须大于 0
+        enforcedAt: ALWAYS
+        expression: value > 0
+        name: 收款金额必须为正数
+        violationMessage: 收款金额必须大于 0
+      required: true
+      type: Money
+    - label: 收款时间
+      name: receiptTime
+      required: true
+      type: DateTime
+    - dictionaryRef:
+        dictionaryId: DICT-RECEIPT-METHOD
+        typeCode: RECEIPT_METHOD
+      label: 收款方式
+      name: receiptMethod
+      required: false
+      type: DictionaryRef
+    - defaultValue: 已登记
+      enumValues:
+      - 已登记
+      - 已冲销
+      label: 收款状态
+      name: status
+      required: true
+      type: Enum
+    - label: 备注
+      name: remark
+      required: false
+      type: String
+    description: 独立记录客户针对具体合同和开票的每笔收款
+    lifecycle:
+    - 已登记
+    - 已冲销
+    name: 收款
+    tags:
+    - 核心域
+- aggregateType: AGGREGATE_ROOT
+  id: AGG-APPROVAL-001
+  rootEntity:
+    alias: ApprovalRecord
+    attributes:
+    - label: 审批记录编号
+      name: approvalRecordNo
+      required: true
+      type: String
+      unique: true
+    - dictionaryRef:
+        dictionaryId: DICT-BIZ-TYPE
+        typeCode: BIZ_TYPE
+      label: 业务类型
+      name: bizType
+      required: true
+      type: DictionaryRef
+    - label: 业务单据编号
+      name: bizNo
+      required: true
+      type: String
+    - dictionaryRef:
+        dictionaryId: DICT-APPROVAL-NODE
+        typeCode: APPROVAL_NODE
+      label: 审批节点
+      name: approvalNode
+      required: true
+      type: DictionaryRef
+    - description: 引用 M5 角色 roleId
+      label: 审批角色
+      name: approvalRoleId
+      required: true
+      type: String
+    - label: 审批人员
+      name: approverId
+      required: true
+      targetAggregate: AGG-EMPLOYEE-001
+      type: AggregateRootRef
+    - dictionaryRef:
+        dictionaryId: DICT-APPROVAL-RESULT
+        typeCode: APPROVAL_RESULT
+      label: 审批结果
+      name: approvalResult
+      required: true
+      type: DictionaryRef
+    - label: 审批意见
+      name: approvalComment
+      required: false
+      type: String
+    - label: 审批时间
+      name: approvalTime
+      required: true
+      type: DateTime
+    description: 记录合同登记审批和开票审批的人工处理历史
+    lifecycle:
+    - 已记录
+    name: 审批记录
+    tags:
+    - 支撑域
+associations:
+- cardinality: MANY_TO_ONE
+  cascadeDelete: false
+  referenceField: productId
+  source: AGG-CONTRACT-001
+  sourceRole: 所属产品
+  target: AGG-PRODUCT-001
+  targetRole: 产品合同
+  type: reference
+- cardinality: MANY_TO_ONE
+  cascadeDelete: false
+  referenceField: customerId
+  source: AGG-CONTRACT-001
+  sourceRole: 所属客户
+  target: AGG-CUSTOMER-001
+  targetRole: 客户合同
+  type: reference
+- cardinality: MANY_TO_ONE
+  cascadeDelete: false
+  referenceField: departmentId
+  source: AGG-CONTRACT-001
+  sourceRole: 归属部门
+  target: AGG-DEPARTMENT-001
+  targetRole: 部门合同
+  type: reference
+- cardinality: MANY_TO_ONE
+  cascadeDelete: false
+  referenceField: ownerId
+  source: AGG-CONTRACT-001
+  sourceRole: 责任人
+  target: AGG-EMPLOYEE-001
+  targetRole: 负责合同
+  type: reference
+- cardinality: MANY_TO_ONE
+  cascadeDelete: false
+  referenceField: departmentId
+  source: AGG-EMPLOYEE-001
+  sourceRole: 所属部门
+  target: AGG-DEPARTMENT-001
+  targetRole: 部门人员
+  type: reference
+- cardinality: ONE_TO_MANY
+  cascadeDelete: false
+  referenceField: contractId
+  source: AGG-CONTRACT-001
+  sourceRole: 产生开票
+  target: AGG-INVOICE-001
+  targetRole: 所属合同
+  type: reference
+- cardinality: ONE_TO_MANY
+  cascadeDelete: false
+  referenceField: contractId
+  source: AGG-CONTRACT-001
+  sourceRole: 对应收款
+  target: AGG-RECEIPT-001
+  targetRole: 所属合同
+  type: reference
+- cardinality: ONE_TO_MANY
+  cascadeDelete: false
+  referenceField: invoiceId
+  source: AGG-INVOICE-001
+  sourceRole: 对应收款
+  target: AGG-RECEIPT-001
+  targetRole: 所属开票
+  type: reference
+data_dictionaries:
+- id: DICT-CONTRACT-TYPE
+  name: 合同类型字典
+  types:
+  - items:
+    - code: PRODUCT
+      enabled: true
+      label: 产品合同
+      sortOrder: 10
+    - code: SERVICE
+      enabled: true
+      label: 服务合同
+      sortOrder: 20
+    - code: INTEGRATION
+      enabled: true
+      label: 集成合同
+      sortOrder: 30
+    typeCode: CONTRACT_TYPE
+    typeName: 合同类型
+- id: DICT-RECEIPT-METHOD
+  name: 收款方式字典
+  types:
+  - items:
+    - code: BANK
+      enabled: true
+      label: 银行转账
+      sortOrder: 10
+    - code: BILL
+      enabled: true
+      label: 票据
+      sortOrder: 20
+    - code: OTHER
+      enabled: true
+      label: 其他
+      sortOrder: 30
+    typeCode: RECEIPT_METHOD
+    typeName: 收款方式
+- id: DICT-APPROVAL-NODE
+  name: 审批节点字典
+  types:
+  - items:
+    - code: FINANCE_MANAGER
+      enabled: true
+      label: 财务经理审批
+      sortOrder: 10
+    - code: GENERAL_MANAGER
+      enabled: true
+      label: 总经理审批
+      sortOrder: 20
+    typeCode: APPROVAL_NODE
+    typeName: 审批节点
+- id: DICT-APPROVAL-RESULT
+  name: 审批结果字典
+  types:
+  - items:
+    - code: APPROVE
+      enabled: true
+      label: 通过
+      sortOrder: 10
+    - code: REJECT
+      enabled: true
+      label: 驳回
+      sortOrder: 20
+    typeCode: APPROVAL_RESULT
+    typeName: 审批结果
+- id: DICT-BIZ-TYPE
+  name: 审批业务类型字典
+  types:
+  - items:
+    - code: CONTRACT_REG
+      enabled: true
+      label: 合同登记
+      sortOrder: 10
+    - code: INVOICE
+      enabled: true
+      label: 开票
+      sortOrder: 20
+    typeCode: BIZ_TYPE
+    typeName: 业务类型
+- id: DICT-PRODUCT-TYPE
+  name: 产品类型字典
+  types:
+  - items: []
+    typeCode: PRODUCT_TYPE
+    typeName: 产品类型
+- id: DICT-CUSTOMER-TYPE
+  name: 客户类型字典
+  types:
+  - items: []
+    typeCode: CUSTOMER_TYPE
+    typeName: 客户类型
+domain: 销售合同执行管理
+model_type: OBJECT
+version: '2.1'

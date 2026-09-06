@@ -1,0 +1,269 @@
+<svg width="1400" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景和标题 -->
+  <rect width="1400" height="1000" fill="#ffffff" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <!-- 标题 -->
+  <text x="700" y="40" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#212121">
+    企业数字化转型系统架构图 (MBSE视图)
+  </text>
+  <text x="700" y="65" text-anchor="middle" font-family="Arial" font-size="14" fill="#666666">
+    基于模型驱动系统工程的数字化转型复杂系统建模
+  </text>
+
+  <!-- 战略层 (Strategy Layer) -->
+  <rect x="100" y="100" width="1200" height="120" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="8"/>
+  <text x="120" y="125" font-family="Arial" font-size="14" font-weight="bold" fill="#3f51b5">«requirement»</text>
+  <text x="120" y="145" font-family="Arial" font-size="18" font-weight="bold" fill="#212121">战略需求层 (Strategic Requirements Layer)</text>
+  
+  <!-- 战略需求组件 -->
+  <rect x="150" y="160" width="200" height="50" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="4"/>
+  <text x="160" y="175" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+  <text x="160" y="190" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">REQ-001</text>
+  <text x="160" y="205" font-family="Arial" font-size="12" fill="#424242">数字化转型战略愿景</text>
+
+  <rect x="400" y="160" width="200" height="50" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="4"/>
+  <text x="410" y="175" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+  <text x="410" y="190" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">REQ-002</text>
+  <text x="410" y="205" font-family="Arial" font-size="12" fill="#424242">商业模式创新需求</text>
+
+  <rect x="650" y="160" width="200" height="50" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="4"/>
+  <text x="660" y="175" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+  <text x="660" y="190" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">REQ-003</text>
+  <text x="660" y="205" font-family="Arial" font-size="12" fill="#424242">组织能力重构需求</text>
+
+  <rect x="900" y="160" width="200" height="50" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" rx="4"/>
+  <text x="910" y="175" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«requirement»</text>
+  <text x="910" y="190" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">REQ-004</text>
+  <text x="910" y="205" font-family="Arial" font-size="12" fill="#424242">数据驱动运营需求</text>
+
+  <!-- 功能层 (Functional Layer) -->
+  <rect x="100" y="250" width="1200" height="180" fill="#f1f8e9" stroke="#4caf50" stroke-width="2" rx="8"/>
+  <text x="120" y="275" font-family="Arial" font-size="14" font-weight="bold" fill="#4caf50">«function»</text>
+  <text x="120" y="295" font-family="Arial" font-size="18" font-weight="bold" fill="#212121">功能能力层 (Functional Capability Layer)</text>
+  <text x="120" y="315" font-family="Arial" font-size="14" fill="#424242">数字化转型三大核心要素实现</text>
+
+  <!-- 连接能力 -->
+  <rect x="150" y="330" width="300" height="80" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="6"/>
+  <text x="160" y="345" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«function»</text>
+  <text x="160" y="365" font-family="Arial" font-size="16" font-weight="bold" fill="#212121">连接能力 (Connection)</text>
+  <text x="160" y="380" font-family="Arial" font-size="12" fill="#424242">• 企业内部横纵向集成</text>
+  <text x="160" y="395" font-family="Arial" font-size="12" fill="#424242">• 消费者全触达连接</text>
+  <text x="160" y="410" font-family="Arial" font-size="12" fill="#424242">• 产业生态协同连接</text>
+
+  <!-- 数据能力 -->
+  <rect x="500" y="330" width="300" height="80" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="6"/>
+  <text x="510" y="345" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«function»</text>
+  <text x="510" y="365" font-family="Arial" font-size="16" font-weight="bold" fill="#212121">数据能力 (Data)</text>
+  <text x="510" y="380" font-family="Arial" font-size="12" fill="#424242">• 数据采集与治理</text>
+  <text x="510" y="395" font-family="Arial" font-size="12" fill="#424242">• 数据分析与洞察</text>
+  <text x="510" y="410" font-family="Arial" font-size="12" fill="#424242">• 数据驱动决策</text>
+
+  <!-- 智能能力 -->
+  <rect x="850" y="330" width="300" height="80" fill="#e8f5e8" stroke="#4caf50" stroke-width="2" rx="6"/>
+  <text x="860" y="345" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«function»</text>
+  <text x="860" y="365" font-family="Arial" font-size="16" font-weight="bold" fill="#212121">智能能力 (Intelligence)</text>
+  <text x="860" y="380" font-family="Arial" font-size="12" fill="#424242">• 业务流程自动化</text>
+  <text x="860" y="395" font-family="Arial" font-size="12" fill="#424242">• 智能分析与预测</text>
+  <text x="860" y="410" font-family="Arial" font-size="12" fill="#424242">• 自适应优化</text>
+
+  <!-- 逻辑层 (Logical Layer) -->
+  <rect x="100" y="460" width="1200" height="200" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="8"/>
+  <text x="120" y="485" font-family="Arial" font-size="14" font-weight="bold" fill="#2196f3">«block»</text>
+  <text x="120" y="505" font-family="Arial" font-size="18" font-weight="bold" fill="#212121">逻辑架构层 (Logical Architecture Layer)</text>
+  <text x="120" y="525" font-family="Arial" font-size="14" fill="#424242">平台化+服务化+场景化架构实现</text>
+
+  <!-- 业务能力中心 -->
+  <rect x="150" y="540" width="280" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="6"/>
+  <text x="160" y="555" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="160" y="575" font-family="Arial" font-size="16" font-weight="bold" fill="#212121">业务能力中心</text>
+  <text x="160" y="590" font-family="Arial" font-size="12" fill="#424242">Business Capability Center</text>
+  <line x1="160" y1="595" x2="420" y2="595" stroke="#2196f3" stroke-width="1"/>
+  <text x="160" y="610" font-family="Arial" font-size="12" fill="#424242">+ 共享业务服务</text>
+  <text x="160" y="625" font-family="Arial" font-size="12" fill="#424242">+ 业务流程编排</text>
+  <text x="160" y="640" font-family="Arial" font-size="12" fill="#424242">+ 业务规则引擎</text>
+
+  <!-- 数据能力中心 -->
+  <rect x="460" y="540" width="280" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="6"/>
+  <text x="470" y="555" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="470" y="575" font-family="Arial" font-size="16" font-weight="bold" fill="#212121">数据能力中心</text>
+  <text x="470" y="590" font-family="Arial" font-size="12" fill="#424242">Data Capability Center</text>
+  <line x1="470" y1="595" x2="730" y2="595" stroke="#2196f3" stroke-width="1"/>
+  <text x="470" y="610" font-family="Arial" font-size="12" fill="#424242">+ 数据湖/数据仓库</text>
+  <text x="470" y="625" font-family="Arial" font-size="12" fill="#424242">+ 数据治理平台</text>
+  <text x="470" y="640" font-family="Arial" font-size="12" fill="#424242">+ 数据服务API</text>
+
+  <!-- 应用场景层 -->
+  <rect x="770" y="540" width="280" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="6"/>
+  <text x="780" y="555" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="780" y="575" font-family="Arial" font-size="16" font-weight="bold" fill="#212121">应用场景层</text>
+  <text x="780" y="590" font-family="Arial" font-size="12" fill="#424242">Application Scenario Layer</text>
+  <line x1="780" y1="595" x2="1040" y2="595" stroke="#2196f3" stroke-width="1"/>
+  <text x="780" y="610" font-family="Arial" font-size="12" fill="#424242">+ 垂直业务场景</text>
+  <text x="780" y="625" font-family="Arial" font-size="12" fill="#424242">+ 敏捷应用构建</text>
+  <text x="780" y="640" font-family="Arial" font-size="12" fill="#424242">+ 用户体验界面</text>
+
+  <!-- 物理层 (Physical Layer) -->
+  <rect x="100" y="690" width="1200" height="200" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="8"/>
+  <text x="120" y="715" font-family="Arial" font-size="14" font-weight="bold" fill="#e91e63">«block»</text>
+  <text x="120" y="735" font-family="Arial" font-size="18" font-weight="bold" fill="#212121">物理基础设施层 (Physical Infrastructure Layer)</text>
+  <text x="120" y="755" font-family="Arial" font-size="14" fill="#424242">云原生技术底座与新一代信息技术支撑</text>
+
+  <!-- 云原生平台 -->
+  <rect x="150" y="770" width="200" height="100" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="6" style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+  <text x="160" y="785" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="160" y="805" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">云原生平台</text>
+  <text x="160" y="820" font-family="Arial" font-size="12" fill="#424242">• 容器化</text>
+  <text x="160" y="835" font-family="Arial" font-size="12" fill="#424242">• 微服务</text>
+  <text x="160" y="850" font-family="Arial" font-size="12" fill="#424242">• DevOps</text>
+  <text x="160" y="865" font-family="Arial" font-size="12" fill="#424242">• 服务网格</text>
+
+  <!-- 5G网络 -->
+  <rect x="380" y="770" width="200" height="100" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="6" style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+  <text x="390" y="785" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="390" y="805" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">5G网络</text>
+  <text x="390" y="820" font-family="Arial" font-size="12" fill="#424242">• 高速连接</text>
+  <text x="390" y="835" font-family="Arial" font-size="12" fill="#424242">• 低延迟</text>
+  <text x="390" y="850" font-family="Arial" font-size="12" fill="#424242">• 大连接</text>
+  <text x="390" y="865" font-family="Arial" font-size="12" fill="#424242">• 边缘计算</text>
+
+  <!-- 物联网 -->
+  <rect x="610" y="770" width="200" height="100" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="6" style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+  <text x="620" y="785" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="620" y="805" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">物联网IoT</text>
+  <text x="620" y="820" font-family="Arial" font-size="12" fill="#424242">• 传感器网络</text>
+  <text x="620" y="835" font-family="Arial" font-size="12" fill="#424242">• 数据采集</text>
+  <text x="620" y="850" font-family="Arial" font-size="12" fill="#424242">• 设备管理</text>
+  <text x="620" y="865" font-family="Arial" font-size="12" fill="#424242">• 实时监控</text>
+
+  <!-- 数字孪生 -->
+  <rect x="840" y="770" width="200" height="100" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="6" style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+  <text x="850" y="785" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="850" y="805" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">数字孪生</text>
+  <text x="850" y="820" font-family="Arial" font-size="12" fill="#424242">• 虚实映射</text>
+  <text x="850" y="835" font-family="Arial" font-size="12" fill="#424242">• 仿真建模</text>
+  <text x="850" y="850" font-family="Arial" font-size="12" fill="#424242">• 预测分析</text>
+  <text x="850" y="865" font-family="Arial" font-size="12" fill="#424242">• 优化决策</text>
+
+  <!-- AI/大数据 -->
+  <rect x="1070" y="770" width="200" height="100" fill="#fce4ec" stroke="#e91e63" stroke-width="2" rx="6" style="filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2))"/>
+  <text x="1080" y="785" font-family="Arial" font-size="12" font-style="italic" fill="#666666">«block»</text>
+  <text x="1080" y="805" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">AI/大数据</text>
+  <text x="1080" y="820" font-family="Arial" font-size="12" fill="#424242">• 机器学习</text>
+  <text x="1080" y="835" font-family="Arial" font-size="12" fill="#424242">• 深度学习</text>
+  <text x="1080" y="850" font-family="Arial" font-size="12" fill="#424242">• 知识图谱</text>
+  <text x="1080" y="865" font-family="Arial" font-size="12" fill="#424242">• 智能决策</text>
+
+  <!-- 关系连接线 -->
+  
+  <!-- 需求到功能的derive关系 -->
+  <line x1="250" y1="210" x2="300" y2="330" stroke="#757575" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <text x="260" y="270" font-family="Arial" font-size="10" fill="#666666">«derive»</text>
+  
+  <line x1="500" y1="210" x2="650" y2="330" stroke="#757575" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <text x="560" y="270" font-family="Arial" font-size="10" fill="#666666">«derive»</text>
+  
+  <line x1="1000" y1="210" x2="1000" y2="330" stroke="#757575" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <text x="1010" y="270" font-family="Arial" font-size="10" fill="#666666">«derive»</text>
+
+  <!-- 功能到逻辑的satisfy关系 -->
+  <line x1="300" y1="410" x2="290" y2="540" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="250" y="475" font-family="Arial" font-size="10" fill="#666666">«satisfy»</text>
+  
+  <line x1="650" y1="410" x2="600" y2="540" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="600" y="475" font-family="Arial" font-size="10" fill="#666666">«satisfy»</text>
+  
+  <line x1="1000" y1="410" x2="910" y2="540" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="930" y="475" font-family="Arial" font-size="10" fill="#666666">«satisfy»</text>
+
+  <!-- 逻辑到物理的refine关系 -->
+  <line x1="290" y1="640" x2="250" y2="770" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="220" y="705" font-family="Arial" font-size="10" fill="#666666">«refine»</text>
+  
+  <line x1="600" y1="640" x2="480" y2="770" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="500" y="705" font-family="Arial" font-size="10" fill="#666666">«refine»</text>
+  
+  <line x1="600" y1="640" x2="710" y2="770" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="630" y="705" font-family="Arial" font-size="10" fill="#666666">«refine»</text>
+  
+  <line x1="910" y1="640" x2="950" y2="770" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="900" y="705" font-family="Arial" font-size="10" fill="#666666">«refine»</text>
+  
+  <line x1="910" y1="640" x2="1170" y2="770" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="1000" y="705" font-family="Arial" font-size="10" fill="#666666">«refine»</text>
+
+  <!-- 组合关系 (物理层内部) -->
+  <line x1="350" y1="820" x2="380" y2="820" stroke="#212121" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <polygon points="350,815 350,825 340,820" fill="#212121"/>
+  
+  <line x1="580" y1="820" x2="610" y2="820" stroke="#212121" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <polygon points="580,815 580,825 570,820" fill="#212121"/>
+  
+  <line x1="810" y1="820" x2="840" y2="820" stroke="#212121" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <polygon points="810,815 810,825 800,820" fill="#212121"/>
+  
+  <line x1="1040" y1="820" x2="1070" y2="820" stroke="#212121" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <polygon points="1040,815 1040,825 1030,820" fill="#212121"/>
+
+  <!-- 数据流 (逻辑层内部) -->
+  <line x1="430" y1="590" x2="460" y2="590" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="435" y="585" font-family="Arial" font-size="10" fill="#4caf50">数据流</text>
+  
+  <line x1="740" y1="590" x2="770" y2="590" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="745" y="585" font-family="Arial" font-size="10" fill="#4caf50">服务调用</text>
+
+  <!-- 发展阶段标识 -->
+  <rect x="1050" y="100" width="240" height="120" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="6"/>
+  <text x="1060" y="120" font-family="Arial" font-size="14" font-weight="bold" fill="#ff9800">数字化转型发展阶段</text>
+  <text x="1060" y="140" font-family="Arial" font-size="12" fill="#424242">阶段1: 内部信息化</text>
+  <text x="1060" y="155" font-family="Arial" font-size="12" fill="#424242">阶段2: 消费互联</text>
+  <text x="1060" y="170" font-family="Arial" font-size="12" fill="#424242">阶段3: 产业互联</text>
+  <text x="1060" y="190" font-family="Arial" font-size="12" font-weight="bold" fill="#ff9800">核心特征:</text>
+  <text x="1060" y="205" font-family="Arial" font-size="11" fill="#424242">• 现实与抽象世界统一</text>
+
+  <!-- 图例 -->
+  <rect x="50" y="920" width="600" height="70" fill="#f5f5f5" stroke="#bdbdbd" stroke-width="1" rx="4"/>
+  <text x="60" y="940" font-family="Arial" font-size="14" font-weight="bold" fill="#212121">图例 (Legend)</text>
+  
+  <!-- 需求元素图例 -->
+  <rect x="70" y="950" width="40" height="20" fill="#e8eaf6" stroke="#3f51b5" stroke-width="1" rx="2"/>
+  <text x="120" y="965" font-family="Arial" font-size="11" fill="#424242">需求 (Requirements)</text>
+  
+  <!-- 功能元素图例 -->
+  <rect x="220" y="950" width="40" height="20" fill="#e8f5e8" stroke="#4caf50" stroke-width="1" rx="2"/>
+  <text x="270" y="965" font-family="Arial" font-size="11" fill="#424242">功能 (Functions)</text>
+  
+  <!-- 逻辑元素图例 -->
+  <rect x="370" y="950" width="40" height="20" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="2"/>
+  <text x="420" y="965" font-family="Arial" font-size="11" fill="#424242">逻辑块 (Logical Blocks)</text>
+  
+  <!-- 物理元素图例 -->
+  <rect x="520" y="950" width="40" height="20" fill="#fce4ec" stroke="#e91e63" stroke-width="1" rx="2"/>
+  <text x="570" y="965" font-family="Arial" font-size="11" fill="#424242">物理组件 (Physical Components)</text>
+
+  <!-- 关系图例 -->
+  <text x="60" y="985" font-family="Arial" font-size="12" font-weight="bold" fill="#212121">关系类型:</text>
+  <line x1="130" y1="980" x2="160" y2="980" stroke="#757575" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <text x="170" y="985" font-family="Arial" font-size="11" fill="#424242">derive</text>
+  
+  <line x1="220" y1="980" x2="250" y2="980" stroke="#388e3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="260" y="985" font-family="Arial" font-size="11" fill="#424242">satisfy</text>
+  
+  <line x1="310" y1="980" x2="340" y2="980" stroke="#7b1fa2" stroke-width="2" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  <text x="350" y="985" font-family="Arial" font-size="11" fill="#424242">refine</text>
+  
+  <line x1="400" y1="980" x2="430" y2="980" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="440" y="985" font-family="Arial" font-size="11" fill="#424242">数据流</text>
+
+  <!-- 箭头标记定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666666"/>
+    </marker>
+  </defs>
+
+  <!-- 版权信息 -->
+  <text x="1200" y="980" text-anchor="end" font-family="Arial" font-size="10" fill="#999999">
+    基于MBSE方法论 | 数字化转型系统工程建模
+  </text>
+
+</svg>

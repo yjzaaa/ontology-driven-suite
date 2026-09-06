@@ -1,0 +1,57 @@
+:root {
+  /* 主品牌色 */
+  --color-primary: #1B3A6B;
+  --color-primary-light: #2952A3;
+  --color-accent: #0EA5E9;
+
+  /* 数据图表色板（麦肯锡蓝系） */
+  --chart-blue-1: #1E3A5F;
+  --chart-blue-2: #2E6DB4;
+  --chart-blue-3: #5BA3D9;
+  --chart-blue-4: #A8CDF0;
+  --chart-orange: #E8623A;
+  --chart-green: #27A86A;
+  --chart-red: #D94040;
+  --chart-gray: #8C9BAB;
+
+  /* 本体图谱专用 */
+  --node-entity-core: #5B4FBB;
+  --node-entity-support: #3B9A80;
+  --node-behavior: #CB6A2A;
+  --node-rule: #BA7517;
+  --node-scenario: #3B78C0;
+  --node-metric: #3B9A80;
+
+  /* 背景 */
+  --bg-page: #F4F6F9;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #1B3A6B;
+
+  /* 文字 */
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --text-on-dark: #FFFFFF;
+
+  /* 边框 */
+  --border-color: #E2E8F0;
+  --border-color-strong: #CBD5E0;
+
+  /* 置信度颜色 */
+  --confidence-high: #22C55E;
+  --confidence-mid: #F59E0B;
+  --confidence-low: #EF4444;
+
+  /* 间距与圆角 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
