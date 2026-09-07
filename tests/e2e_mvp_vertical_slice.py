@@ -147,9 +147,9 @@ def main() -> int:
     check("类型化列投影（目录编码/单价/资产分类）",
           all(c in cols for c in ("目录编码", "单价", "资产分类")), f"cols={cols}")
     row = (tbl.get("rows") or [{}])[0]
-    check("富化引用生效（vendorCode→vendorName）",
-          bool(row.get("vendorCode") and row.get("vendorName")),
-          f"row={row!r}")
+    check("富化引用生效（vendorCode→vendorName 权威源）",
+          bool(row.get("vendorCode") and row.get("vendorCode__label")),
+          f"row={row!r}")   # 注：__label 是富化值（厂商主数据），非冗余副本 vendorName
 
     print("\n[场景9] V2 类型化查询：查预算 FY23_Ext testing")
     tbl = first(chat("查预算 FY23_Ext testing"), "object_table") or {}

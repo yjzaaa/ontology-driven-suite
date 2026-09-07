@@ -8,6 +8,7 @@
 |---|---|---|
 | `e2e_mvp_vertical_slice.py` | 端到端验收 | MVP 竖切九场景（LLM 意图解析 → 治理读 → HITL 提案/批准 → 读写自洽 → 语义护栏 → V2 类型化查询） |
 | `test_engine_generalization.py` | 引擎回归 | **V2 验收判据**："新增类型化对象 = 纯 YAML 提交，gateway 零代码改动"；M3 规则刚性执行（派生/校验/手填拒绝）；非法引用与规则登记 fail-fast |
+| `manual-test-questions.md` | **手工验收题单** | 16 题实测验证的人工测试问题（类型化视图/同义词/HITL/语义护栏），含预期结果与观察点 |
 
 ## 运行端到端验收
 

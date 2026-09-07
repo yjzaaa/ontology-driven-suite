@@ -89,7 +89,7 @@ class ModelRegistry:
                 + [f["id"] for f in o.get("content_fields") or []])
 
     def visible_fields(self, oid: str) -> list:
-        """表格列（visible != False 的 fields + content_fields），含 ref 富化列。"""
+        """表格列（visible != False 的 fields + content_fields）；ref 富化列紧跟其引用字段。"""
         o = self.objects[oid]
         vis = [f for f in o.get("fields") or [] if f.get("visible", True)]
         vis += [f for f in o.get("content_fields") or [] if f.get("visible", True)]
@@ -97,10 +97,15 @@ class ModelRegistry:
         shown = {f["display_name"] for f in vis}   # 按 display_name 去重（id 大小写可能不同）
         for f in o.get("content_fields") or []:
             ref = f.get("ref")
-            # 富化列：目标 label 的显示名未出现在列中时才追加（避免重复列）
-            if ref and (lbl_dn := self._ref_label_display(ref)) not in shown:
-                cols.append({"id": f["id"] + "__label", "display_name": lbl_dn})
-                shown.add(lbl_dn)
+            if not ref:
+                continue
+            lbl_dn = self._ref_label_display(ref)
+            if lbl_dn in shown:
+                continue   # 目标显示名已存在，不重复列
+            col = {"id": f["id"] + "__label", "display_name": lbl_dn}
+            idx = next((i + 1 for i, c in enumerate(cols) if c["id"] == f["id"]), len(cols))
+            cols.insert(idx, col)
+            shown.add(lbl_dn)
         return cols
 
     def _ref_label_display(self, ref: dict) -> str:
@@ -563,9 +568,12 @@ from agent.runtime import GatewayBindings, build_runtime  # noqa: E402
 
 
 def _build_table_event(obj_id: str, rows: list) -> dict:
-    """表格事件完全由模型投影：列=visible 字段（含 ref 富化列），行=声明字段全集。"""
+    """表格事件完全由模型投影：列=visible 字段（含 ref 富化列），行=声明字段全集 + 富化值。
+    富化键（field__label）由 run_query 生成，不丢弃——否则富化列有列无值。"""
     cols = REG.visible_fields(obj_id)
-    keep = REG.all_field_ids(obj_id)
+    enriched = [f["id"] + "__label" for f in (REG.objects[obj_id].get("content_fields") or [])
+                if f.get("ref")]
+    keep = REG.all_field_ids(obj_id) + enriched
     proj = [{k: r.get(k) for k in keep} for r in rows]
     return {"type": "object_table", "object": obj_id,
             "display": REG.display_name(obj_id),
