@@ -1,0 +1,325 @@
+# =====================================================================
+# V2 本体：PR 在线审批主数据（类型化深化切片）
+# 状态：DRAFT（候选区，禁止 Runtime Registry 正式加载；正式发布走 models/ 流程）
+# 证据基线：
+#   DB     —— SSME.DPA_Test @ shai472a（只读元数据探测 + 采样；
+#             引导同步脚本 gateway/sync_local.py 落本地库，16774 行）
+#   SOURCE —— D:\WorkSpace @ revision ce9ad5ca，分支 SSME.DPA.DEV
+#   UI     —— Areas/MasterData/Views/**（联动取证，见 ui_linkages/rules）
+# 数据形态：tb_Master_Data_PR_Online_Approval 为 JSON 文档存储，
+#   dic_type = SubtableType 枚举（ESN=0…PC_HAAS_List=86，共 87 型），
+#   dic_content = 业务 JSON 文档（每类型字段出现率 100%，为稳定强 schema）。
+# V2 原则：
+#   1. 引擎只拥有通用能力（类型过滤/JSON 投影/目录驱动路由/参数映射），
+#      新增类型化对象 = 纯 YAML 提交，gateway 零代码改动（e2e 验收判据）；
+#   2. 路由关键词、提案卡文案、参数映射、禁止规则全部模型声明；
+#   3. 前端联动的业务判定追到服务端事实源；纯前端规则标注 execution_point。
+# 纪律：url_path 等技术细节只存在于 MI，模型与 Agent Tool 层不可见。
+# =====================================================================
+meta:
+  domain: masterdata
+  title: PR 在线审批主数据（V2 类型化深化）
+  status: DRAFT
+  dpa_revision: ce9ad5ca
+  owner: copilot-agent
+  evidence:
+    - kind: DB_SCHEMA
+      ref: "SSME.DPA_Test.sys.columns（tb_Master_Data_PR_Online_Approval，10 列）"
+    - kind: SOURCE_SYMBOL
+      ref: "YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/MasterDataPROnlineApprovalConfig.cs#SubtableType"
+    - kind: SOURCE_SYMBOL
+      ref: "YiSha.Business/YiSha.Service/MasterData/MasterDataPROnlineApprovalService.cs#GetMasterDataPROnlineApprovalListBySubtableType"
+    - kind: DATA_PROFILE
+      ref: "gateway/data/localdb/pr_approval.json（各类型 dic_content 字段出现率 100%，见 tests 取证记录）"
+
+# ---------------- M1 对象 ----------------
+objects:
+  # 兜底 blob：87 类文档的通用视图（未类型化的 82+ 类由此覆盖）
+  - id: pr_approval_doc
+    display_name: PR 审批主数据文档
+    description: PR 在线审批模块的主数据文档（测试库 16774 行 / 87 个子表类型），内容为业务 JSON
+    primary_key: id
+    source_table: tb_Master_Data_PR_Online_Approval
+    fields:
+      - {id: id,               display_name: 行主键,   type: int,    visible: false}
+      - {id: dic_name,         column: dic_name,       display_name: 文档类型,  type: string}
+      - {id: dic_type,         column: dic_type,       display_name: 类型编号,  type: int, visible: false}
+      - {id: active_status,    column: active_status,  display_name: 状态,      type: string}
+      - {id: remark,           column: remark,         display_name: 备注,      type: string}
+      - {id: dic_content,      column: dic_content,    display_name: 文档内容,  type: json, visible: false}
+      - {id: last_updated_date, column: last_updated_date, display_name: 更新时间, type: datetime}
+      - {id: create_date,      column: create_date,    display_name: 创建时间,  type: datetime}
+    queries:
+      - id: pr_doc_search
+        display_name: 审批主数据检索
+        keywords: [审批主数据, 主数据, 文档]
+        mi_ref: mi_pr_doc_search
+        row_limit: 50
+    behaviors:
+      # 该行为作用于任意类型文档行（含未类型化的 blob 行），故归属备对象
+      - id: change_doc_status
+        display_name: 启停审批主数据文档
+        description: 通过 DPA 原批量编辑链修改文档启用状态（Active/Inactive），事务提交并写子表操作日志
+        kind: write
+        risk: HIGH
+        requires_approval: true
+        mi_ref: mi_pr_doc_update_status
+        dpa_evidence: "MasterDataPROnlineApprovalController.UpdateSubtableDataList → UpdateSubtableDataByBatch（事务 + 异步操作日志，操作人取自 DPA 会话）"
+        target_locator:
+          query_ref: pr_doc_search       # 提案前用该查询定位目标文档
+        input_values:                    # 触发词 → 输入值（路由与 LLM 目录共用，模型声明）
+          active_status: {停用: Inactive, 启用: Active}
+        target_label: "{dic_name}（id={id}）"
+        change_label: "状态 → {input.active_status}"
+
+  # ── 类型化对象 1：标准商品（引用汇聚型，联动最复杂，V2 试点）──
+  - id: standard_goods
+    display_name: 标准商品主数据
+    description: PR 商品采购主数据（415 行）；字段证据=本地库 dic_content 出现率 100% + StandardGoods/Form.cshtml
+    primary_key: id
+    source_table: tb_Master_Data_PR_Online_Approval
+    doc_type: Standard_Goods
+    fields:
+      - {id: id,            column: id,            display_name: 行主键,   type: int, visible: false}
+      - {id: dic_name,      column: dic_name,      display_name: 文档类型, type: string, visible: false}
+      - {id: dic_type,      column: dic_type,      display_name: 类型编号, type: int, visible: false}
+      - {id: active_status, column: active_status, display_name: 状态,     type: string}
+      - {id: last_updated_date, column: last_updated_date, display_name: 更新时间, type: datetime}
+    content_fields:
+      - {id: matType,      display_name: 物料类型,   type: string}
+      - {id: catalogCode,  display_name: 目录编码,   type: string}
+      - {id: shortDesc,    display_name: 物料描述,   type: string}
+      - {id: vendorCode,   display_name: 厂商编码,   type: string,
+         ref: {target: vendor_type, key: VendorCode, label: VendorName}}   # 查询时富化：带出厂商名
+      - {id: vendorName,   display_name: 厂商名称（存档副本）, type: string, visible: false}
+      # 权威性声明：冗余副本实证漂移（4/415 行与厂商主数据不一致，如 9200008 副本缺
+      # "Ltd."），显示以 vendorCode ref 富化（vendor_type.VendorName 权威源）为准。
+      # 数据层事实：厂商主数据 1294 条名称含首尾空格——忠实投影不清洗，修复属 DPA 侧。
+      - {id: vendorMail,   display_name: 厂商邮箱,   type: string}
+      - {id: vPrice,       display_name: 单价,       type: string}
+      - {id: cCurrency,    display_name: 币种,       type: string}
+      - {id: uom,          display_name: 单位,       type: string}
+      - {id: glAccount,    display_name: 总账科目,   type: string}   # ref 待 gl_account 建模后启用
+      - {id: AssetClass,   display_name: 资产分类,   type: string}   # ref 待 asset_class 建模后启用
+      - {id: assetFlag,    display_name: 资产标记,   type: string}
+      - {id: AssetType,    display_name: 资产类型,   type: string}
+      - {id: ITAssetType,  display_name: IT 资产类型, type: string}
+      - {id: esnCode,      display_name: ESN 编码,   type: string}   # ref 待 esn 建模后启用
+      - {id: Buyer,        display_name: 采购员,     type: string}
+      - {id: taxRate,      display_name: 税率,       type: string}
+    queries:
+      - id: standard_goods_search
+        display_name: 标准商品检索
+        keywords: [商品, 物料, 标准商品]
+        mi_ref: mi_standard_goods_search
+        row_limit: 50
+
+  # ── 类型化对象 2：厂商类型 ──
+  - id: vendor_type
+    display_name: 厂商类型主数据
+    description: 厂商主数据（3872 行，第一大类）；字段证据=本地库 dic_content 出现率 100%
+    primary_key: id
+    source_table: tb_Master_Data_PR_Online_Approval
+    doc_type: Vendor_type
+    fields:
+      - {id: id,            column: id,            display_name: 行主键,   type: int, visible: false}
+      - {id: dic_name,      column: dic_name,      display_name: 文档类型, type: string, visible: false}
+      - {id: dic_type,      column: dic_type,      display_name: 类型编号, type: int, visible: false}
+      - {id: active_status, column: active_status, display_name: 状态,     type: string}
+    content_fields:
+      - {id: VendorCode,     display_name: 厂商编码,   type: string}
+      - {id: VendorName,     display_name: 厂商名称,   type: string}
+      - {id: VendorType,     display_name: 厂商类型,   type: string}
+      - {id: Status,         display_name: 内容状态,   type: string}
+      - {id: LastModifyDate, display_name: 最后修改,   type: string}
+    queries:
+      - id: vendor_type_search
+        display_name: 厂商检索
+        keywords: [厂商, 供应商, vendor]
+        mi_ref: mi_vendor_type_search
+        row_limit: 50
+
+  # ── 类型化对象 3：预算参考号 ──
+  - id: reference_no
+    display_name: 预算参考号主数据
+    description: 预算参考号（1895 行）；含预算三件套（BudgetAmount/UsedAmount/RemainingAmount）
+    primary_key: id
+    source_table: tb_Master_Data_PR_Online_Approval
+    doc_type: Reference_No
+    fields:
+      - {id: id,            column: id,            display_name: 行主键,   type: int, visible: false}
+      - {id: dic_name,      column: dic_name,      display_name: 文档类型, type: string, visible: false}
+      - {id: dic_type,      column: dic_type,      display_name: 类型编号, type: int, visible: false}
+      - {id: active_status, column: active_status, display_name: 状态,     type: string}
+    content_fields:
+      - {id: referenceNo,       display_name: 参考号,       type: string}
+      - {id: bl,                display_name: 业务线,       type: string}
+      - {id: comment,           display_name: 用途说明,     type: string}
+      - {id: BudgetAmount,      display_name: 预算金额,     type: string}
+      - {id: UsedAmount,        display_name: 已用金额,     type: string}
+      - {id: RemainingAmount,   display_name: 剩余预算,     type: string}
+      - {id: ResponsibleFIName, display_name: 财务责任人,   type: string}
+      - {id: ValidFrom,         display_name: 生效日,       type: string}
+      - {id: ValidTo,           display_name: 失效日,       type: string}
+    queries:
+      - id: reference_no_search
+        display_name: 预算参考号检索
+        keywords: [预算, 参考号, 预算余量]
+        mi_ref: mi_reference_no_search
+        row_limit: 50
+
+# ---------------- M3 规则（封闭词表，引擎刚性执行） ----------------
+# 执行语义：kind=derivation 在提案构建时由引擎计算（LLM 禁填派生字段，对应 DPA disabled）；
+# kind=validation 在 policy_check fail-closed（违规提案不产生）。网关第一道刚性不依赖
+# backend_recheck 取证结果——它是防 LLM 幻觉写入的防线；DPA 复验是第二道（纵深防御）。
+# 证据事实：三条规则取证自前端 StandardGoods/Form.cshtml，后端是否复验待取证。
+rules:
+  - id: rule_sg_assetclass_derivation
+    object: standard_goods
+    kind: derivation
+    display_name: IT 资产分类金额阈值派生
+    target: AssetClass
+    trigger_when: {field: AssetType, equals: ITAsset}
+    input: vPrice
+    cases:
+      - {op: ">", threshold: 5000, value: "6230"}
+      - {op: "<=", threshold: 5000, value: "6931"}
+    evidence: {kind: UI_SOURCE, ref: "Areas/MasterData/Views/StandardGoods/Form.cshtml#198+"}
+    execution_point: frontend_only
+    backend_recheck: unknown
+
+  - id: rule_sg_asset_conditional_required
+    object: standard_goods
+    kind: validation
+    display_name: 资产字段条件必填
+    constraints:
+      - {when: {field: assetFlag, equals: "yes"}, required: [AssetType, AssetClass]}
+      - {when: {field: assetFlag, equals: "yes", and: {field: AssetType, equals: ITAsset}},
+         required: [ITAssetType]}
+      - {when: {field: assetFlag, equals: "n"}, required: [glAccount]}
+    evidence: {kind: UI_SOURCE, ref: "Areas/MasterData/Views/StandardGoods/Form.cshtml#207-214"}
+    execution_point: frontend_only
+    backend_recheck: unknown
+
+  - id: rule_sg_glaccount_asset_range
+    object: standard_goods
+    kind: validation
+    display_name: 资产科目段过滤
+    constraints:
+      - {when: {field: assetFlag, equals: "n"}, field: glAccount, pattern: "^6"}
+    evidence: {kind: UI_SOURCE, ref: "Areas/MasterData/Views/StandardGoods/Form.cshtml#103-133"}
+    execution_point: frontend_only
+    backend_recheck: unknown
+
+# ---------------- MU 联动登记（交互契约；业务判定归属见 attribution） ----------------
+ui_linkages:
+  - {object: standard_goods, trigger: 选择 vendorCode, action: 带出 vendorName,
+     attribution: "M1 引用 + M7 查询（MU 投影）", evidence: "Areas/MasterData/Views/StandardGoods/Form.cshtml#137-138"}
+  - {object: standard_goods, trigger: assetFlag 切换, action: AssetType/AssetClass/ITAssetType/glAccount 显隐+必填+清空,
+     attribution: "M3 rule_sg_asset_conditional_required（MU 投影）", evidence: "Areas/MasterData/Views/StandardGoods/Form.cshtml#207-214"}
+  - {object: standard_goods, trigger: assetFlag=='n', action: glAccount 下拉仅保留 6 开头科目,
+     attribution: "M3 rule_sg_glaccount_asset_range（MU 投影）", evidence: "Areas/MasterData/Views/StandardGoods/Form.cshtml#103-133"}
+  - {object: standard_goods, trigger: AssetType+vPrice 变化, action: 推导 AssetClass 并禁用手改,
+     attribution: "M3 rule_sg_assetclass_derivation（MU 投影）", evidence: "Areas/MasterData/Views/StandardGoods/Form.cshtml#198+"}
+  - {object: standard_goods, trigger: 选择 AssetClass, action: 查 Asset_Class 文档带出 glAccount,
+     attribution: "M1 跨类型引用 + M7 查询（MU 投影）", evidence: "Areas/MasterData/Views/StandardGoods/Form.cshtml#167-180"}
+  - {object: pr_approval_doc, trigger: 行状态 Active/Inactive, action: 操作按钮可见性切换,
+     attribution: "M2 行为前置条件（MU 投影）", evidence: "Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml#356"}
+
+# ---------------- MI 集成合同 ----------------
+mis:
+  - id: mi_pr_doc_search
+    executor: DATABASE_MCP
+    effect: READ_ONLY
+    timeout_seconds: 10
+    statement_template: |      # 治理查询契约留档；运行时消费 gateway/data/localdb/pr_approval.json
+      SELECT TOP 50 id, dic_name, dic_type, active_status, remark, dic_content,
+             last_updated_date, create_date
+      FROM tb_Master_Data_PR_Online_Approval
+      WHERE dic_name LIKE ':kw' OR dic_content LIKE ':kw' OR remark LIKE ':kw'
+    params:
+      - {name: kw, type: string, required: false, default: "%%"}
+    local_source: pr_approval                      # 运行时本地库
+    local_search_fields: [dic_name, dic_content, remark, id]
+
+  - id: mi_standard_goods_search
+    executor: DATABASE_MCP
+    effect: READ_ONLY
+    timeout_seconds: 10
+    statement_template: |
+      SELECT TOP 50 id, dic_name, active_status, dic_content, last_updated_date
+      FROM tb_Master_Data_PR_Online_Approval
+      WHERE dic_name = 'Standard_Goods' AND (dic_content LIKE ':kw' OR remark LIKE ':kw')
+    params:
+      - {name: kw, type: string, required: false, default: "%%"}
+    local_source: pr_approval
+    type_filter: Standard_Goods                    # 引擎通用能力：按 dic_name 过滤
+    local_search_fields: [dic_content, remark, id]
+    content_fields: [matType, catalogCode, shortDesc, vendorCode, vendorName, vendorMail,
+                     vPrice, cCurrency, uom, glAccount, AssetClass, assetFlag, AssetType,
+                     ITAssetType, esnCode, Buyer, taxRate]      # 引擎通用能力：dic_content JSON 投影
+
+  - id: mi_vendor_type_search
+    executor: DATABASE_MCP
+    effect: READ_ONLY
+    timeout_seconds: 10
+    statement_template: |
+      SELECT TOP 50 id, dic_name, active_status, dic_content, last_updated_date
+      FROM tb_Master_Data_PR_Online_Approval
+      WHERE dic_name = 'Vendor_type' AND (dic_content LIKE ':kw' OR remark LIKE ':kw')
+    params:
+      - {name: kw, type: string, required: false, default: "%%"}
+    local_source: pr_approval
+    type_filter: Vendor_type
+    local_search_fields: [dic_content, remark, id]
+    content_fields: [VendorCode, VendorName, VendorType, Status, LastModifyDate]
+
+  - id: mi_reference_no_search
+    executor: DATABASE_MCP
+    effect: READ_ONLY
+    timeout_seconds: 10
+    statement_template: |
+      SELECT TOP 50 id, dic_name, active_status, dic_content, last_updated_date
+      FROM tb_Master_Data_PR_Online_Approval
+      WHERE dic_name = 'Reference_No' AND (dic_content LIKE ':kw' OR remark LIKE ':kw')
+    params:
+      - {name: kw, type: string, required: false, default: "%%"}
+    local_source: pr_approval
+    type_filter: Reference_No
+    local_search_fields: [dic_content, remark, id]
+    content_fields: [referenceNo, bl, comment, BudgetAmount, UsedAmount, RemainingAmount,
+                     ResponsibleFIName, ValidFrom, ValidTo]
+
+  - id: mi_pr_doc_update_status
+    executor: DPA_HTTP
+    effect: WRITE
+    risk: HIGH
+    method: POST
+    url_path: /MasterData/MasterDataPROnlineApproval/UpdateSubtableDataList
+    auth_mode: same_origin_cookie   # T04.2 试点机制：仅转发用户同源 DPA 会话 Cookie
+    timeout_seconds: 15
+    retries: 0                      # 写请求不重试
+    idempotency: no                 # 状态更新非幂等设计；由单次 approvalToken 保证只执行一次
+    fixed_params: {}
+    forbidden_params:               # 结构化禁止规则（引擎解释封闭词表，业务取值在模型）
+      - {param: target.ids, rule: nonempty_positive_ints, reason: 必须选中至少一个文档}
+      - {param: input.active_status, rule: "in:Active,Inactive", reason: 只允许 Active/Inactive 两种目标状态}
+    param_mapping:
+      ActiveStatu: "{input.active_status}"
+      DicType:     "{target.dic_type}"
+      JsonIds:     "{target.ids}"
+    error_mapping:
+      401: DPA_SESSION_EXPIRED
+      403: DPA_PERMISSION_DENIED
+      500: DPA_INTERNAL_ERROR
+    dpa_evidence:
+      symbol: "MasterDataPROnlineApprovalController.UpdateSubtableDataList([FromBody] SaveSubtableDataParm{ActiveStatu, DicType, EntityJson, JsonIds})"
+      file: "YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs#665"
+      side_effects: "事务内批量更新 active_status（含 Reference_No 到期强制 Inactive 特例）并刷新 last_updated_date；事务提交后异步写 tb_Master_Data_PR_Online_Approval_oplog（操作人取自 DPA 会话）"
+    local_update:                   # local_json 沙箱：写后同步本地库，保证读写自洽
+      source: pr_approval
+      match_column: id
+      pk: "{target.ids}"
+      set:
+        active_status: "{input.active_status}"
+      touch: last_updated_date
