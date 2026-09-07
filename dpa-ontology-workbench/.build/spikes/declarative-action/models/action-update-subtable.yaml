@@ -1,0 +1,50 @@
+# ─── 声明式 Action（纯语义层，不碰任何技术接口）──────────────────────────
+# 职责：typed 输入 + 目标定位 + 规则引用 + 写回绑定 + 审批声明。
+# URL/HTTP/凭据/参数映射 一律不在此（那是 MI 的事，见 mi-update-subtable.yaml）。
+model_id: masterdata.m2.update-subtable-data
+model_type: M2
+domain: masterdata
+name: { zh: 更新子表数据, en: Update Subtable Data }
+version: 1.0.0
+status: PUBLISHED
+evidence_refs:
+  - "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableDataList"
+created_at: "2026-09-07T10:00:00+08:00"
+created_by: declarative-action-spike
+schema_version: 3.0.0
+
+# 目标对象 + 定位方式（写前定位：先查后写）
+target:
+  object: masterdata.m1.subtable-type
+  locator:
+    local_source: pr_approval     # 本地沙箱库（gateway/data/localdb 等价物）
+    key_field: id
+
+# typed 输入（JSON Schema）——LLM function calling 与服务端强校验共用此契约
+input_schema:
+  type: object
+  additionalProperties: false
+  properties:
+    record_id: { type: string, description: 目标记录 ID }
+    active_status:
+      type: string
+      enum: [Active, Inactive]
+      description: 目标状态
+  required: [record_id, active_status]
+
+# 结构化规则引用（替代中文自然语言 condition）
+rules:
+  - ref: masterdata.m3.allow-update-rule
+
+# 写回声明（对齐 Palantir WriteBack：显式声明写回路径/时机/幂等）
+writeback:
+  via: masterdata.mi.update-subtable   # 绑定 MI 防腐层
+  timing: on-approval                  # 审批通过后写回
+  idempotency: approval-token-single-use
+  compensation: null                   # 可指向逆操作 Action
+
+# HITL 审批声明
+approval:
+  required: true
+  risk: HIGH
+  side_effect: WRITE

@@ -1,0 +1,28 @@
+# ─── M3 结构化规则（替代中文自然语言 condition）──────────────────────────
+# 结构化 when-then：字段约束由封闭词表解释（RULE_OPS 在引擎启动时校验），
+# 业务取值（禁止更新列表）全部进 YAML，引擎保持通用。
+model_id: masterdata.m3.allow-update-rule
+model_type: M3
+domain: masterdata
+name: { zh: 允许更新规则, en: Allow Update Rule }
+version: 1.0.0
+status: PUBLISHED
+description:
+  zh: 禁止更新列表内的子表类型不允许更新（ESN、Tax_Rate 等）。
+evidence_refs:
+  - "ev:WS:ce9ad5ca:YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/.../SubtableType"
+created_at: "2026-09-07T10:00:00+08:00"
+created_by: declarative-action-spike
+schema_version: 3.0.0
+applies_to:
+  - masterdata.m2.update-subtable-data
+
+# 结构化约束：target.dic_type 若命中禁止列表，则阻断（op=in：命中才阻断）
+when:
+  field: "target.dic_type"          # JMESPath 定位，取值域 {input, target}
+  op: in                            # 封闭词表：equals/not_equals/in/not_in/required/pattern
+  value: ["ESN", "Tax_Rate", "Tax_Code", "Tax_code_prefix", "Exchange_Rate"]
+then:
+  effect: block                     # block | warn | derive
+  message: "该子表类型在禁止更新列表内，不允许更新"
+severity: BLOCK
