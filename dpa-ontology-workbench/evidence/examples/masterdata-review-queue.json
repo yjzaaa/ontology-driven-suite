@@ -1,0 +1,56 @@
+[
+  {
+    "review_item_id": "rev-01",
+    "conclusion_type": "mixed-side-effect",
+    "evidence_ids": [
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData",
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData:side-effect-cache"
+    ],
+    "state": "pending",
+    "assigned_role": "dpa-tech-owner",
+    "decision": {
+      "decision_by": "dpa-tech-owner",
+      "decision_at": "2026-09-04T17:00:00+08:00",
+      "basis_evidence_ids": [
+        "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData"
+      ],
+      "reason": "确认写库 + 缓存清理 + 操作日志，MIXED/HIGH，禁止自动执行"
+    }
+  },
+  {
+    "review_item_id": "rev-02",
+    "conclusion_type": "dynamic-sql",
+    "evidence_ids": [
+      "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/MobileHaasJob.cs:MobileHaasJob.dowork"
+    ],
+    "state": "pending",
+    "assigned_role": "security-data-owner"
+  },
+  {
+    "review_item_id": "rev-03",
+    "conclusion_type": "dynamic-ui-binding",
+    "evidence_ids": [
+      "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/gridwidget.cshtml:column"
+    ],
+    "state": "pending",
+    "assigned_role": "domain-ontology-reviewer"
+  },
+  {
+    "review_item_id": "rev-04",
+    "conclusion_type": "dispatch",
+    "evidence_ids": [
+      "ev:WS:ce9ad5ca:YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/MasterDataPROnlineApprovalConfig.cs:SubtableType"
+    ],
+    "state": "pending",
+    "assigned_role": "domain-ontology-reviewer"
+  },
+  {
+    "review_item_id": "rev-05",
+    "conclusion_type": "permission",
+    "evidence_ids": [
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Web.Code/DataRepository.cs:GetUserByToken"
+    ],
+    "state": "pending",
+    "assigned_role": "security-data-owner"
+  }
+]

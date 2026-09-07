@@ -1,0 +1,29 @@
+.build/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+coverage/
+TestResults/
+bin/
+obj/
+*.user
+*.suo
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+deepseek.config.yaml
+evidence/snapshots/*/raw/
+*.db
+*.sqlite
+*.sqlite3
+
+# 运行时数据：台账/审计/日志不入库；localdb 数据源（测试库 SSME.DPA_Test 只读引导
+# 快照，非生产数据）经用户明确批准入库；运行期沙箱写会改写其内容并产生 git diff
+gateway/data/*
+!gateway/data/localdb/

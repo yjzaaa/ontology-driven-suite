@@ -1,0 +1,24 @@
+model_id: masterdata.m2.update-subtable-data
+model_type: M2
+domain: masterdata
+name:
+  zh: 更新子表数据
+  en: Update Subtable Data
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+target_object: masterdata.m1.subtable-type
+semantic_inputs:
+  - subtable_type
+  - record_id
+  - field_values
+semantic_outputs:
+  - updated_record
+preconditions:
+  - masterdata.m3.allow-update-rule
+side_effect: MIXED
+risk: HIGH

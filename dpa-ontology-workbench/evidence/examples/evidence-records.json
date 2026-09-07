@@ -1,0 +1,93 @@
+[
+  {
+    "evidence_id": "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData",
+    "kind": "FACT",
+    "source_repo": "D:\\WorkSpace",
+    "revision": "ce9ad5ca",
+    "path": "YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs",
+    "symbol": "UpdateSubtableData",
+    "line_range": "655-663",
+    "extractor": "codebase-memory",
+    "observed_at": "2026-09-04T16:00:00+08:00",
+    "confidence": 1.0,
+    "tags": [
+      "write",
+      "mixed"
+    ]
+  },
+  {
+    "evidence_id": "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData:side-effect-cache",
+    "kind": "FACT",
+    "source_repo": "D:\\WorkSpace",
+    "revision": "ce9ad5ca",
+    "path": "YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs",
+    "symbol": "UpdateSubtableData",
+    "line_range": "658-660",
+    "extractor": "roslyn-side-effect",
+    "observed_at": "2026-09-04T16:01:00+08:00",
+    "confidence": 1.0,
+    "tags": [
+      "write",
+      "mixed"
+    ],
+    "relation": {
+      "from": "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData:side-effect-cache",
+      "to": "db:WS:ce9ad5ca:dbo.tb_Master_Data_PR_Online_Approval",
+      "type": "WRITE"
+    }
+  },
+  {
+    "evidence_id": "ev:WS:ce9ad5ca:YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/MasterDataPROnlineApprovalConfig.cs:SubtableType",
+    "kind": "FACT",
+    "source_repo": "D:\\WorkSpace",
+    "revision": "ce9ad5ca",
+    "path": "YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/MasterDataPROnlineApprovalConfig.cs",
+    "symbol": "SubtableType",
+    "line_range": "14-150",
+    "extractor": "codebase-memory",
+    "observed_at": "2026-09-04T16:02:00+08:00",
+    "confidence": 0.9,
+    "tags": [
+      "read"
+    ]
+  },
+  {
+    "evidence_id": "ev:WS:ce9ad5ca:UpdateSubtableData:is-mixed-high",
+    "kind": "INFERENCE",
+    "source_repo": "D:\\WorkSpace",
+    "revision": "ce9ad5ca",
+    "path": "YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs",
+    "symbol": "UpdateSubtableData",
+    "line_range": "655-663",
+    "extractor": "adapter",
+    "observed_at": "2026-09-04T16:03:00+08:00",
+    "derived_from": [
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData",
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData:side-effect-cache"
+    ],
+    "confidence": 0.85,
+    "tags": [
+      "write",
+      "mixed"
+    ]
+  },
+  {
+    "evidence_id": "ev:WS:ce9ad5ca:UpdateSubtableData:pure-read",
+    "kind": "ASSUMPTION",
+    "source_repo": "D:\\WorkSpace",
+    "revision": "ce9ad5ca",
+    "path": "YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs",
+    "symbol": "UpdateSubtableData",
+    "line_range": "655-663",
+    "extractor": "adapter",
+    "observed_at": "2026-09-04T16:04:00+08:00",
+    "derived_from": [
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData"
+    ],
+    "confidence": 0.1,
+    "tags": [
+      "write",
+      "mixed"
+    ]
+  }
+]

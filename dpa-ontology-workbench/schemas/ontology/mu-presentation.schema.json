@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/mu-presentation.schema.json",
+  "title": "MU Presentation",
+  "description": "MU 展示契约：展示投影与 Legacy View 入口。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "MU" },
+        "binds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "view_structure": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "source_field"],
+            "properties": {
+              "name": { "type": "string" },
+              "source_field": { "type": "string" }
+            }
+          }
+        },
+        "intent": {
+          "type": "string",
+          "enum": ["view", "edit", "import", "legacy"]
+        },
+        "legacy_fallback": { "type": "string" }
+      },
+      "required": ["binds", "intent"]
+    }
+  ]
+}

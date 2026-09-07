@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/m5-actor-permission.schema.json",
+  "title": "M5 Actor / Permission",
+  "description": "M5 参与者/权限契约：角色、权限与数据范围；不得包含凭据或绕过 DPA 授权。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "M5" },
+        "actors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "applies_to", "action"],
+            "properties": {
+              "name": { "type": "string" },
+              "applies_to": { "type": "string" },
+              "action": { "type": "string", "enum": ["read", "write", "approve", "execute"] }
+            }
+          }
+        },
+        "data_scope": { "type": "string" },
+        "authority_source": {
+          "type": "string",
+          "enum": ["DPA", "platform-policy"]
+        }
+      },
+      "required": ["authority_source"]
+    }
+  ]
+}

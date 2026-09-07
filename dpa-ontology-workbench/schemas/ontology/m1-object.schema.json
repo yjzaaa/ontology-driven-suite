@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/m1-object.schema.json",
+  "title": "M1 Object",
+  "description": "M1 业务对象契约：业务身份、属性、生命周期与关系。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "M1" },
+        "identity_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value_type"],
+            "properties": {
+              "name": { "type": "string" },
+              "value_type": { "type": "string", "enum": ["string", "number", "boolean", "date", "enum", "reference"] },
+              "required": { "type": "boolean" },
+              "enum_values": { "type": "array", "items": { "type": "string" } },
+              "ref_model": { "type": "string" }
+            }
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["target", "kind"],
+            "properties": {
+              "target": { "type": "string" },
+              "kind": { "type": "string", "enum": ["references", "composes", "depends-on"] }
+            }
+          }
+        },
+        "lifecycle": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "from_revision": "391d82d5",
+  "to_revision": "ce9ad5ca",
+  "generator_version": "adapter@1.0.0",
+  "changes": [
+    {
+      "path": "YiSha.Business/YiSha.Business.AutoJob/Job/AssetStocktaingNewJob.cs",
+      "change_type": "modified",
+      "lines": "42-75",
+      "impact": "Job 分支逻辑对调（07-20 与 FullStampAdmin/SelfFullSampleCount 交换），副作用结论需重新抽取",
+      "affected_evidence_ids": [
+        "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/AssetStocktaingNewJob.cs:AssetStocktaingNewJob.Start",
+        "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/AssetStocktaingNewJob.cs:AssetStocktaingNewJob.FullStampAdmin",
+        "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/AssetStocktaingNewJob.cs:AssetStocktaingNewJob.SelfFullSampleCount"
+      ],
+      "state": "INVALIDATED"
+    },
+    {
+      "path": "YiSha.Business/YiSha.Business.AutoJob/Job/SyncFCTXT.cs",
+      "change_type": "modified",
+      "lines": "new",
+      "impact": "Job 新增逻辑，需新增证据",
+      "affected_evidence_ids": [],
+      "state": "NEW"
+    },
+    {
+      "path": "YiSha.Web/YiSha.Admin.Web/Areas/DLP/Views/DLPReview/Index.cshtml",
+      "change_type": "modified",
+      "lines": "new",
+      "impact": "UI 绑定变更，需重建 UI 域快照",
+      "affected_evidence_ids": [],
+      "state": "REVIEW_REQUIRED"
+    }
+  ],
+  "invalidation_closure": {
+    "directly_invalidated": 3,
+    "propagated_inferences": 1,
+    "review_required_candidates": [
+      ".build/candidates/masterdata-asset-stocktaking.yaml"
+    ],
+    "rescan_scope": {
+      "job_domain": true,
+      "ui_domain": true,
+      "database_domain": false,
+      "note": "AssetStocktaingNewJob 未访问 SubtableType 可达表，故不触发数据库域重建；若后续证明可达则升级"
+    }
+  },
+  "deterministic": true,
+  "note": "相同输入重复计算得到相同的新增、失效和重扫集合"
+}

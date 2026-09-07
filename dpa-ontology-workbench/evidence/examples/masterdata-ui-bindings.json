@@ -1,0 +1,68 @@
+{
+  "revision": "ce9ad5ca",
+  "source_repo": "D:\\WorkSpace",
+  "extracted_at": "2026-09-04T16:40:00+08:00",
+  "ui_bindings": [
+    {
+      "relation_id": "ui-rel-01",
+      "type": "page-to-field",
+      "from": "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml:grid",
+      "to": "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml:subtable-grid",
+      "evidence": "Index.cshtml:203 ($('#grid').jqxGrid(...))",
+      "classification": "FACT"
+    },
+    {
+      "relation_id": "ui-rel-02",
+      "type": "event-to-route",
+      "from": "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml:getSubtableDatalist",
+      "to": "route:WS:ce9ad5ca:GET:MasterData/MasterDataPROnlineApproval/GetSubtableDatalist",
+      "evidence": "Index.cshtml:326-327 (getRequestFunc('@Url.Action(\"GetSubtableDatalist\")', { subtableType }))",
+      "classification": "FACT",
+      "param": "subtableType"
+    },
+    {
+      "relation_id": "ui-rel-03",
+      "type": "event-to-route",
+      "from": "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml:getSubTableGridColum",
+      "to": "route:WS:ce9ad5ca:GET:MasterData/MasterDataPROnlineApproval/GetSubtableViewModel",
+      "evidence": "Index.cshtml:329-330 (getRequestFunc('@Url.Action(\"GetSubtableViewModel\")', { subtableType }))",
+      "classification": "FACT",
+      "param": "subtableType"
+    },
+    {
+      "relation_id": "ui-rel-04",
+      "type": "event-to-route",
+      "from": "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml:updateSubtableData",
+      "to": "route:WS:ce9ad5ca:POST:MasterData/MasterDataPROnlineApproval/UpdateSubtableData",
+      "evidence": "Index.cshtml:333 (postRequestFunc('@Url.Content(\"~/MasterData/MasterDataPROnlineApproval/UpdateSubtableData\")'))",
+      "classification": "FACT",
+      "risk": "MIXED/HIGH",
+      "note": "写端点绑定，禁止自动执行"
+    },
+    {
+      "relation_id": "ui-rel-05",
+      "type": "field-to-dto",
+      "from": "ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/gridwidget.cshtml:column",
+      "to": "dto-field:datafield",
+      "evidence": "gridwidget.cshtml:802-807 (columns.push({name: list[i].datafield,...}))",
+      "classification": "INFERENCE",
+      "gap": "GAP-002",
+      "note": "运行时动态生成列，字段→DTO 映射无法完全静态解析"
+    }
+  ],
+  "unresolved_bindings": [
+    {
+      "id": "GAP-002",
+      "detail": "运行时生成控件/动态列字段，需人工补证",
+      "counts_toward_denominator": true
+    }
+  ],
+  "summary": {
+    "page_to_field": 1,
+    "field_to_dto": 1,
+    "event_to_route": 3,
+    "fact_count": 4,
+    "inference_count": 1,
+    "unresolved_count": 1
+  }
+}

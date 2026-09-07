@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/mi-integration.schema.json",
+  "title": "MI Integration",
+  "description": "MI 集成契约：语义模型到 DPA 技术目标或只读 Database MCP 的防腐层映射。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "MI" },
+        "binds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_kind": {
+          "type": "string",
+          "enum": ["dpa-http", "database-mcp-readonly"]
+        },
+        "fixed_params": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbidden_params": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "side_effect_level": {
+          "type": "string",
+          "enum": ["READ", "WRITE", "MIXED", "UNKNOWN"]
+        },
+        "timeout_ms": { "type": "integer", "minimum": 1 },
+        "retry_policy": { "type": "string" },
+        "idempotent": { "type": "boolean" },
+        "error_map": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "credential_policy": { "type": "string" }
+      },
+      "required": ["target_kind", "side_effect_level"],
+      "if": {
+        "properties": { "target_kind": { "const": "database-mcp-readonly" } }
+      },
+      "then": {
+        "properties": { "side_effect_level": { "const": "READ" } }
+      }
+    }
+  ]
+}

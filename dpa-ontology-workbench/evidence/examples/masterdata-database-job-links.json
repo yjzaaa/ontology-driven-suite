@@ -1,0 +1,68 @@
+{
+  "revision": "ce9ad5ca",
+  "source_repo": "D:\\WorkSpace",
+  "extracted_at": "2026-09-04T16:35:00+08:00",
+  "database_links": [
+    {
+      "relation_id": "db-rel-01",
+      "from": "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/MobileHaasJob.cs:MobileHaasJob.dowork",
+      "to": "db:WS:ce9ad5ca:MasterData.dbo.tb_Master_Data_PR_Online_Approval",
+      "type": "READ",
+      "sql_snippet": "select count(*) from [MasterData].[dbo].tb_Master_Data_PR_Online_Approval where dic_type=66",
+      "classification": "READ",
+      "confidence": 1.0,
+      "notes": "静态参数化查询，dic_type=66 为 SubtableType 可达点",
+      "gaps": []
+    },
+    {
+      "relation_id": "db-rel-02",
+      "from": "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/MobileHaasJob.cs:MobileHaasJob.dowork",
+      "to": "db:WS:ce9ad5ca:tb_mobile_HAAS_report",
+      "type": "WRITE",
+      "sql_snippet": "insert into tb_mobile_HAAS_report(year,month,dataJson,created_time) select ... from tb_mobile_HAAS_report",
+      "classification": "WRITE",
+      "confidence": 1.0,
+      "notes": "跨库写入，条件分支 SQL2/SQL3",
+      "gaps": []
+    },
+    {
+      "relation_id": "db-rel-03",
+      "from": "ev:WS:ce9ad5ca:YiSha.Business/YiSha.Business.AutoJob/Job/MobileHaasJob.cs:MobileHaasJob.dowork",
+      "to": "db:WS:ce9ad5ca:shai472a.SSME.DPAMS.dbo.tb_mobile_expense_report",
+      "type": "WRITE",
+      "sql_snippet": "insert into shai472a.[SSME.DPAMS].dbo.tb_mobile_expense_report(...) select ... from t_phone_expense_applyRecord",
+      "classification": "WRITE",
+      "confidence": 1.0,
+      "notes": "跨服务器写入，外部系统联动",
+      "gaps": ["GAP-004"]
+    },
+    {
+      "relation_id": "db-rel-04",
+      "from": "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData",
+      "to": "db:WS:ce9ad5ca:dbo.tb_Master_Data_PR_Online_Approval",
+      "type": "WRITE",
+      "sql_snippet": "Repository.Insert / Repository.Update",
+      "classification": "WRITE",
+      "confidence": 0.9,
+      "notes": "ORM 写入；同一方法含缓存清理副作用，整体判定 MIXED/HIGH",
+      "gaps": []
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "job:WS:ce9ad5ca:MobileHaasJob",
+      "file": "YiSha.Business/YiSha.Business.AutoJob/Job/MobileHaasJob.cs",
+      "framework": "AutoJob / IJobTask",
+      "guard": "is_runing 静态防重入标志（非幂等保证）",
+      "retry": "未发现显式重试",
+      "callback": "跨库写外部系统（SSME.DPAMS）",
+      "mixed_side_effects": true
+    }
+  ],
+  "summary": {
+    "read_relations": 1,
+    "write_relations": 3,
+    "mixed_unknown_relations": 0,
+    "note": "MIXED/UNKNOWN 关系不得声明为可自动执行的纯读能力"
+  }
+}

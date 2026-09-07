@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/m2-behavior.schema.json",
+  "title": "M2 Behavior",
+  "description": "M2 业务行为契约：业务结果能力，与 endpoint 解耦。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "M2" },
+        "target_object": { "type": "string" },
+        "semantic_inputs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "semantic_outputs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "preconditions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "side_effect": {
+          "type": "string",
+          "enum": ["READ", "WRITE", "MIXED"]
+        },
+        "risk": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"]
+        }
+      },
+      "if": {
+        "properties": {
+          "side_effect": { "const": "MIXED" }
+        }
+      },
+      "then": {
+        "properties": {
+          "risk": { "const": "HIGH" }
+        }
+      }
+    }
+  ]
+}

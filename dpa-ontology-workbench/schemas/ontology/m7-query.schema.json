@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/m7-query.schema.json",
+  "title": "M7 Query",
+  "description": "M7 受治理查询契约：查询语义与限制，不含任意 SQL 或物理 DTO。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "M7" },
+        "target_object": { "type": "string" },
+        "semantic_parameters": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "return_shape": { "type": "string" },
+        "filters": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ordering": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pagination": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["max_page_size", "max_rows"],
+          "properties": {
+            "max_page_size": { "type": "integer", "minimum": 1 },
+            "max_rows": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "row_scope": { "type": "string" },
+        "limits": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["pagination"]
+    }
+  ]
+}

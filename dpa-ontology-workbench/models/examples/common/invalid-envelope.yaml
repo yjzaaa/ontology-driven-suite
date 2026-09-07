@@ -1,0 +1,11 @@
+model_id: masterdata.m1.subtable-type
+model_type: M9
+domain: masterdata
+name:
+  zh: 子表类型
+version: 1.0.0
+status: GENERATED
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+unknown_field: should-be-rejected

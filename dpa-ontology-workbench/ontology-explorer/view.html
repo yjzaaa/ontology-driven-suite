@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPA 本体 YAML — 树与图（投影）</title>
+<style>
+  body { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; margin: 0; background: #f6f7fb; color: #222; }
+  header { background: #1f2d3d; color: #fff; padding: 16px 24px; }
+  header h1 { margin: 0; font-size: 18px; }
+  header p { margin: 4px 0 0; color: #b8c4d0; font-size: 12px; }
+  nav.tabs { display: flex; gap: 8px; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e3e6ee; }
+  nav.tabs button { padding: 8px 16px; border: 1px solid #d0d6e0; border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
+  nav.tabs button.active { background: #1f2d3d; color: #fff; border-color: #1f2d3d; }
+  main { padding: 20px 24px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .type-group { margin-bottom: 12px; background: #fff; border: 1px solid #e3e6ee; border-radius: 8px; padding: 10px 14px; }
+  .type-group summary { cursor: pointer; font-size: 14px; }
+  .count { color: #888; }
+  ul.tree { list-style: none; padding-left: 18px; margin: 6px 0 0; }
+  ul.props { list-style: none; padding-left: 16px; margin: 4px 0 8px; font-size: 12px; color: #444; }
+  ul.props li { padding: 1px 0; }
+  .model summary { cursor: pointer; padding: 4px 0; }
+  .mid { font-family: Consolas, monospace; color: #1a5c9e; font-weight: bold; margin-right: 10px; }
+  .name { color: #333; margin-right: 10px; }
+  .status { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #f0f2f7; }
+  .status.review_required { background: #fff3cd; color: #856404; }
+  .k { color: #7a7f8a; }
+  .v { font-family: Consolas, monospace; font-size: 11px; color: #2c3e50; }
+  .graph-wrap { background: #fff; border: 1px solid #e3e6ee; border-radius: 8px; padding: 12px; overflow: auto; }
+  .legend { font-size: 12px; color: #555; margin: 8px 0; }
+  .legend span { margin-right: 12px; }
+  footer { padding: 12px 24px; color: #999; font-size: 11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DPA 本体 YAML — 树与图（投影视图）</h1>
+  <p>事实源：<code>models/examples/masterdata/*.yaml</code>（8 个模型）｜ 本视图是只读投影，不成为第二事实源 ｜ 生成器 digest: 3fc854524c077501</p>
+</header>
+<nav class="tabs">
+  <button class="active" data-tab="tree">🌲 树（模型层级）</button>
+  <button data-tab="graph">🕸 图（引用关系）</button>
+</nav>
+<main>
+  <section id="tab-tree" class="tab-panel active">
+    <details open class="type-group"><summary><b>对象 Object</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.m1.subtable-type</span><span class="name">子表类型 / Subtable Type</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">identity_fields</span>: <span class="v">[&quot;enum_name&quot;]</span></li>
+<li><span class="k">attributes</span>: <span class="v">[{&quot;name&quot;: &quot;enum_name&quot;, &quot;value_type&quot;: &quot;enum&quot;, &quot;required&quot;: true, &quot;enum_values&quot;: [&quot;ESN&quot;, &quot;Tax_Rate&quot;, &quot;Standard_Goods&quot;, &quot;Depth_Structure&quot;]}, {&quot;name&quot;: &quot;display_name&quot;, &quot;value_type&quot;: &quot;string&quot;, &quot;required&quot;: true}, {&quot;name&quot;: &quot;data_source&quot;, &quot;value_type&quot;: &quot;reference&quot;, &quot;ref_model&quot;: &quot;masterdata.m1.subtable-data-source&quot;}]</span></li>
+<li><span class="k">relations</span>: <span class="v">[{&quot;target&quot;: &quot;masterdata.m7.list-subtable-data&quot;, &quot;kind&quot;: &quot;depends-on&quot;}]</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m7.list-subtable-data, masterdata.m1.subtable-data-source</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>行为 Behavior</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.m2.update-subtable-data</span><span class="name">更新子表数据 / Update Subtable Data</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">target_object</span>: <span class="v">&quot;masterdata.m1.subtable-type&quot;</span></li>
+<li><span class="k">semantic_inputs</span>: <span class="v">[&quot;subtable_type&quot;, &quot;record_id&quot;, &quot;field_values&quot;]</span></li>
+<li><span class="k">semantic_outputs</span>: <span class="v">[&quot;updated_record&quot;]</span></li>
+<li><span class="k">preconditions</span>: <span class="v">[&quot;masterdata.m3.allow-update-rule&quot;]</span></li>
+<li><span class="k">side_effect</span>: <span class="v">&quot;MIXED&quot;</span></li>
+<li><span class="k">risk</span>: <span class="v">&quot;HIGH&quot;</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m1.subtable-type, masterdata.m3.allow-update-rule</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>规则 Rule</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.m3.allow-update-rule</span><span class="name">允许更新规则 / Allow Update Rule</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">applies_to</span>: <span class="v">[&quot;masterdata.m2.update-subtable-data&quot;]</span></li>
+<li><span class="k">severity</span>: <span class="v">&quot;BLOCK&quot;</span></li>
+<li><span class="k">condition</span>: <span class="v">&quot;subtable_type 不在禁止更新列表中&quot;</span></li>
+<li><span class="k">result</span>: <span class="v">&quot;允许更新&quot;</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m2.update-subtable-data</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>参与者/权限</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.m5.online-approval-actor</span><span class="name">在线审批参与者 / Online Approval Actor</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">actors</span>: <span class="v">[&quot;masterdata-approver&quot;]</span></li>
+<li><span class="k">permissions</span>: <span class="v">[{&quot;name&quot;: &quot;更新子表数据&quot;, &quot;applies_to&quot;: &quot;masterdata.m2.update-subtable-data&quot;, &quot;action&quot;: &quot;write&quot;}, {&quot;name&quot;: &quot;审批子表变更&quot;, &quot;applies_to&quot;: &quot;masterdata.m6.subtable-approval-flow&quot;, &quot;action&quot;: &quot;approve&quot;}]</span></li>
+<li><span class="k">data_scope</span>: <span class="v">&quot;用户数据范围由 DPA 最终裁决&quot;</span></li>
+<li><span class="k">authority_source</span>: <span class="v">&quot;DPA&quot;</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m2.update-subtable-data, masterdata.m6.subtable-approval-flow</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>流程 Flow</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.m6.subtable-approval-flow</span><span class="name">子表在线审批流程 / Subtable Online Approval Flow</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">states</span>: <span class="v">[&quot;草稿&quot;, &quot;待审&quot;, &quot;通过&quot;, &quot;驳回&quot;]</span></li>
+<li><span class="k">transitions</span>: <span class="v">[{&quot;from&quot;: &quot;草稿&quot;, &quot;to&quot;: &quot;待审&quot;, &quot;trigger&quot;: &quot;masterdata.m2.update-subtable-data&quot;, &quot;guard&quot;: [&quot;masterdata.m3.allow-update-rule&quot;]}, {&quot;from&quot;: &quot;待审&quot;, &quot;to&quot;: &quot;通过&quot;, &quot;trigger&quot;: &quot;approve&quot;, &quot;guard&quot;: [&quot;masterdata.m5.online-approval-actor&quot;]}, {&quot;from&quot;: &quot;待审&quot;, &quot;to&quot;: &quot;驳回&quot;, &quot;trigger&quot;: &quot;reject&quot;, &quot;guard&quot;: [&quot;masterdata.m5.online-approval-actor&quot;]}]</span></li>
+<li><span class="k">trigger_behaviors</span>: <span class="v">[&quot;masterdata.m2.update-subtable-data&quot;]</span></li>
+<li><span class="k">guard_rules</span>: <span class="v">[&quot;masterdata.m3.allow-update-rule&quot;]</span></li>
+<li><span class="k">terminals</span>: <span class="v">[&quot;通过&quot;, &quot;驳回&quot;]</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m2.update-subtable-data, masterdata.m3.allow-update-rule, masterdata.m5.online-approval-actor</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>查询 Query</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.m7.list-subtable-data</span><span class="name">列出子表数据 / List Subtable Data</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">target_object</span>: <span class="v">&quot;masterdata.m1.subtable-type&quot;</span></li>
+<li><span class="k">semantic_parameters</span>: <span class="v">[&quot;subtable_type&quot;]</span></li>
+<li><span class="k">return_shape</span>: <span class="v">&quot;object-list&quot;</span></li>
+<li><span class="k">filters</span>: <span class="v">[&quot;subtable_type&quot;]</span></li>
+<li><span class="k">ordering</span>: <span class="v">[&quot;record_id&quot;]</span></li>
+<li><span class="k">pagination</span>: <span class="v">{&quot;max_page_size&quot;: 100, &quot;max_rows&quot;: 1000}</span></li>
+<li><span class="k">row_scope</span>: <span class="v">&quot;用户数据范围（DPA 最终裁决）&quot;</span></li>
+<li><span class="k">limits</span>: <span class="v">[&quot;禁任意 SQL&quot;, &quot;禁物理 DTO 映射&quot;]</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m1.subtable-type</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>展示 Presentation</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.mu.subtable-grid-view</span><span class="name">子表网格视图 / Subtable Grid View</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">binds</span>: <span class="v">[&quot;masterdata.m7.list-subtable-data&quot;]</span></li>
+<li><span class="k">view_structure</span>: <span class="v">&quot;object-list-grid&quot;</span></li>
+<li><span class="k">intent</span>: <span class="v">&quot;view&quot;</span></li>
+<li><span class="k">legacy_fallback</span>: <span class="v">&quot;masterdata.mu.legacy-dpa-page&quot;</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m7.list-subtable-data</span></li>
+</ul></details></li>
+</ul></details>
+<details open class="type-group"><summary><b>集成 Integration</b> <span class="count">(1)</span></summary>
+<ul class="tree">
+<li><details open class="model"><summary class="review_required"><span class="mid">masterdata.mi.update-subtable</span><span class="name">更新子表数据集成 / Update Subtable Data Integration</span><span class="status">REVIEW_REQUIRED</span></summary>
+<ul class="props">
+<li><span class="k">binds</span>: <span class="v">[&quot;masterdata.m2.update-subtable-data&quot;]</span></li>
+<li><span class="k">target_kind</span>: <span class="v">&quot;dpa-http&quot;</span></li>
+<li><span class="k">fixed_params</span>: <span class="v">[&quot;subtableType&quot;]</span></li>
+<li><span class="k">forbidden_params</span>: <span class="v">[&quot;credential&quot;, &quot;token&quot;]</span></li>
+<li><span class="k">side_effect_level</span>: <span class="v">&quot;MIXED&quot;</span></li>
+<li><span class="k">timeout_ms</span>: <span class="v">30000</span></li>
+<li><span class="k">retry_policy</span>: <span class="v">&quot;no-retry-on-write&quot;</span></li>
+<li><span class="k">idempotent</span>: <span class="v">false</span></li>
+<li><span class="k">error_map</span>: <span class="v">{&quot;DB_WRITE_FAILED&quot;: &quot;持久化失败&quot;, &quot;CACHE_CLEAR_FAILED&quot;: &quot;缓存清理失败&quot;}</span></li>
+<li><span class="k">credential_policy</span>: <span class="v">&quot;仅描述服务端转发策略，不携带真实 Cookie/Token 值；凭据不进入模型上下文（边界 10）&quot;</span></li>
+<li><span class="k">evidence_refs</span>: <span class="v">1 条</span></li>
+<li><span class="k">→ 引用</span>: <span class="v">masterdata.m2.update-subtable-data</span></li>
+</ul></details></li>
+</ul></details>
+  </section>
+  <section id="tab-graph" class="tab-panel">
+    <div class="legend">节点 = 本体模型（按模型类型分列）；箭头 = 引用关系（引用目标 model_id）。</div>
+    <div class="graph-wrap">
+      <svg width="2110" height="240" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2110 240">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c7c9c"/></marker></defs>
+<line x1="220" y1="53.0" x2="1170" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="450" y1="53.0" x2="20" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="450" y1="53.0" x2="480" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="680" y1="53.0" x2="250" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="910" y1="53.0" x2="250" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="910" y1="53.0" x2="940" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="1140" y1="53.0" x2="250" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="1140" y1="53.0" x2="480" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="1140" y1="53.0" x2="710" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="1370" y1="53.0" x2="20" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="1830" y1="53.0" x2="250" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="1600" y1="53.0" x2="1170" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<line x1="220" y1="53.0" x2="1860" y2="53.0" stroke="#7c7c9c" stroke-width="1.6" marker-end="url(#arrow)" opacity="0.75"/>
+<rect x="20" y="30" width="200" height="46" rx="8" fill="#4c78a8" opacity="0.92"/>
+<text x="28" y="48" fill="#fff" font-size="12" font-weight="bold">subtable-type</text>
+<text x="28" y="65" fill="#fff" font-size="10" opacity="0.9">子表类型</text>
+<rect x="250" y="30" width="200" height="46" rx="8" fill="#f58518" opacity="0.92"/>
+<text x="258" y="48" fill="#fff" font-size="12" font-weight="bold">update-subtable-data</text>
+<text x="258" y="65" fill="#fff" font-size="10" opacity="0.9">更新子表数据</text>
+<rect x="480" y="30" width="200" height="46" rx="8" fill="#54a24b" opacity="0.92"/>
+<text x="488" y="48" fill="#fff" font-size="12" font-weight="bold">allow-update-rule</text>
+<text x="488" y="65" fill="#fff" font-size="10" opacity="0.9">允许更新规则</text>
+<rect x="710" y="30" width="200" height="46" rx="8" fill="#e45756" opacity="0.92"/>
+<text x="718" y="48" fill="#fff" font-size="12" font-weight="bold">online-approval-actor</text>
+<text x="718" y="65" fill="#fff" font-size="10" opacity="0.9">在线审批参与者</text>
+<rect x="940" y="30" width="200" height="46" rx="8" fill="#72b7b2" opacity="0.92"/>
+<text x="948" y="48" fill="#fff" font-size="12" font-weight="bold">subtable-approval-flow</text>
+<text x="948" y="65" fill="#fff" font-size="10" opacity="0.9">子表在线审批流程</text>
+<rect x="1170" y="30" width="200" height="46" rx="8" fill="#b279a2" opacity="0.92"/>
+<text x="1178" y="48" fill="#fff" font-size="12" font-weight="bold">list-subtable-data</text>
+<text x="1178" y="65" fill="#fff" font-size="10" opacity="0.9">列出子表数据</text>
+<rect x="1630" y="30" width="200" height="46" rx="8" fill="#9d755d" opacity="0.92"/>
+<text x="1638" y="48" fill="#fff" font-size="12" font-weight="bold">update-subtable</text>
+<text x="1638" y="65" fill="#fff" font-size="10" opacity="0.9">更新子表数据集成</text>
+<rect x="1400" y="30" width="200" height="46" rx="8" fill="#ff9da6" opacity="0.92"/>
+<text x="1408" y="48" fill="#fff" font-size="12" font-weight="bold">subtable-grid-view</text>
+<text x="1408" y="65" fill="#fff" font-size="10" opacity="0.9">子表网格视图</text>
+<rect x="1860" y="30" width="200" height="46" rx="8" fill="none" stroke="#c0392b" stroke-width="1.8" stroke-dasharray="6 4"/>
+<text x="1868" y="48" fill="#c0392b" font-size="12" font-weight="bold">subtable-data-source</text>
+<text x="1868" y="65" fill="#c0392b" font-size="10">(未建模/悬空引用)</text>
+</svg>
+    </div>
+  </section>
+</main>
+<footer>YAML 是事实源，图是 Registry 生成的投影。本页由 ontology-explorer/generate-ontology-view.py 生成。</footer>
+<script>
+  document.querySelectorAll("nav.tabs button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.remove("active"); });
+      document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+</script>
+</body>
+</html>
