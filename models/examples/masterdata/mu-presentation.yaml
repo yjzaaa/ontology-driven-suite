@@ -1,0 +1,23 @@
+model_id: masterdata.mu.subtable-grid-view
+model_type: MU
+domain: masterdata
+name:
+  zh: 子表网格视图
+  en: Subtable Grid View
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ui:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Views/MasterDataPROnlineApproval/Index.cshtml:grid
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+binds:
+  - masterdata.m7.list-subtable-data
+view_structure: object-list-grid
+fields:
+  - name: recordId
+    source_field: record_id
+  - name: displayName
+    source_field: display_name
+intent: view
+legacy_fallback: masterdata.mu.legacy-dpa-page

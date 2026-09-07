@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/evidence/evidence-record.schema.json",
+  "title": "Evidence Record",
+  "description": "DPA 反向工程证据记录信封：机器证据、推断或假设的统一契约。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id",
+    "kind",
+    "source_repo",
+    "revision",
+    "path",
+    "symbol",
+    "line_range",
+    "extractor",
+    "observed_at",
+    "confidence"
+  ],
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^(ev|route|db|job|ui):[A-Za-z0-9_-]+:[A-Za-z0-9_.-]+:.*$"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["FACT", "INFERENCE", "ASSUMPTION"]
+    },
+    "source_repo": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "symbol": {
+      "type": "string",
+      "minLength": 1
+    },
+    "line_range": {
+      "type": "string",
+      "pattern": "^\\d+-\\d+$"
+    },
+    "extractor": {
+      "type": "string",
+      "enum": [
+        "codebase-memory",
+        "roslyn-controller-route",
+        "roslyn-side-effect",
+        "db-metadata",
+        "manual",
+        "adapter"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "derived_from": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["READ", "WRITE", "CALLS", "BINDS", "TRIGGERS", "DERIVES"]
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["read", "write", "mixed", "dynamic", "gap", "permission"]
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "INFERENCE 与 ASSUMPTION 必须提供 derived_from",
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": ["INFERENCE", "ASSUMPTION"]
+          }
+        }
+      },
+      "then": {
+        "required": ["derived_from"]
+      }
+    }
+  ]
+}

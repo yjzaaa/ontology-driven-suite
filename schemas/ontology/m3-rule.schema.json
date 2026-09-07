@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/m3-rule.schema.json",
+  "title": "M3 Rule",
+  "description": "M3 业务规则契约：可复用判断/派生约束。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "M3" },
+        "applies_to": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "condition": { "type": "string" },
+        "result": { "type": "string" },
+        "severity": {
+          "type": "string",
+          "enum": ["INFO", "WARNING", "BLOCK"]
+        },
+        "explanation": { "type": "string" }
+      }
+    }
+  ]
+}

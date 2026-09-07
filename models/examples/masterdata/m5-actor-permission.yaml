@@ -1,0 +1,24 @@
+model_id: masterdata.m5.online-approval-actor
+model_type: M5
+domain: masterdata
+name:
+  zh: 在线审批参与者
+  en: Online Approval Actor
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:Form
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+actors:
+  - masterdata-approver
+permissions:
+  - name: 更新子表数据
+    applies_to: masterdata.m2.update-subtable-data
+    action: write
+  - name: 审批子表变更
+    applies_to: masterdata.m6.subtable-approval-flow
+    action: approve
+data_scope: 用户数据范围由 DPA 最终裁决
+authority_source: DPA

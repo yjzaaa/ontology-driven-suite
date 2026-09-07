@@ -1,0 +1,33 @@
+publication_id: pub-masterdata-20260904-001
+published_at: '2026-09-04T18:30:00+08:00'
+published_by: release-approver
+models:
+- model_id: m1-object
+  version: 1.0.0
+  sha256: 36bbbd0a36285e59c9a8a0842e9ac8c122234ada0bab87e3e989b7f239becac4
+- model_id: m2-behavior
+  version: 1.0.0
+  sha256: c5462907cc02addd1d6103c1728b213768e74108d5e72410beedb96c4ad60600
+- model_id: m3-rule
+  version: 1.0.0
+  sha256: af841eabfdc25768dc7937efca174631082ffb7811f09f567e10feb5773ff69e
+- model_id: m5-actor-permission
+  version: 1.0.0
+  sha256: 3f3483f2c41e809f634fe73e6290f859c450f10ef84470eeadcb1d9bf7a1b731
+- model_id: m6-flow
+  version: 1.0.0
+  sha256: b0b54fd8aea6bf9d44796f5b7f59332a16bbe343d30ddec3b49c83348d0cc032
+- model_id: m7-query
+  version: 1.0.0
+  sha256: 61f5edc74eb2ffa230c18e76406665412b64e26571cd4cddb66ba538ea767910
+- model_id: mi-integration
+  version: 1.0.0
+  sha256: bb50d0d9d0db5f6c5efcc619da7ea97977defc615669cc89c69981abcc412855
+- model_id: mu-presentation
+  version: 1.0.0
+  sha256: 79c2c8a30d46e3e7690ddeac8090aa60336e249e0caf0f5d899bdeefb336e936
+content_digest: 1a102e6e9e6a7ed28498cfa425ad90d202cea7cbb17b39df97d55b422e2efd76
+review_refs:
+- rev-01
+- rev-03
+- rev-04

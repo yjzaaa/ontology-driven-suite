@@ -1,0 +1,13 @@
+# 完整引用闭包样例：从 M2 update-subtable-data 出发，解析全部可达模型
+# 期望：唯一封闭集合 { m1.subtable-type, m3.allow-update-rule, m5.online-approval-actor, m6.subtable-approval-flow, m7.list-subtable-data, m2.update-subtable-data, mi.update-subtable, mu.subtable-grid-view }
+roots:
+  - masterdata.m2.update-subtable-data@1.0.0
+closure:
+  - masterdata.m1.subtable-type@1.0.0
+  - masterdata.m3.allow-update-rule@1.0.0
+  - masterdata.m5.online-approval-actor@1.0.0
+  - masterdata.m6.subtable-approval-flow@1.0.0
+  - masterdata.m7.list-subtable-data@1.0.0
+  - masterdata.mi.update-subtable@1.0.0
+  - masterdata.mu.subtable-grid-view@1.0.0
+acyclic: true

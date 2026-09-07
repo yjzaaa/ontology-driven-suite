@@ -1,0 +1,74 @@
+{
+  "snapshot_id": "snap-ce9ad5ca-adapter.1.0.0-b79606fb3afea5bd1609ed40b622142f1c98125abcfe89a76a661b0e8e343910",
+  "source_revision": "ce9ad5ca",
+  "generator_version": "adapter@1.0.0",
+  "coverage_by_domain": {
+    "controller": {
+      "numerator": 12,
+      "denominator": 37,
+      "percent": 32.4,
+      "gaps": [
+        "GAP-001"
+      ],
+      "note": "试点可达 Action 12/37；其余 Action 与 SubtableType 无直接关系或待确认"
+    },
+    "database": {
+      "numerator": 4,
+      "denominator": 6,
+      "percent": 66.7,
+      "gaps": [
+        "GAP-003",
+        "GAP-004"
+      ],
+      "note": "已识别 4 条读写关系；动态 SQL 与生产元数据待补证"
+    },
+    "job": {
+      "numerator": 1,
+      "denominator": 3,
+      "percent": 33.3,
+      "gaps": [
+        "GAP-005"
+      ],
+      "note": "MobileHaasJob 已覆盖；其他 AutoJob 需确认 SubtableType 可达性"
+    },
+    "ui": {
+      "numerator": 5,
+      "denominator": 8,
+      "percent": 62.5,
+      "gaps": [
+        "GAP-002"
+      ],
+      "note": "5 条绑定已解析；运行时动态绑定待人工补证"
+    }
+  },
+  "coverage_by_layer": {
+    "asset_discovery": {
+      "numerator": 22,
+      "denominator": 54,
+      "percent": 40.7
+    },
+    "symbol_resolution": {
+      "numerator": 20,
+      "denominator": 22,
+      "percent": 90.9
+    },
+    "relation_resolution": {
+      "numerator": 12,
+      "denominator": 18,
+      "percent": 66.7
+    },
+    "evidence_location": {
+      "numerator": 22,
+      "denominator": 22,
+      "percent": 100.0
+    },
+    "human_review": {
+      "numerator": 2,
+      "denominator": 6,
+      "percent": 33.3
+    }
+  },
+  "overall_percent": 40.7,
+  "state": "degraded",
+  "note": "不合并单一百分比掩盖缺口；四域五层分别展示。试点目标阈值 80% 未达，需补证 GAP-001~005"
+}

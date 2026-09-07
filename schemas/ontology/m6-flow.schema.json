@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/m6-flow.schema.json",
+  "title": "M6 Flow",
+  "description": "M6 流程契约：状态迁移与跨行为编排。",
+  "type": "object",
+  "unevaluatedProperties": false,
+  "allOf": [
+    { "$ref": "model-envelope.schema.json" },
+    {
+      "type": "object",
+      "properties": {
+        "model_type": { "const": "M6" },
+        "states": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "to", "trigger"],
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "trigger": { "type": "string" },
+              "guard": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "trigger_behaviors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "guard_rules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "terminals": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  ]
+}

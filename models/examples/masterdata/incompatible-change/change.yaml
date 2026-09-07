@@ -1,0 +1,11 @@
+# 不兼容升级样例：M2 副作用从 WRITE 变为 MIXED → major
+model: masterdata.m2.update-subtable-data
+from: 1.0.0
+to: 2.0.0
+change:
+  field: side_effect
+  before: WRITE
+  after: MIXED
+classification: major
+reason: 行为副作用变化（READ→MIXED），旧消费者可能把该行为当纯写自动执行，风险不可接受
+blocks_release: true

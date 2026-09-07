@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/model-envelope.schema.json",
+  "title": "Ontology Model Envelope",
+  "description": "八类本体模型（M1/M2/M3/M5/M6/M7/MU/MI）统一顶层信封。为支持具体模型扩展，本 Schema 不设置 additionalProperties；具体模型 Schema 用 unevaluatedProperties: false 收口未知字段。",
+  "type": "object",
+  "required": [
+    "model_id",
+    "model_type",
+    "domain",
+    "name",
+    "version",
+    "status",
+    "created_at",
+    "created_by",
+    "schema_version"
+  ],
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+\\.[mM][0-9A-Za-z]+\\.[a-z0-9-]+$"
+    },
+    "model_type": {
+      "type": "string",
+      "enum": ["M1", "M2", "M3", "M5", "M6", "M7", "MU", "MI"]
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["zh", "en"],
+      "properties": {
+        "zh": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["GENERATED", "REVIEW_REQUIRED", "APPROVED", "PUBLISHED", "DEPRECATED", "WITHDRAWN"]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(ev|route|db|job|ui):[A-Za-z0-9_-]+:[A-Za-z0-9_.-]+:.*$"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    }
+  },
+  "allOf": [
+    {
+      "description": "PUBLISHED 状态必须提供 evidence_refs",
+      "if": {
+        "properties": { "status": { "const": "PUBLISHED" } }
+      },
+      "then": { "required": ["evidence_refs"] }
+    }
+  ]
+}

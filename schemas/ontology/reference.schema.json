@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/ontology/reference.schema.json",
+  "title": "Model Reference",
+  "description": "本体模型跨引用声明契约。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ref", "kind"],
+  "properties": {
+    "ref": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+\\.[mM][0-9A-Za-z]+\\.[a-z0-9-]+(@(\\^)?\\d+\\.\\d+(\\.\\d+)?)?$"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["object", "behavior", "rule", "actor-permission", "flow", "query", "presentation", "integration"]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(\\^)?\\d+\\.\\d+(\\.\\d+)?$"
+    }
+  }
+}

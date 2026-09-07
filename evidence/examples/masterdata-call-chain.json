@@ -1,0 +1,102 @@
+{
+  "anchor": "MasterDataPROnlineApprovalController.UpdateSubtableData",
+  "revision": "ce9ad5ca",
+  "source_repo": "D:\\WorkSpace",
+  "extracted_at": "2026-09-04T16:30:00+08:00",
+  "extractor": "codebase-memory (trace_path calls outbound depth=3)",
+  "chain": [
+    {
+      "hop": 0,
+      "symbol": "MasterDataPROnlineApprovalController.UpdateSubtableData",
+      "file": "YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs",
+      "line": "655-663",
+      "role": "controller",
+      "side_effect": "write",
+      "note": "HttpPost; 调用 Dll.UpdateSubtableData 后 clearSubtableCache + HrEmployeeInfoCache.Remove"
+    },
+    {
+      "hop": 1,
+      "symbol": "MasterDataPROnlineApprovalDll.UpdateSubtableData",
+      "file": "YiSha.Business/YiSha.Business/MasterData/MasterDataPROnlineApprovalDll.cs",
+      "role": "dll",
+      "callees": [
+        "ISubtableDataHandler.ValidateFunc",
+        "MasterDataPROnlineApprovalDll.GetUpdateMasterdataPROnlineApprovalDto",
+        "MasterDataPROnlineApprovalService.SetMasterDataPROnlineApproval",
+        "MasterDataPROnlineApprovalDll.LogUpdate",
+        "MasterDataPROnlineApprovalService.SaveOperateLog",
+        "Repository.Insert",
+        "Repository.Update",
+        "MemoryCacheImp.SetCache"
+      ]
+    },
+    {
+      "hop": 2,
+      "symbol": "MasterDataPROnlineApprovalService.SetMasterDataPROnlineApproval",
+      "file": "YiSha.Business/YiSha.Service/MasterData/MasterDataPROnlineApprovalService.cs",
+      "role": "service",
+      "side_effect": "write",
+      "note": "业务服务层，承载持久化与操作日志"
+    },
+    {
+      "hop": 2,
+      "symbol": "Repository.Insert / Repository.Update",
+      "file": "YiSha.Data/YiSha.Data/Repository/Repository.cs",
+      "role": "data-access",
+      "side_effect": "write",
+      "note": "数据库写入点；tags=write"
+    },
+    {
+      "hop": 2,
+      "symbol": "MasterDataPROnlineApprovalService.SaveOperateLog",
+      "file": "YiSha.Business/YiSha.Service/MasterData/MasterDataPROnlineApprovalService.cs",
+      "role": "log",
+      "side_effect": "write-log",
+      "note": "操作日志，审计关联"
+    },
+    {
+      "hop": 4,
+      "symbol": "DataRepository.GetUserByToken / CookieHelper.GetCookie / SessionHelper.GetSession",
+      "file": "YiSha.Web/YiSha.Web.Code/DataRepository.cs",
+      "role": "identity",
+      "side_effect": "read",
+      "note": "身份/会话上下文，凭据不得进入模型上下文"
+    }
+  ],
+  "noise": [
+    {
+      "symbol": "echarts.View",
+      "file": "YiSha.Web/YiSha.Admin.Web/wwwroot/lib/report/echarts/echarts.js",
+      "reason": "第三方前端库误报边"
+    },
+    {
+      "symbol": "jqwidgets.jqxgantt.api.e.call",
+      "file": "YiSha.Web/YiSha.Admin.Web/wwwroot/jqwidgets/jqxgantt/api.js",
+      "reason": "第三方前端库误报边"
+    },
+    {
+      "symbol": "FormController.Select",
+      "file": "YiSha.Web/YiSha.Admin.Web/Areas/DemoManage/Controllers/FormController.cs",
+      "reason": "跨域误匹配，与 MasterData 无 SubtableType 可达关系"
+    }
+  ],
+  "side_effect_classification": {
+    "value": "MIXED",
+    "risk": "HIGH",
+    "evidence_ids": [
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData",
+      "ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:UpdateSubtableData:side-effect-cache"
+    ],
+    "note": "写库 + 操作日志 + 缓存清理 → MIXED/HIGH，禁止自动执行"
+  },
+  "gaps": [
+    {
+      "id": "GAP-001",
+      "detail": "Route 节点多数为空，需 roslyn-controller-route 补证"
+    },
+    {
+      "id": "GAP-002",
+      "detail": "ISubtableHandler 动态分派实现类需 roslyn-subtable-dispatch 补证"
+    }
+  ]
+}

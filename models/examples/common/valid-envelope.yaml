@@ -1,0 +1,13 @@
+model_id: masterdata.m1.subtable-type
+model_type: M1
+domain: masterdata
+name:
+  zh: 子表类型
+  en: Subtable Type
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ev:WS:ce9ad5ca:YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/MasterDataPROnlineApprovalConfig.cs:SubtableType
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0

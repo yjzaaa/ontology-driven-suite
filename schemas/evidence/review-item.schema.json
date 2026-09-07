@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-ontology-workbench/schemas/evidence/review-item.schema.json",
+  "title": "Evidence Review Item",
+  "description": "人工审核队列项契约：机器结论的人工确认、修正或拒绝记录。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_item_id",
+    "conclusion_type",
+    "evidence_ids",
+    "state",
+    "assigned_role"
+  ],
+  "properties": {
+    "review_item_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conclusion_type": {
+      "type": "string",
+      "enum": ["dispatch", "read-write-classification", "dynamic-sql", "reflection", "dynamic-ui-binding", "mixed-side-effect", "permission"]
+    },
+    "evidence_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "state": {
+      "type": "string",
+      "enum": ["pending", "accepted", "corrected", "rejected", "reopened"]
+    },
+    "assigned_role": {
+      "type": "string",
+      "enum": ["dpa-tech-owner", "domain-ontology-reviewer", "security-data-owner", "release-approver"]
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_by", "decision_at", "basis_evidence_ids", "reason"],
+      "properties": {
+        "decision_by": { "type": "string" },
+        "decision_at": { "type": "string", "format": "date-time" },
+        "basis_evidence_ids": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

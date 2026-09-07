@@ -1,0 +1,25 @@
+{
+  "snapshot_id": "snap-ce9ad5ca-adapter.1.0.0-b79606fb3afea5bd1609ed40b622142f1c98125abcfe89a76a661b0e8e343910",
+  "source_revision": "ce9ad5ca",
+  "generator_version": "adapter@1.0.0",
+  "config_digest": "aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899",
+  "files": [
+    {
+      "path": "evidence/examples/evidence-records.json",
+      "sha256": "7af4ef37b3313b96b3c027f351fa41880db0ebd4948954888b6820d7f076e1eb"
+    },
+    {
+      "path": "evidence/examples/masterdata-call-chain.json",
+      "sha256": "da64650cc6900a79b3bfff4143bbb3ef56658f0f7f5c2333607e1ac103d255b8"
+    },
+    {
+      "path": "evidence/examples/masterdata-database-job-links.json",
+      "sha256": "77ed86e524fcbe8c37341485aef847090609d17c3e99ff8d2e18fd4870bef24e"
+    },
+    {
+      "path": "evidence/examples/masterdata-ui-bindings.json",
+      "sha256": "30854ab0aa0ee3a3b03dc9569a4f7cde40e2fea88836a39bb5e538350fbc6954"
+    }
+  ],
+  "created_at": "2026-09-04T16:45:00+08:00"
+}

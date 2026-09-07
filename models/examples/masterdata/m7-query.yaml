@@ -1,0 +1,28 @@
+model_id: masterdata.m7.list-subtable-data
+model_type: M7
+domain: masterdata
+name:
+  zh: 列出子表数据
+  en: List Subtable Data
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:GetSubtableDatalist
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+target_object: masterdata.m1.subtable-type
+semantic_parameters:
+  - subtable_type
+return_shape: object-list
+filters:
+  - subtable_type
+ordering:
+  - record_id
+pagination:
+  max_page_size: 100
+  max_rows: 1000
+row_scope: 用户数据范围（DPA 最终裁决）
+limits:
+  - 禁任意 SQL
+  - 禁物理 DTO 映射

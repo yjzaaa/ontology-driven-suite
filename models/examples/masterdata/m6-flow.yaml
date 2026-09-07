@@ -1,0 +1,41 @@
+model_id: masterdata.m6.subtable-approval-flow
+model_type: M6
+domain: masterdata
+name:
+  zh: 子表在线审批流程
+  en: Subtable Online Approval Flow
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ev:WS:ce9ad5ca:YiSha.Web/YiSha.Admin.Web/Areas/MasterData/Controllers/MasterDataPROnlineApprovalController.cs:Form
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+states:
+  - 草稿
+  - 待审
+  - 通过
+  - 驳回
+transitions:
+  - from: 草稿
+    to: 待审
+    trigger: masterdata.m2.update-subtable-data
+    guard:
+      - masterdata.m3.allow-update-rule
+  - from: 待审
+    to: 通过
+    trigger: approve
+    guard:
+      - masterdata.m5.online-approval-actor
+  - from: 待审
+    to: 驳回
+    trigger: reject
+    guard:
+      - masterdata.m5.online-approval-actor
+trigger_behaviors:
+  - masterdata.m2.update-subtable-data
+guard_rules:
+  - masterdata.m3.allow-update-rule
+terminals:
+  - 通过
+  - 驳回

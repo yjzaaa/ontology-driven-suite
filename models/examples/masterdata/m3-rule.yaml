@@ -1,0 +1,19 @@
+model_id: masterdata.m3.allow-update-rule
+model_type: M3
+domain: masterdata
+name:
+  zh: 允许更新规则
+  en: Allow Update Rule
+version: 1.0.0
+status: REVIEW_REQUIRED
+evidence_refs:
+  - ev:WS:ce9ad5ca:YiSha.Entity/YiSha.Enum/MasterDataPROnlineApproval/MasterDataPROnlineApprovalConfig.cs:SubtableType
+created_at: "2026-09-04T18:00:00+08:00"
+created_by: copilot-agent
+schema_version: 3.0.0
+applies_to:
+  - masterdata.m2.update-subtable-data
+condition: subtable_type 不在禁止更新列表中
+result: 允许更新
+severity: BLOCK
+explanation: ESN、Tax_Rate、Tax_Code、Tax_code_prefix、Exchange_Rate 出现在禁止更新列表，对应类型不允许更新（masterdata-scope.md）
