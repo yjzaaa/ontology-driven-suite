@@ -69,6 +69,12 @@ class ModelRegistry:
                 self.queries[q["id"]] = (oid, q)
             for b in o.get("behaviors") or []:
                 self.behaviors[b["id"]] = (oid, b)
+        # M3 规则（刚性执行）与 MU 联动（仅治理登记）加载为索引
+        self.rules: list = model.get("rules") or []
+        self.rules_by_object: dict = {}  # obj_id -> [rule, ...]；规则是运行时能力，按对象索引
+        for r in self.rules:
+            self.rules_by_object.setdefault(r.get("object"), []).append(r)
+        self.ui_linkages: list = model.get("ui_linkages") or []  # 仅登记：消费者是 Renderer/Studio，非执行器
         self._validate()
 
     def _field_ids(self, oid: str) -> set:
@@ -166,8 +172,67 @@ class ModelRegistry:
                     if self.mis[q["mi_ref"]].get("effect") == "READ_ONLY":
                         self.mi_refs.setdefault(q["mi_ref"], []).append(
                             (f["id"], ref["target"], ref["key"], ref["label"]))
+        # M3 规则与 MU 联动登记完整性：规则执行前先证明登记得对（引用闭包 + 封闭词表）
+        self._validate_rules(errs)
+        self._validate_ui_linkages(errs)
         if errs:
             raise RuntimeError("本体模型校验失败（fail-fast）：\n  - " + "\n  - ".join(errs))
+
+    # M3 规则的封闭词表（kind/op）——业务取值在 YAML，词表本身是引擎知识
+    RULE_KINDS = ("derivation", "validation")
+    RULE_OPS = (">", ">=", "<", "<=", "==")
+
+    def _validate_rules(self, errs: list) -> None:
+        for r in self.rules:
+            rid = r.get("id", "?")
+            if r.get("object") not in self.objects:
+                errs.append(f"规则 {rid} 挂载到未建模对象 {r.get('object')}")
+                continue
+            if not r.get("evidence"):
+                errs.append(f"规则 {rid} 缺少 evidence")
+            if r.get("kind") not in self.RULE_KINDS:
+                errs.append(f"规则 {rid} kind={r.get('kind')} 不在封闭词表 {self.RULE_KINDS}")
+                continue
+            fids = self._field_ids(r["object"])
+            if r["kind"] == "derivation":
+                for key in ("target", "input", "trigger_when"):
+                    if not r.get(key):
+                        errs.append(f"派生规则 {rid} 缺少 {key}")
+                for f in (r.get("target"), (r.get("trigger_when") or {}).get("field"), r.get("input")):
+                    if f and f not in fids:
+                        errs.append(f"派生规则 {rid} 引用未声明字段 {f}")
+                if not (r.get("cases") or []):
+                    errs.append(f"派生规则 {rid} cases 不能为空")
+                for c in r.get("cases") or []:
+                    if c.get("op") not in self.RULE_OPS:
+                        errs.append(f"派生规则 {rid} op={c.get('op')} 不在封闭词表 {self.RULE_OPS}")
+                    if "threshold" not in c or c.get("value") in (None, ""):
+                        errs.append(f"派生规则 {rid} case 缺少 threshold/value")
+            else:
+                if not (r.get("constraints") or []):
+                    errs.append(f"校验规则 {rid} constraints 不能为空")
+                for c in r.get("constraints") or []:
+                    w = c.get("when") or {}
+                    cond_fields = [w.get("field")]
+                    if w.get("and"):
+                        cond_fields.append(w["and"].get("field"))
+                    for f in cond_fields:
+                        if f and f not in fids:
+                            errs.append(f"校验规则 {rid} when 引用未声明字段 {f}")
+                    for f in c.get("required") or []:
+                        if f not in fids:
+                            errs.append(f"校验规则 {rid} required 引用未声明字段 {f}")
+                    if c.get("field") and c["field"] not in fids:
+                        errs.append(f"校验规则 {rid} 引用未声明字段 {c['field']}")
+                    if not c.get("required") and not (c.get("field") and (c.get("pattern") or c.get("in"))):
+                        errs.append(f"校验规则 {rid} constraint 必须含 required 或 field+pattern/in")
+
+    def _validate_ui_linkages(self, errs: list) -> None:
+        for i, lk in enumerate(self.ui_linkages):
+            if lk.get("object") not in self.objects:
+                errs.append(f"ui_linkages[{i}] 挂载到未建模对象 {lk.get('object')}")
+            if not lk.get("evidence"):
+                errs.append(f"ui_linkages[{i}] 缺少 evidence")
 
 
 with open(MODEL_PATH, encoding="utf-8") as f:
@@ -290,10 +355,80 @@ def _dig(obj, path: str):
     return cur
 
 
+# ---------------- M3 规则刚性执行（封闭词表解释器：防 LLM 幻觉的结构防线） ----------------
+# 派生（kind=derivation）在提案构建时计算——对应 DPA 表单中派生字段 disabled；
+# 校验（kind=validation）在 policy_check fail-closed——违规提案根本不产生，
+# HITL 审批人看到的必然是合规提案。网关第一道刚性不依赖 backend_recheck 取证；
+# DPA 原业务链复验是第二道（纵深防御）。执行判定带 rule_id 进审计。
+
+def _when_matches(when: dict, payload: dict) -> bool:
+    """封闭条件词表：{field, equals[, and:{field, equals}]}。空 when 恒真。"""
+    if not when:
+        return True
+    if str(payload.get(when.get("field"))) != str(when.get("equals")):
+        return False
+    sub = when.get("and")
+    if sub and str(payload.get(sub.get("field"))) != str(sub.get("equals")):
+        return False
+    return True
+
+
+def _apply_derivations(oid: str, inputs: dict) -> tuple[dict, list]:
+    """派生规则：触发命中即由引擎计算派生字段；LLM 手填派生字段一律拒绝。"""
+    out = dict(inputs or {})
+    applied = []
+    for r in REG.rules_by_object.get(oid, []):
+        if r["kind"] != "derivation" or not _when_matches(r.get("trigger_when"), out):
+            continue
+        tgt = r["target"]
+        if str(out.get(tgt) or "").strip():
+            raise ValueError(f"{r['id']}：{tgt} 为派生字段（DPA 表单中禁手改），禁止手动提供")
+        raw = out.get(r["input"])
+        if raw in (None, ""):
+            continue  # 无输入无法派生；缺失由校验规则兜底拦截
+        try:
+            v = float(str(raw).replace(",", ""))
+        except ValueError:
+            raise ValueError(f"{r['id']}：派生输入 {r['input']}={raw!r} 不是数值（fail-closed）")
+        for c in r["cases"]:
+            if {">": v > c["threshold"], ">=": v >= c["threshold"],
+                "<": v < c["threshold"], "<=": v <= c["threshold"],
+                "==": v == c["threshold"]}[c["op"]]:
+                out[tgt] = c["value"]
+                applied.append({"rule": r["id"], "target": tgt, "value": c["value"],
+                                "via": f"{r['input']}={raw}"})
+                break
+        else:
+            raise ValueError(f"{r['id']}：无匹配派生分支（{r['input']}={raw}），fail-closed")
+    return out, applied
+
+
+def _run_validation_rules(oid: str, payload: dict) -> list:
+    """校验规则（fail-closed）：返回违规描述列表（空 = 通过）。"""
+    errs = []
+    for r in REG.rules_by_object.get(oid, []):
+        if r["kind"] != "validation":
+            continue
+        for c in r.get("constraints") or []:
+            if not _when_matches(c.get("when"), payload):
+                continue
+            for f in c.get("required") or []:
+                if payload.get(f) in (None, ""):
+                    errs.append(f"{r['id']}：该条件下 {f} 必填")
+            if c.get("pattern"):
+                v = str(payload.get(c["field"]) or "")
+                if not v or not re.match(c["pattern"], v):
+                    errs.append(f"{r['id']}：{c['field']}={v or '（空）'} 不满足约束 {c['pattern']}")
+            if c.get("in") and str(payload.get(c["field"])) not in [str(x) for x in c["in"]]:
+                errs.append(f"{r['id']}：{c['field']} 不在允许取值内")
+    return errs
+
+
 # ---------------- 最小 Policy（fail-closed：封闭规则词表解释器） ----------------
 def policy_check(behavior_id: str, arguments: dict) -> None:
-    """C0-C2 最小检查：解释 MI forbidden_params 声明（封闭词表），未知规则 fail-closed。"""
-    _oid, b = REG.behaviors[behavior_id]
+    """C0-C2 最小检查：解释 MI forbidden_params 声明（封闭词表），未知规则 fail-closed；
+    并刚性执行对象级 M3 校验规则。"""
+    oid, b = REG.behaviors[behavior_id]
     if b["kind"] != "write":
         return
     if not b.get("requires_approval"):
@@ -312,6 +447,11 @@ def policy_check(behavior_id: str, arguments: dict) -> None:
             raise RuntimeError(f"未知禁止规则类型，fail-closed：{rule}")
         if not ok:
             raise ValueError(fp.get("reason") or f"参数违反禁止规则：{fp['param']} {rule}")
+    # 对象级 M3 校验规则（刚性，fail-closed）
+    payload = {**(arguments.get("target") or {}), **(arguments.get("input") or {})}
+    errs = _run_validation_rules(oid, payload)
+    if errs:
+        raise ValueError("；".join(errs))
 
 
 # ---------------- 提案 ----------------
@@ -351,8 +491,15 @@ def build_arguments(behavior_id: str, row: dict, inputs: dict) -> dict:
 
 
 def create_proposal(behavior_id: str, arguments: dict, thread_id: str = "") -> dict:
-    policy_check(behavior_id, arguments)
-    _oid, b = REG.behaviors[behavior_id]
+    oid, b = REG.behaviors[behavior_id]
+    try:
+        # 派生规则先于一切检查：LLM 手填派生字段在此拒绝（对应 DPA disabled 语义）
+        inputs, derivations = _apply_derivations(oid, arguments.get("input") or {})
+        arguments = {**arguments, "input": inputs}
+        policy_check(behavior_id, arguments)
+    except ValueError as e:
+        audit({"kind": "proposal_rejected_by_rule", "behavior": behavior_id, "reason": str(e)})
+        raise
     mi = REG.mis[b["mi_ref"]]
     pid = "P" + secrets.token_hex(4)
     token = secrets.token_urlsafe(24)
@@ -361,12 +508,13 @@ def create_proposal(behavior_id: str, arguments: dict, thread_id: str = "") -> d
             for k, v in mi.get("param_mapping", {}).items()}
     tgt = arguments.get("target", {})
     store.save({"proposal_id": pid, "behavior": behavior_id, "arguments": arguments,
+                "derivations": derivations,  # 派生判定随提案留痕（rule_id + 计算依据）
                 "form": form, "token_hash": token_hash(token), "state": "PENDING_APPROVAL",
                 "mi": b["mi_ref"], "risk": b["risk"], "created": time.time(),
                 "thread_id": thread_id,  # LangGraph 线程：批准后用于 resume 补齐事件流
                 "history": [{"event": "created"}]})
     audit({"kind": "proposal_created", "proposal_id": pid, "behavior": behavior_id,
-           "target": tgt, "risk": b["risk"]})
+           "target": tgt, "risk": b["risk"], "derivations": derivations})
     label = _render(b.get("target_label") or "（id={id}）", tgt, arguments.get("input") or {})
     change = _render(b.get("change_label") or "", tgt, arguments.get("input") or {})
     return {"proposal_id": pid, "state": "PENDING_APPROVAL", "risk": b["risk"],

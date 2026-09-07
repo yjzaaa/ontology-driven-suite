@@ -20,7 +20,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "gateway"))
 
 import yaml  # noqa: E402
-from mvp_server import ModelRegistry, _execute_query  # noqa: E402
+from mvp_server import (ModelRegistry, _apply_derivations, _execute_query,  # noqa: E402
+                        _run_validation_rules)  # noqa: E402
 
 MODEL_PATH = ROOT / ".build/candidates/masterdata/mvp-vertical-slice.yaml"
 PASS, FAIL = [], []
@@ -100,6 +101,52 @@ try:
     check("坏引用拒绝启动", False, "未抛出异常")
 except RuntimeError as e:
     check("坏引用拒绝启动", "not_modeled" in str(e), str(e)[:120])
+
+# ── 4. M3 规则刚性执行：派生 + 校验（防 LLM 幻觉的结构防线） ──
+print("\n[验收] M3 派生规则（引擎计算，LLM 禁填派生字段）")
+inputs, applied = _apply_derivations("standard_goods", {"AssetType": "ITAsset", "vPrice": "6000"})
+check("派生 >5000 → 6230", inputs.get("AssetClass") == "6230" and len(applied) == 1,
+      f"inputs={inputs} applied={applied}")
+inputs, _ = _apply_derivations("standard_goods", {"AssetType": "ITAsset", "vPrice": "5000"})
+check("派生边界 ≤5000 → 6931", inputs.get("AssetClass") == "6931", f"inputs={inputs}")
+try:
+    _apply_derivations("standard_goods", {"AssetType": "ITAsset", "vPrice": "6000",
+                                          "AssetClass": "6999"})
+    check("手填派生字段拒绝", False, "未抛出异常")
+except ValueError as e:
+    check("手填派生字段拒绝", "禁止手动提供" in str(e), str(e)[:120])
+try:
+    _apply_derivations("standard_goods", {"AssetType": "ITAsset", "vPrice": "abc"})
+    check("非数值派生输入 fail-closed", False, "未抛出异常")
+except ValueError:
+    check("非数值派生输入 fail-closed", True)
+
+print("\n[验收] M3 校验规则（fail-closed，违规提案不产生）")
+errs = _run_validation_rules("standard_goods", {"assetFlag": "n", "glAccount": "5100"})
+check("科目段非 6 开头拦截", any("rule_sg_glaccount" in e for e in errs), str(errs))
+errs = _run_validation_rules("standard_goods", {"assetFlag": "n", "glAccount": "6230"})
+check("6 开头科目通过", errs == [], str(errs))
+errs = _run_validation_rules("standard_goods", {"assetFlag": "n"})
+check("assetFlag=n 缺 glAccount 拦截", any("必填" in e for e in errs), str(errs))
+errs = _run_validation_rules("standard_goods", {"assetFlag": "yes"})
+check("assetFlag=yes 缺双字段拦截", sum("必填" in e for e in errs) >= 2, str(errs))
+
+# ── 5. fail-fast：规则登记不合法必须拒绝启动 ──
+print("\n[验收] 规则登记 fail-fast")
+bad2 = copy.deepcopy(base)
+bad2["rules"][0]["cases"][0]["op"] = ">>>"
+try:
+    ModelRegistry(bad2)
+    check("未知 op 拒绝启动", False, "未抛出异常")
+except RuntimeError as e:
+    check("未知 op 拒绝启动", "op" in str(e), str(e)[:120])
+bad3 = copy.deepcopy(base)
+bad3["ui_linkages"][0]["object"] = "not_modeled"
+try:
+    ModelRegistry(bad3)
+    check("联动挂未知对象拒绝启动", False, "未抛出异常")
+except RuntimeError as e:
+    check("联动挂未知对象拒绝启动", "not_modeled" in str(e), str(e)[:120])
 
 print(f"\n──── 结论：{len(PASS)} 通过 / {len(FAIL)} 失败 ────")
 for f in FAIL:

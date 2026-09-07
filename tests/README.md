@@ -7,7 +7,7 @@
 | 文件 | 类型 | 覆盖 |
 |---|---|---|
 | `e2e_mvp_vertical_slice.py` | 端到端验收 | MVP 竖切九场景（LLM 意图解析 → 治理读 → HITL 提案/批准 → 读写自洽 → 语义护栏 → V2 类型化查询） |
-| `test_engine_generalization.py` | 引擎回归 | **V2 验收判据**："新增类型化对象 = 纯 YAML 提交，gateway 零代码改动"；非法引用 fail-fast |
+| `test_engine_generalization.py` | 引擎回归 | **V2 验收判据**："新增类型化对象 = 纯 YAML 提交，gateway 零代码改动"；M3 规则刚性执行（派生/校验/手填拒绝）；非法引用与规则登记 fail-fast |
 
 ## 运行端到端验收
 
@@ -39,11 +39,13 @@ gateway/.venv/Scripts/python.exe -X utf8 tests/e2e_mvp_vertical_slice.py
 gateway/.venv/Scripts/python.exe -X utf8 tests/test_engine_generalization.py
 ```
 
-验证三件事：
+验证四件事：
 1. **纯 YAML 新增对象**：进程内给模型追加第 4 个类型化对象 GL_Account（不修改任何
    .py），注册表校验通过、类型过滤+JSON 投影查询直接可用；
 2. **ref 富化零代码生效**：新声明的引用字段自动进入富化索引（运行时富化由 e2e 场景 8 覆盖）；
-3. **fail-fast**：引用未建模的目标对象时启动即拒绝。
+3. **M3 规则刚性执行**：派生规则由引擎计算（手填派生字段拒绝、非数值输入 fail-closed）；
+   校验规则 fail-closed（科目段 6 开头、条件必填）——防 LLM 幻觉写入的结构防线；
+4. **fail-fast**：引用未建模对象、规则未知 kind/op、联动挂未知对象，启动即拒。
 
 ### 纪律
 
