@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-"""MVP 竖切端到端验收：六个测试问题 → 逐步断言。
+"""MVP 竖切端到端验收：九个测试问题 → 逐步断言。
 
-覆盖：LLM 意图解析 → 治理读 → HITL 提案/批准 → 读写自洽 → 语义护栏。
+覆盖：LLM 意图解析 → 治理读 → HITL 提案/批准 → 读写自洽 → 语义护栏
+      → V2 类型化查询（厂商/商品/预算，模型驱动的投影与路由）。
 
 运行前提：
 1. 网关已启动：uvicorn mvp_server:app --app-dir gateway --port 8000
@@ -126,6 +127,38 @@ def main() -> int:
     ev = chat("今天天气怎么样")
     check("不得产生提案", first(ev, "proposal_card") is None)
     check("返回未识别意图", bool(first(ev, "error")))
+
+    # ── V2 类型化查询：全部由本体 YAML 驱动（doc_type 过滤 + content_fields 投影）──
+    print("\n[场景7] V2 类型化查询：查厂商 9305733")
+    tbl = first(chat(f"查厂商 {DOC}"), "object_table") or {}
+    check("命中厂商类型视图", tbl.get("display") == "厂商类型主数据",
+          f"display={tbl.get('display')}")
+    row = (tbl.get("rows") or [{}])[0]
+    check("投影字段完整（厂商编码/名称/类型）",
+          bool(row.get("VendorCode") and row.get("VendorName") and row.get("VendorType")),
+          f"row={row!r}")
+
+    print("\n[场景8] V2 类型化查询：查商品 芝士")
+    tbl = first(chat("查商品 芝士"), "object_table") or {}
+    check("命中标准商品视图", tbl.get("display") == "标准商品主数据",
+          f"display={tbl.get('display')}")
+    check("按内容字段检索命中", bool(tbl.get("rows")), "0 行")
+    cols = tbl.get("columns") or []
+    check("类型化列投影（目录编码/单价/资产分类）",
+          all(c in cols for c in ("目录编码", "单价", "资产分类")), f"cols={cols}")
+    row = (tbl.get("rows") or [{}])[0]
+    check("富化引用生效（vendorCode→vendorName）",
+          bool(row.get("vendorCode") and row.get("vendorName")),
+          f"row={row!r}")
+
+    print("\n[场景9] V2 类型化查询：查预算 FY23_Ext testing")
+    tbl = first(chat("查预算 FY23_Ext testing"), "object_table") or {}
+    check("命中预算参考号视图", tbl.get("display") == "预算参考号主数据",
+          f"display={tbl.get('display')}")
+    row = (tbl.get("rows") or [{}])[0]
+    check("预算三件套投影（预算/已用/剩余）",
+          all(k in row for k in ("BudgetAmount", "UsedAmount", "RemainingAmount")),
+          f"row={row!r}")
 
     print(f"\n──── 结论：{len(PASS)} 通过 / {len(FAIL)} 失败 ────")
     for f in FAIL:
